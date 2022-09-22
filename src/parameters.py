@@ -40,8 +40,8 @@ TURNING_DISTRIBUTION_MIN, TURNING_DISTRIBUTION_MAX = -np.pi, np.pi
 
 
 # for the 2D distributions
-N_BINS_2D_RX = 64
-N_BINS_2D_RY = 64
+N_BINS_2D_RX = 32
+N_BINS_2D_RY = 32
 RX_MIN, RX_MAX = -5000, 5000
 RY_MIN, RY_MAX = -5000, 5000
 
@@ -75,7 +75,7 @@ RND_TRAJ_SIZE_MIN, RND_TRAJ_SIZE_MAX = 1500, 5500
 
 # for the distributions of trajectories sizes
 N_BINS_TRAJ_SIZE = 20
-TRAJ_SIZE_MIN, TRAJ_SIZE_MAX = 0, 6000
+TRAJ_SIZE_MIN, TRAJ_SIZE_MAX = 2000, 6000
 
 # for the straightness index distributions
 N_BINS_STRAIGHTNESS_INDEX_DISTRIBUTION = 20
@@ -119,3 +119,6 @@ COLORS_SOC_REL = ["black", "red", "blue", "green", "orange"]
 COLORS_INTERACTION = ["blue", "red", "green", "orange"]
 
 LINE_TYPES = {"group": "dashed", "non_group": "solid", "group_members": "dashdot"}
+
+
+N_POINTS_MIN_VICINITY = 4

@@ -190,21 +190,21 @@ if __name__ == "__main__":
         #         plt.legend()
 
         # plot 2D maps of the segment length against the deflection
-        xi = np.linspace(RND_TRAJ_SIZE_MIN, RND_TRAJ_SIZE_MAX, 32)
-        yi = np.linspace(
-            DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["min"],
-            DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["max"],
-            DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["n_bins"],
-        )
-        for measure in DEFLECTION_MEASURES:
-            grid = compute_grid_count(
-                np.array(lengths_without_interaction[group_non_group]["gross"]),
-                np.array(deflections_without_interaction[group_non_group][measure]),
-                RND_TRAJ_SIZE_MIN,
-                RND_TRAJ_SIZE_MAX,
-                32,
-                DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["min"],
-                DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["max"],
-                DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["n_bins"],
-            )
-            plot_color_map(xi, yi, grid, "segment", measure, equal=False)
+        # xi = np.linspace(RND_TRAJ_SIZE_MIN, RND_TRAJ_SIZE_MAX, 32)
+        # yi = np.linspace(
+        #     DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["min"],
+        #     DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["max"],
+        #     DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["n_bins"],
+        # )
+        # for measure in DEFLECTION_MEASURES:
+        #     grid = compute_grid_count(
+        #         np.array(lengths_without_interaction[group_non_group]["gross"]),
+        #         np.array(deflections_without_interaction[group_non_group][measure]),
+        #         RND_TRAJ_SIZE_MIN,
+        #         RND_TRAJ_SIZE_MAX,
+        #         32,
+        #         DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["min"],
+        #         DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["max"],
+        #         DEFLECTIONS_DISTRIBUTIONS_PARAMETERS[measure]["n_bins"],
+        #     )
+        #     plot_color_map(xi, yi, grid, "segment", measure, equal=False)

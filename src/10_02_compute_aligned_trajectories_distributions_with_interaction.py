@@ -51,12 +51,14 @@ if __name__ == "__main__":
         cell_size_y = int((RY_MAX - RY_MIN) / N_BINS_2D_RY)
         # grids_vel =np.zeros((len(soc_binding_values), n_bin_x, n_bin_y))
 
+        thresholds_ped = get_pedestrian_thresholds(env_name)
+        thresholds_group = get_groups_thresholds()
+
         for day in days:
 
-            thresholds_ped = get_pedestrian_thresholds(env_name)
-            thresholds_group = get_groups_thresholds()
-
-            non_groups = env.get_pedestrians(days=[day], thresholds=thresholds_ped)
+            non_groups = env.get_pedestrians(
+                days=[day], thresholds=thresholds_ped, no_groups=True
+            )
 
             groups = env.get_groups(
                 size=2,
@@ -82,7 +84,10 @@ if __name__ == "__main__":
                     )
 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
-                    non_groups, proximity_threshold=None, skip=group_members_id
+                    non_groups,
+                    proximity_threshold=4000,
+                    skip=group_members_id,
+                    # alone=True,
                 )
 
                 if not group_encounters:

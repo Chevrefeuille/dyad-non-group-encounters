@@ -1,8 +1,6 @@
-from lib2to3.pgen2.token import SLASHEQUAL
 from pedestrians_social_binding.constants import *
 from pedestrians_social_binding.utils import *
 from pedestrians_social_binding.environment import Environment
-from pedestrians_social_binding.threshold import Threshold
 from pedestrians_social_binding.plot_utils import *
 from pedestrians_social_binding.trajectory_utils import *
 
@@ -38,6 +36,7 @@ if __name__ == "__main__":
 
         n_encounters_soc = {}
         n_encounters_dir = {}
+        n_encounters = {}
 
 
         thresholds_ped = get_pedestrian_thresholds(env_name)
@@ -46,7 +45,7 @@ if __name__ == "__main__":
         for day in days:
 
             non_groups = env.get_pedestrians(
-                days=[day], thresholds=thresholds_ped, sampling_time=500
+                days=[day], thresholds=thresholds_ped, sampling_time=500, no_groups=True
             )
 
             groups = env.get_groups(
@@ -72,7 +71,7 @@ if __name__ == "__main__":
                     n_encounters_soc[soc_binding] = 0
 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
-                    non_groups, proximity_threshold=None, skip=group_members_id
+                    non_groups, proximity_threshold=4000, skip=group_members_id, alone=True
                 )
 
                 if not group_encounters:
@@ -102,6 +101,12 @@ if __name__ == "__main__":
                     if relative_direction not in n_encounters_dir:
                         n_encounters_dir[relative_direction] = 0
 
+                    if relative_direction not in n_encounters:
+                        n_encounters[relative_direction] = {}
+
+                    if soc_binding not in n_encounters[relative_direction]:
+                        n_encounters[relative_direction][soc_binding] = 0
+
                     # if relative_direction != "opposite":
                     #     continue
 
@@ -121,11 +126,15 @@ if __name__ == "__main__":
                     pos_group_encounter = pos_group[d_G_NG < VICINITY]
                     pos_non_group_encounter = pos_non_group[d_G_NG < VICINITY]
 
-                    if len(pos_group_encounter) <= 2:
+                    if len(pos_group_encounter) <= N_POINTS_MIN_VICINITY:
                         continue
 
 
                     n_encounters_soc[soc_binding] += 1
+                    n_encounters[relative_direction][soc_binding] += 1
+
+
+                    # if soc_binding != 0:
                     n_encounters_dir[relative_direction] += 1 
 
         print(env_name_short)
@@ -136,7 +145,7 @@ if __name__ == "__main__":
             tot += n_encounters_soc[i]
         print(f" Total: {tot}")
         print("--------")
-        print("Social binding")
+        print("Rel dir")
         tot = 0
         for dir in n_encounters_dir:
             if dir == "None":
@@ -146,6 +155,20 @@ if __name__ == "__main__":
         print(f" Total: {tot}")
         print("==============")
         
+        print("both")
+        for dir in n_encounters_dir:
+            print(f"-> {dir}")
+            if dir == "None":
+                continue
+            tot = 0
+            for i in soc_binding_values:
+                if i not in n_encounters[dir]:
+                    continue
+                print(f"  - {soc_binding_names[i]}: {n_encounters[dir][i]}")
+                tot += n_encounters[dir][i]
+            print(f" Total: {tot}")
+            print("--------")
+        print("==============")
 
 
 

@@ -19,7 +19,7 @@ if __name__ == "__main__":
         env_name_short = env_name.split(":")[0]
 
         deflections_with_interaction = pickle_load(
-            f"../data/pickle/deflection_with_interaction_{env_name_short}.pkl"
+            f"../data/pickle/deflection_with_interaction_{env_name_short}_all.pkl"
         )
         deflections_without_interaction_segment = pickle_load(
             f"../data/pickle/deflection_without_interaction_{env_name_short}.pkl"
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             f"../data/pickle/length_trajectory_without_interaction_{env_name_short}_random.pkl"
         )
         lengths_with_interaction = pickle_load(
-            f"../data/pickle/length_trajectory_with_interaction_{env_name_short}.pkl"
+            f"../data/pickle/length_trajectory_with_interaction_{env_name_short}_all.pkl"
         )
 
         header = (
@@ -100,6 +100,21 @@ if __name__ == "__main__":
         print()
 
         print("ANOVA")
+        print("----- ALL ------")
+        for measure in DEFLECTION_MEASURES:
+            print(f"-> {measure}")
+            for group_non_group in ["group_members", "non_group"]:
+
+                all_deflections = []
+                for i in soc_binding_values:
+                    all_deflections += [
+                        deflections_with_interaction["opposite"][i][measure][
+                            group_non_group
+                        ]
+                    ]
+                F, p = stats.f_oneway(*all_deflections)
+                print(f"  - {group_non_group.replace('_', ' ')}: {F}, {p}")
+        print("----- Pairwise ------")
         header = (
             "| | "
             + " | ".join([soc_binding_names[i] for i in soc_binding_values])
@@ -130,11 +145,11 @@ if __name__ == "__main__":
                         )
                         deflections_j = deflections_j[~np.isnan(deflections_j)]
 
-                        F, p = stats.f_oneway(
+                        t, p = stats.ttest_ind(
                             deflections_i,
                             deflections_j,
                         )
-                        line += f" {p} |"
+                        line += f" {round(p,3)} |"
                     print(line)
 
                 # print(soc_binding_names[i], soc_binding_names[j], round(p, 3))

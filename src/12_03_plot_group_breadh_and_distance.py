@@ -3,6 +3,7 @@ from pedestrians_social_binding.constants import *
 
 import matplotlib.pyplot as plt
 from utils import *
+import pandas as pd
 
 if __name__ == "__main__":
 
@@ -31,6 +32,7 @@ if __name__ == "__main__":
 
         # scatter distance, breadth
         fig, ax = plt.subplots()
+
         for i in soc_binding_values:
             ax.scatter(
                 distances_with_interaction[i],
@@ -39,9 +41,18 @@ if __name__ == "__main__":
                 label=soc_binding_names[i],
                 alpha=0.3,
             )
+            data = np.array(
+                [distances_with_interaction[i], breadths_with_interaction[i]]
+            ).T
+            pd.DataFrame(data).to_csv(
+                f"../data/plots/breadth/{env_name_short}_scatter_breadth_vs_distance.csv",
+                index=False,
+                header=False,
+            )
+            print(data.shape)
         ax.legend()
         plt.savefig(
-            f"../data/figures/breadth/{env_name}_scatter_breadth_vs_distance.png"
+            f"../data/figures/breadth/{env_name_short}_scatter_breadth_vs_distance.png"
         )
         # plt.show()
         plt.close()
@@ -61,6 +72,12 @@ if __name__ == "__main__":
             )
             ax.plot(
                 bin_centers, means, c=soc_binding_colors[i], label=soc_binding_names[i]
+            )
+            data = np.array([bin_centers, means, stds]).T
+            pd.DataFrame(data).to_csv(
+                f"../data/plots/breadth/{env_name_short}_bin_breadth_vs_distance.csv",
+                index=False,
+                header=False,
             )
         ax.legend()
         # plt.show()

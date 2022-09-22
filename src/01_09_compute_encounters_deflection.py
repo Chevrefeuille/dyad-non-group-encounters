@@ -68,7 +68,10 @@ if __name__ == "__main__":
                     continue
 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
-                    non_groups, proximity_threshold=None, skip=group_members_id
+                    non_groups,
+                    proximity_threshold=4000,
+                    skip=group_members_id,
+                    alone=None,
                 )
 
                 if not group_encounters:
@@ -126,7 +129,7 @@ if __name__ == "__main__":
                     pos_group_encounter = pos_group[d_G_NG < VICINITY]
                     pos_non_group_encounter = pos_non_group[d_G_NG < VICINITY]
 
-                    if len(pos_group_encounter) <= 4:
+                    if len(pos_group_encounter) <= N_POINTS_MIN_VICINITY:
                         continue
 
                     # plot_animated_2D_trajectories(
@@ -181,10 +184,10 @@ if __name__ == "__main__":
                         ]
 
         pickle_save(
-            f"../data/pickle/deflection_with_interaction_{env_name_short}.pkl",
+            f"../data/pickle/deflection_with_interaction_{env_name_short}_all.pkl",
             deflections,
         )
         pickle_save(
-            f"../data/pickle/length_trajectory_with_interaction_{env_name_short}.pkl",
+            f"../data/pickle/length_trajectory_with_interaction_{env_name_short}_all.pkl",
             lengths,
         )

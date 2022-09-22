@@ -3,6 +3,7 @@ from pedestrians_social_binding.constants import *
 
 from utils import *
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 if __name__ == "__main__":
@@ -37,7 +38,7 @@ if __name__ == "__main__":
             10000,
             12 + 1,
         )
-        bin_centers_t = 0.5 * (pdf_edges_t[0:-1] + pdf_edges_t[1:])
+        bin_centers = 0.5 * (pdf_edges_t[0:-1] + pdf_edges_t[1:])
 
         for measure in DEFLECTION_MEASURES:
             fig, ax = plt.subplots()
@@ -68,21 +69,37 @@ if __name__ == "__main__":
                 # )
 
                 # bin plot
-                mean_deflection_per_bin_without_interaction = get_mean_over_bins(
+                (
+                    mean_deflection_per_bin_without_interaction,
+                    std,
+                    ste,
+                ) = get_mean_std_ste_over_bins(
                     np.array(
                         lengths_without_interaction_random[group_non_group]["gross"]
                     ),
                     np.array(
                         deflections_without_interaction_random[group_non_group][measure]
                     ),
-                    bin_centers_t,
+                    bin_centers,
                 )
                 ax.plot(
-                    bin_centers_t,
+                    bin_centers,
                     mean_deflection_per_bin_without_interaction,
                     label=f"random-{group_non_group}",
                     c=colors[group_non_group],
-                    ls="dashed",
+                )
+
+                data = np.array(
+                    [
+                        bin_centers / 1000,
+                        mean_deflection_per_bin_without_interaction,
+                        ste,
+                    ]
+                ).T
+                pd.DataFrame(data).to_csv(
+                    f"../data/plots/deflections/baseline/{env_name_short}_{measure}_{group_non_group}.csv",
+                    index=False,
+                    header=False,
                 )
 
                 # plot the baseline without interactions with random lengths
@@ -104,9 +121,9 @@ if __name__ == "__main__":
             ax.set_xlim([1000, 10000])
             ax.legend()
             fig.savefig(
-                f"../data/figures/deflection/random_vs_segment/{env_name_short}_{group_non_group}_{measure}.png"
+                f"../data/figures/deflection/random/{env_name_short}_{group_non_group}_{measure}.png"
             )
-            plt.show()
+            # plt.show()
             plt.close()
 
             # fig.savefig(

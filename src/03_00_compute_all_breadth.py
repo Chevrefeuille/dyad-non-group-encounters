@@ -1,11 +1,12 @@
 from copy import deepcopy
 from pedestrians_social_binding.environment import Environment
-from pedestrians_social_binding.threshold import Threshold
 from pedestrians_social_binding.plot_utils import *
 from pedestrians_social_binding.utils import *
 from pedestrians_social_binding.constants import *
 
 from parameters import *
+from utils import *
+
 
 from tqdm import tqdm
 
@@ -17,51 +18,67 @@ if __name__ == "__main__":
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
         )
 
-        days = DAYS_ATC if env_name == "atc" else DAYS_DIAMOR
-        soc_binding_type = "soc_rel" if env_name == "atc" else "interaction"
-        soc_binding_names = (
-            SOCIAL_RELATIONS_EN if env_name == "atc" else INTENSITIES_OF_INTERACTION_NUM
+        env_name_short = env_name.split(":")[0]
+        XMIN, XMAX, YMIN, YMAX = env.get_boundaries()
+        days = get_all_days(env_name)
+        soc_binding_type, soc_binding_names, soc_binding_values, _ = get_social_values(
+            env_name
         )
-        soc_binding_values = [0, 1, 2, 3, 4] if env_name == "atc" else [0, 1, 2, 3]
 
-        breadth = {}
+        thresholds_ped = get_pedestrian_thresholds(env_name)
+        thresholds_group = get_groups_thresholds()
 
-        for day in days:
-            # print(f"Day {day}:")
-            threshold_v = Threshold("v", min=500, max=3000)  # velocity in [0.5; 3]m/s
-            threshold_d = Threshold("d", min=5000)  # walk at least 5 m
-            thresholds_indiv = [threshold_v, threshold_d]
+        sizes = {}
+        breadths = {}
+        depths = {}
 
-            # corridor threshold for ATC
-            if env_name == "atc":
-                threshold_corridor_x = Threshold("x", 5000, 48000)
-                threshold_corridor_y = Threshold("y", -27000, 8000)
-                thresholds_indiv += [threshold_corridor_x, threshold_corridor_y]
+        groups = env.get_groups(
+            size=2,
+            ped_thresholds=thresholds_ped,
+            group_thresholds=thresholds_group,
+            with_social_binding=True,
+        )
 
-            # threshold on the distance between the group members, max 4 m
-            threshold_delta = Threshold("delta", max=4000)
+        for group in groups:
+            group_id = group.get_id()
 
-            non_groups = env.get_pedestrians(
-                days=[day], no_groups=True, thresholds=thresholds_indiv
-            )
+            soc_binding = group.get_annotation(soc_binding_type)
 
-            groups = env.get_groups(
-                days=[day],
-                size=2,
-                ped_thresholds=thresholds_indiv,
-                group_thresholds=[threshold_delta],
-                with_social_binding=True,
-            )
+            if soc_binding not in sizes:
+                sizes[soc_binding] = []
+                breadths[soc_binding] = []
+                depths[soc_binding] = []
 
-            for group in groups:
-                group_id = group.get_id()
+            size = group.get_interpersonal_distance()
+            depth, breadth = group.get_depth_and_breadth()
 
-                soc_binding = group.get_annotation(soc_binding_type)
+            sizes[soc_binding] += list(size)
+            breadths[soc_binding] += list(breadth)
+            depths[soc_binding] += list(depth)
 
-                if soc_binding not in breadth:
-                    breadth[soc_binding] = []
+            # group.plot_2D_trajectory()
 
-                d_AB = group.get_interpersonal_distance()
-                breadth[soc_binding] += list(d_AB)
+        pickle_save(f"../data/pickle/group_breadth_{env_name}.pkl", breadths)
+        pickle_save(f"../data/pickle/group_depth_{env_name}.pkl", depths)
+        pickle_save(f"../data/pickle/group_size_{env_name}.pkl", sizes)
 
-        pickle_save(f"../data/pickle/group_breadth_{env_name}.pkl", breadth)
+        # bin_size = (
+        #     BREADTH_DISTRIBUTION_MAX - BREADTH_DISTRIBUTION_MIN
+        # ) / N_BINS_BREADTH_DISTRIBUTION
+        # pdf_edges = np.linspace(
+        #     BREADTH_DISTRIBUTION_MIN,
+        #     BREADTH_DISTRIBUTION_MAX,
+        #     N_BINS_BREADTH_DISTRIBUTION + 1,
+        # )
+        # bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:]) / 1000
+
+        # # plot pdf
+        # for i in soc_binding_values:
+        #     size_values = depths[i]
+        #     hist = np.histogram(size_values, pdf_edges)[0]
+        #     pdf = hist / sum(hist) / bin_size
+        #     plt.plot(bin_centers, pdf, label=soc_binding_names[i])
+        # plt.legend()
+        # plt.show()
+
+        # pickle_save(f"../data/pickle/group_breadth_{env_name}.pkl", breadth)

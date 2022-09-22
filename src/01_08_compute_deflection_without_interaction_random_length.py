@@ -31,7 +31,7 @@ if __name__ == "__main__":
             "group_members": {"net": [], "gross": []},
             "non_group": {"net": [], "gross": []},
         }
-
+        n, p = 0, 0
         for day in days:
             print(f"Day {day}:")
             thresholds_ped = get_pedestrian_thresholds(env_name)
@@ -103,6 +103,8 @@ if __name__ == "__main__":
                     pieces_group = get_random_pieces(position, 20)
                     pieces_A = get_random_pieces(pos_A, 20)
                     pieces_B = get_random_pieces(pos_B, 20)
+
+                    n += 20
 
                     # for piece_A, piece_B in zip(pieces_A, pieces_B):
                     #     trajectory1 = np.zeros((len(piece_A), 7))
@@ -255,6 +257,8 @@ if __name__ == "__main__":
                         if len(piece) >= 4
                     ]
 
+                    p += 20
+
                     for measure in DEFLECTION_MEASURES:
                         if measure not in deflections["non_group"]:
                             deflections["non_group"][measure] = []
@@ -291,6 +295,8 @@ if __name__ == "__main__":
                         #         )
 
                         deflections["non_group"][measure] += non_group_deflections
+
+        print(n, p)
 
         pickle_save(
             f"../data/pickle/deflection_without_interaction_{env_name_short}_random.pkl",

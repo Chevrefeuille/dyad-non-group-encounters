@@ -29,7 +29,6 @@ if __name__ == "__main__":
         observed_minimum_distances = {}
         straight_line_minimum_distances = {}
         group_sizes = {}
-        velocities = {}
 
         thresholds_ped = get_pedestrian_thresholds(env_name)
         thresholds_group = get_groups_thresholds()
@@ -64,13 +63,12 @@ if __name__ == "__main__":
                     observed_minimum_distances[soc_binding] = []
                     straight_line_minimum_distances[soc_binding] = []
                     group_sizes[soc_binding] = []
-                    velocities[soc_binding] = []
 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
                     non_groups,
                     proximity_threshold=4000,
                     skip=group_members_id,
-                    alone=False,
+                    alone=True,
                 )
 
                 for non_group in group_encounters:
@@ -125,9 +123,6 @@ if __name__ == "__main__":
                     #     [traj_group_aligned, traj_non_group_aligned]
                     # )
 
-                    velocity = traj_non_group_aligned[:, 5:7]
-                    velocity_norm = np.linalg.norm(velocity, axis=1)
-
                     rp = compute_straight_line_minimum_distance(traj_non_group_aligned)
                     ro = compute_observed_minimum_distance(
                         traj_non_group_aligned, interpolate=True
@@ -136,7 +131,6 @@ if __name__ == "__main__":
                     if rp:
                         observed_minimum_distances[soc_binding] += [ro]
                         straight_line_minimum_distances[soc_binding] += [rp]
-                        velocities[soc_binding] += [np.nanmean(velocity_norm)]
 
         for soc_binding in soc_binding_values:
             observed_minimum_distances[soc_binding] = np.array(
@@ -147,14 +141,10 @@ if __name__ == "__main__":
             )
 
         pickle_save(
-            f"../data/pickle/observed_minimum_distance_{env_name_short}_with_interaction_not_alone.pkl",
+            f"../data/pickle/observed_minimum_distance_{env_name_short}_with_interaction_alone.pkl",
             observed_minimum_distances,
         )
         pickle_save(
-            f"../data/pickle/straight_line_minimum_distance_{env_name_short}_with_interaction_not_alone.pkl",
+            f"../data/pickle/straight_line_minimum_distance_{env_name_short}_with_interaction_alone.pkl",
             straight_line_minimum_distances,
-        )
-        pickle_save(
-            f"../data/pickle/velocities_{env_name_short}_with_interaction_not_alone.pkl",
-            velocities,
         )

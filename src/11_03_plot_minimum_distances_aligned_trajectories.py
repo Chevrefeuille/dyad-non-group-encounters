@@ -2,6 +2,8 @@ from pedestrians_social_binding.utils import *
 from pedestrians_social_binding.constants import *
 
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 from parameters import *
 from utils import *
 
@@ -28,9 +30,6 @@ if __name__ == "__main__":
         straight_line_minimum_distances_with_interaction = pickle_load(
             f"../data/pickle/straight_line_minimum_distance_{env_name_short}_with_interaction.pkl"
         )
-        group_breadths_with_interaction = pickle_load(
-            f"../data/pickle/group_breadth_{env_name_short}_with_interaction.pkl"
-        )
 
         observed_minimum_distances_without_interaction = pickle_load(
             f"../data/pickle/observed_minimum_distance_{env_name_short}_without_interaction.pkl"
@@ -39,77 +38,185 @@ if __name__ == "__main__":
             f"../data/pickle/straight_line_minimum_distance_{env_name_short}_without_interaction.pkl"
         )
 
-        # scatter baseline
-        # plt.scatter(
-        #     straight_line_minimum_distances_without_interaction,
-        #     observed_minimum_distances_without_interaction,
-        # )
-        # plt.show()
+        group_size_all = pickle_load(f"../data/pickle/group_size_{env_name_short}.pkl")
+        group_breadth_all = pickle_load(
+            f"../data/pickle/group_breadth_{env_name_short}.pkl"
+        )
 
-        # # plot 2D pair distributions with interaction
-        # for i, v in enumerate(soc_binding_values):
-        #     plt.scatter(
-        #         straight_line_minimum_distances_without_interaction,
-        #         observed_minimum_distances_without_interaction,
-        #     )
-        # plt.title(f"{env_name_short}")
-        # # plt.legend()
-        # plt.show()
+        # NOT ALONE
 
-        fig, ax = plt.subplots()
-        bin_size = (RP_MAX - RP_MIN) / N_BINS_RP
-        pdf_edges = np.linspace(RP_MIN, RP_MAX, N_BINS_RP + 1)
+        # without scaling
+        bin_size = 4000 / N_BINS_RP
+        pdf_edges = np.linspace(0, 4000, N_BINS_RP + 1)
         bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
 
-        mean_observed_minimum_distance_per_bin = get_mean_over_bins(
-            straight_line_minimum_distances_without_interaction,
-            observed_minimum_distances_without_interaction,
-            bin_centers,
-        )
-        ax.plot(bin_centers, mean_observed_minimum_distance_per_bin, label="baseline")
-
-        for i in soc_binding_values:
-            mean_observed_minimum_distance_per_bin = get_mean_over_bins(
-                straight_line_minimum_distances_with_interaction[i],
-                observed_minimum_distances_with_interaction[i],
-                bin_centers,
+        for i, v in enumerate(soc_binding_values):
+            (
+                mean_observed_minimum_distance_per_bin,
+                stds,
+                stdes,
+            ) = get_mean_std_ste_over_bins(
+                straight_line_minimum_distances_with_interaction[v],
+                observed_minimum_distances_with_interaction[v],
+                pdf_edges[1:],
             )
-            ax.plot(
+            plt.plot(
                 bin_centers,
                 mean_observed_minimum_distance_per_bin,
-                label=soc_binding_names[i],
-                c=soc_binding_colors[i],
+                label=soc_binding_names[v],
+                c=soc_binding_colors[v],
             )
-        ax.legend()
+        plt.ylim(0, 4000)
+        plt.xlim(0, 4000)
+        plt.title(f"{env_name_short}")
+        plt.legend()
         # plt.show()
         plt.close()
 
-        # plot scaled with group breadth
+        # with scaling
         bin_size = 4 / N_BINS_RP
         pdf_edges = np.linspace(0, 4, N_BINS_RP + 1)
         bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
 
+        data_bin = np.empty((len(bin_centers), len(soc_binding_values) * 2 + 1))
+        data_bin[:, 0] = bin_centers.T
         fig, ax = plt.subplots()
-        for i in soc_binding_values:
-            mean_observed_minimum_distance_per_bin = get_mean_over_bins(
-                straight_line_minimum_distances_with_interaction[i]
-                / np.nanmean(group_breadths_with_interaction[i]),
-                observed_minimum_distances_with_interaction[i]
-                / np.nanmean(group_breadths_with_interaction[i]),
-                bin_centers,
+        for i, v in enumerate(soc_binding_values):
+            # if v != 1:
+            # continue
+            # plt.scatter(
+            #     straight_line_minimum_distances_with_interaction[v]
+            #     / np.nanmean(group_size_all[v]),
+            #     observed_minimum_distances_with_interaction[v]
+            #     / np.nanmean(group_size_all[v]),
+            #     alpha=0.3,
+            #     c=soc_binding_colors[v],
+            #     label=soc_binding_names[v],
+            # )
+            (
+                mean_observed_minimum_distance_per_bin,
+                stds,
+                stdes,
+            ) = get_mean_std_ste_over_bins(
+                straight_line_minimum_distances_with_interaction[v]
+                / np.nanmean(group_size_all[v]),
+                observed_minimum_distances_with_interaction[v]
+                / np.nanmean(group_size_all[v]),
+                pdf_edges[1:],
             )
-            ax.plot(
+            plt.plot(
                 bin_centers,
                 mean_observed_minimum_distance_per_bin,
-                label=soc_binding_names[i],
-                c=soc_binding_colors[i],
+                label=soc_binding_names[v],
+                c=soc_binding_colors[v],
             )
+            data = np.array(
+                [
+                    straight_line_minimum_distances_with_interaction[v]
+                    / np.nanmean(group_size_all[v]),
+                    observed_minimum_distances_with_interaction[v]
+                    / np.nanmean(group_size_all[v]),
+                ]
+            ).T
+            pd.DataFrame(data).to_csv(
+                f"../data/plots/intrusion/{env_name_short}_{soc_binding_names[v]}_straight_line_vs_observed_scatter.csv",
+                index=False,
+                header=False,
+            )
+
+            data_bin[:, 1 + i * 2 : 1 + i * 2 + 2] = np.array(
+                [mean_observed_minimum_distance_per_bin, stdes]
+            ).T
+        pd.DataFrame(data_bin).to_csv(
+            f"../data/plots/intrusion/{env_name_short}_straight_line_vs_observed_bin.csv",
+            index=False,
+            header=False,
+        )
+        # for p in pdf_edges:
+        #     plt.axvline(p, color="b")
+        ax.set_ylim(0, 4)
+        ax.set_xlim(0, 4)
+        ax.set_ylabel(r"$\bar{r_o}$")
+        ax.set_xlabel(r"$\bar{r_p}$")
+        # plt.title(f"{env_name_short}")
         ax.legend()
-        ax.set_xlim([0, 4])
-        ax.set_ylim([0, 4])
-        fig.savefig(f"../data/figures/intrusion/intrusion_{env_name_short}.png")
-        # plt.show()
-        plt.close()
+        ax.grid(color="lightgray", linestyle="--", linewidth=0.5)
+        fig.savefig(
+            f"../data/figures/intrusion/intrusion_{env_name_short}.png",
+            dpi=300,
+        )
+        plt.show()
+
+        # fig, ax = plt.subplots()
+        # bin_size = (RP_MAX - RP_MIN) / N_BINS_RP
+        # pdf_edges = np.linspace(RP_MIN, RP_MAX, N_BINS_RP + 1)
+        # bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
+
+        # mean_observed_minimum_distance_per_bin = get_mean_over_bins(
+        #     straight_line_minimum_distances_without_interaction,
+        #     observed_minimum_distances_without_interaction,
+        #     bin_centers,
+        # )
+        # ax.plot(bin_centers, mean_observed_minimum_distance_per_bin, label="baseline")
+
+        # for i in soc_binding_values:
+        #     mean_observed_minimum_distance_per_bin = get_mean_over_bins(
+        #         straight_line_minimum_distances_with_interaction[i],
+        #         observed_minimum_distances_with_interaction[i],
+        #         bin_centers,
+        #     )
+        #     ax.plot(
+        #         bin_centers,
+        #         mean_observed_minimum_distance_per_bin,
+        #         label=soc_binding_names[i],
+        #         c=soc_binding_colors[i],
+        #     )
+        # ax.legend()
+        # # plt.show()
+        # plt.close()
+
+        # plot scaled with group breadth
+        # bin_size = 4 / N_BINS_RP
+        # pdf_edges = np.linspace(0, 4, N_BINS_RP + 1)
+        # bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
+
+        # fig, ax = plt.subplots()
+        # data = np.empty((len(bin_centers), len(soc_binding_values) * 2 + 1))
+        # data[:, 0] = bin_centers.T
+        # for i, v in enumerate(soc_binding_values):
+        #     print(soc_binding_names[v])
+        #     (
+        #         mean_observed_minimum_distance_per_bin,
+        #         stds,
+        #         stdes,
+        #     ) = get_mean_std_ste_over_bins(
+        #         straight_line_minimum_distances_with_interaction[v]
+        #         / np.nanmean(group_breadths_with_interaction[v]),
+        #         observed_minimum_distances_with_interaction[v]
+        #         / np.nanmean(group_breadths_with_interaction[v]),
+        #         bin_centers,
+        #     )
+        #     ax.plot(
+        #         bin_centers,
+        #         mean_observed_minimum_distance_per_bin,
+        #         label=soc_binding_names[v],
+        #         c=soc_binding_colors[v],
+        #     )
+
+        #     data[:, 1 + i * 2 : 1 + i * 2 + 2] = np.array(
+        #         [mean_observed_minimum_distance_per_bin, stdes]
+        #     ).T
+        # pd.DataFrame(data).to_csv(
+        #     f"../data/plots/intrusion/{env_name_short}_straight_line_vs_observed_bin_only.csv",
+        #     index=False,
+        #     header=False,
+        # )
+        # ax.legend()
+        # ax.set_xlim([0, 4])
+        # ax.set_ylim([0, 4])
+        # fig.savefig(f"../data/figures/intrusion/intrusion_{env_name_short}_only.png")
+        # # plt.show()
+        # plt.close()
 
         # plot distribution of the minimum observed distance against baseline
         # bin_size = 1 / 16
