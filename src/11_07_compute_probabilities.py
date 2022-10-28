@@ -36,214 +36,102 @@ if __name__ == "__main__":
             f"../data/pickle/group_breadth_{env_name_short}.pkl"
         )
 
-        bin_size = 4 / 16
-        pdf_edges = np.linspace(0, 4, 16 + 1)
+        N_BINS = 8
+        MIN, MAX = 0, 4
+        bin_size = (MAX- MIN) / N_BINS
+        pdf_edges = np.linspace(MIN, MAX, N_BINS + 1)
         bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
 
-        # with scaling
-        print(" - Scaling by group size")
-        ps = []
-        fig, ax = plt.subplots()
-        for k in range(len(pdf_edges[1:])):
-            values = []
+        fig, axes = plt.subplots(2, 2, constrained_layout=True, figsize=(16, 8))
+        for n, p_lim in enumerate([0.25, 0.5, 0.75, 1]):
+            print(f"------ {p_lim} -------")
+
+            all_probabilities = []
+            probabilities_array = np.zeros((len(soc_binding_values), N_BINS))
+            errors_array = np.zeros((len(soc_binding_values), N_BINS))
+
             for i, v in enumerate(soc_binding_values):
-                observed_values = observed_minimum_distances_with_interaction[
+                print(soc_binding_names[v])
+                r0 = observed_minimum_distances_with_interaction[
                     v
                 ] / np.nanmean(group_size_all[v])
-                straight_line_values = straight_line_minimum_distances_with_interaction[
+                rb = straight_line_minimum_distances_with_interaction[
                     v
                 ] / np.nanmean(group_size_all[v])
 
-                bin_ids = np.digitize(straight_line_values, pdf_edges[1:])
-                observed_for_bin = observed_values[bin_ids == k]
-                if len(observed_for_bin):
-                    values += [observed_for_bin]
+                # ind_bigger = r0 >= rb  # potential is supposed to never be attractive
+                # rb = rb[ind_bigger]
+                # r0 = r0[ind_bigger]
 
-            f, p = stats.f_oneway(*values)
-            ps += [p]
+                probabilities = []
+                errors = []
+                for k in range(len(pdf_edges[1:])):
+                    bin_ids = np.digitize(rb, pdf_edges[1:])
+                    r0_for_bin = r0[bin_ids == k]
+                    p = (
+                        np.sum(r0_for_bin < p_lim) / len(r0_for_bin)
+                        if len(r0_for_bin)
+                        else np.nan
+                    )
+                    print(np.sum(r0_for_bin < p_lim), len(r0_for_bin))
+                    probabilities += [p]
+                    if len(r0_for_bin):
+                        standard_error = (p * (1 - p) / len(r0_for_bin)) ** 0.5
+                    else:
+                        standard_error = np.nan
+                    errors += [standard_error]
+        
+                # data_bin[:, 1 + i : 2 + i] = np.array(probabilities)[..., None]
 
-        ax.plot(bin_centers, ps)
-        ax.set_ylabel("p-values")
-        ax.set_xlabel("r_p (scaled with group size)")
-        ax.set_yscale("log")
-        ax.set_title(f"{env_name_short}")
-        # plt.show()
+                # pd.DataFrame(data_bin).to_csv(
+                #     f"../data/plots/probabilities/{env_name_short}_probabilities.csv",
+                #     index=False,
+                #     header=False,
+                # )
 
-        all_probabilities = []
+                probabilities_array[i, :] = np.array(probabilities)
+                errors_array[i, :] = np.array(errors)
 
-        data_bin = np.empty((len(bin_centers), 1 + len(soc_binding_values)))
-        data_bin[:, 0] = bin_centers.T
+            row = n // 2
+            col = n % 2
 
-        fig, ax = plt.subplots()
-        for i, v in enumerate(soc_binding_values):
-            observed_values = observed_minimum_distances_with_interaction[
-                v
-            ] / np.nanmean(group_size_all[v])
-            straight_line_values = straight_line_minimum_distances_with_interaction[
-                v
-            ] / np.nanmean(group_size_all[v])
+            sum_prob = np.sum(probabilities_array, axis=0)
+            values_ok = np.where(sum_prob)
+            data_bin = np.empty((len(values_ok[0]), 1 + 2 * len(soc_binding_values)))
+            for i, v in enumerate(soc_binding_values):
 
-            probabilities = []
-            for k in range(len(pdf_edges[1:])):
-                bin_ids = np.digitize(straight_line_values, pdf_edges[1:])
-                observed_for_bin = observed_values[bin_ids == k]
-                probabilities += [
-                    np.sum(observed_for_bin < 1) / len(observed_for_bin)
-                    if len(observed_for_bin)
-                    else np.nan
-                ]
-            all_probabilities += [probabilities]
-            ax.plot(probabilities, label=soc_binding_names[v], c=soc_binding_colors[v])
+                axes[row][col].errorbar(
+                    bin_centers[values_ok],
+                    probabilities_array[i, :][values_ok],
+                    yerr=errors_array[i, :][values_ok],
+                    fmt="o-",
+                    capsize=4,
+                    capthick=1,
+                    label=soc_binding_names[v],
+                    c=soc_binding_colors[v],
+                )
 
-            data_bin[:, 1 + i : 2 + i] = np.array(probabilities)[..., None]
+                data_bin[:, 0] = bin_centers[values_ok].T
+                data_bin[:, 1 + 2 * i] = np.array(probabilities_array[i, :][values_ok])
+                data_bin[:, 2 + 2 * i] = np.array(errors_array[i, :][values_ok])
 
-        pd.DataFrame(data_bin).to_csv(
-            f"../data/plots/probabilities/{env_name_short}_probabilities.csv",
-            index=False,
-            header=False,
-        )
+                # pd.DataFrame(data_bin).to_csv(
+                #     f"../data/plots/probabilities/{env_name_short}_probabilities_{p_lim}.csv",
+                #     index=False,
+                #     header=False,
+                # )
 
-        ax.legend()
-        ax.set_ylabel("p(r_o < 1)")
-        ax.set_xlabel("r_p (scaled with group size)")
-        ax.set_title(f"{env_name_short}")
-        # plt.show()
+            axes[row][col].set_ylim([-0.1, 1])
+            axes[row][col].set_xlim([-0.1, 4])
+            axes[row][col].legend()
+            axes[row][col].set_ylabel(f"p(r_o < {p_lim})")
+            axes[row][col].set_xlabel("r_p (scaled with group size)")
+            axes[row][col].set_title(f"p(r_o < {p_lim})")
+            axes[row][col].grid(color="lightgray", linestyle="--", linewidth=0.5)
+            plt.suptitle(env_name_short)
+            # plt.savefig(
+            #     f"../data/figures/intrusion/probabilities/probabilities_{env_name_short}.png"
+            # )
+        plt.show()
 
-        # all_probabilities_without_nan = [
-        #     [p for p in probabilities if p is not np.nan and p > 0]
-        #     for probabilities in all_probabilities
-        # ]
-        # f, p = stats.f_oneway(*all_probabilities_without_nan)
-        # print(all_probabilities_without_nan)
-        # print(f"ANOVA probabilities: {p}")
-
-        # print(" - Scaling by group breadth")
-        # ps = []
-        # fig, ax = plt.subplots()
-        # for k in range(len(pdf_edges[1:])):
-        #     values = []
-        #     for i, v in enumerate(soc_binding_values):
-        #         observed_values = observed_minimum_distances_with_interaction[
-        #             v
-        #         ] / np.nanmean(group_breadth_all[v])
-        #         straight_line_values = straight_line_minimum_distances_with_interaction[
-        #             v
-        #         ] / np.nanmean(group_breadth_all[v])
-
-        #         bin_ids = np.digitize(straight_line_values, pdf_edges[1:])
-        #         observed_for_bin = observed_values[bin_ids == k]
-        #         if len(observed_for_bin):
-        #             values += [observed_for_bin]
-
-        #     f, p = stats.f_oneway(*values)
-        #     ps += [p]
-
-        # ax.plot(ps)
-        # ax.set_ylabel("p-values")
-        # ax.set_xlabel("r_p (scaled with group breadth)")
-        # ax.set_title(env_name_short)
-        # ax.set_yscale("log")
-        # plt.show()
-
-        # all_probabilities = []
-        # fig, ax = plt.subplots()
-        # for i, v in enumerate(soc_binding_values):
-        #     observed_values = observed_minimum_distances_with_interaction[
-        #         v
-        #     ] / np.nanmean(group_breadth_all[v])
-        #     straight_line_values = straight_line_minimum_distances_with_interaction[
-        #         v
-        #     ] / np.nanmean(group_breadth_all[v])
-
-        #     probabilities = []
-        #     for k in range(len(pdf_edges[1:])):
-        #         bin_ids = np.digitize(straight_line_values, pdf_edges[1:])
-        #         observed_for_bin = observed_values[bin_ids == k]
-        #         probabilities += [
-        #             np.sum(observed_for_bin < 1) / len(observed_for_bin)
-        #             if len(observed_for_bin)
-        #             else np.nan
-        #         ]
-        #     all_probabilities += [probabilities]
-        #     ax.plot(probabilities)
-        # ax.set_ylabel("p(r_o < 1)")
-        # ax.set_xlabel("r_p (scaled with group breadth)")
-        # ax.set_title(env_name_short)
-        # plt.show()
-
-        # all_probabilities_without_nan = [
-        #     [p for p in probabilities if p is not np.nan]
-        #     for probabilities in all_probabilities
-        # ]
-        # f, p = stats.f_oneway(*all_probabilities_without_nan)
-        # print(f"ANOVA probabilities: {p}")
-
-        # # without scaling
-        # print(" - No scaling")
-
-        # bin_size = 4000 / 8
-        # pdf_edges = np.linspace(0, 4000, 8 + 1)
-        # bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
-
-        # ps = []
-        # fig, ax = plt.subplots()
-        # for k in range(len(pdf_edges[1:])):
-        #     values = []
-        #     for i, v in enumerate(soc_binding_values):
-        #         observed_values = observed_minimum_distances_with_interaction[v]
-        #         straight_line_values = straight_line_minimum_distances_with_interaction[
-        #             v
-        #         ]
-        #         bin_ids = np.digitize(straight_line_values, pdf_edges[1:])
-        #         observed_for_bin = observed_values[bin_ids == k]
-        #         if len(observed_for_bin):
-        #             values += [observed_for_bin]
-
-        #     if len(values) > 1:
-        #         f, p = stats.f_oneway(*values)
-        #         ps += [p]
-        #     else:
-        #         ps += [np.nan]
-
-        # ax.plot(bin_centers, ps)
-        # ax.set_ylabel("p-values")
-        # ax.set_xlabel("r_p")
-        # ax.set_title(env_name_short)
-        # ax.set_yscale("log")
-        # plt.show()
-
-        # all_probabilities = []
-        # fig, ax = plt.subplots()
-        # for i, v in enumerate(soc_binding_values):
-        #     observed_values = observed_minimum_distances_with_interaction[v]
-        #     straight_line_values = straight_line_minimum_distances_with_interaction[v]
-
-        #     probabilities = []
-        #     for k in range(len(pdf_edges[1:])):
-        #         bin_ids = np.digitize(straight_line_values, pdf_edges[1:])
-        #         observed_for_bin = observed_values[bin_ids == k]
-        #         probabilities += [
-        #             np.sum(observed_for_bin < 800) / len(observed_for_bin)
-        #             if len(observed_for_bin)
-        #             else np.nan
-        #         ]
-        #     all_probabilities += [probabilities]
-        #     ax.plot(
-        #         bin_centers,
-        #         probabilities,
-        #         label=soc_binding_names[v],
-        #         c=soc_binding_colors[v],
-        #     )
-
-        # ax.legend()
-        # ax.set_ylabel("p(r_o < 800)")
-        # ax.set_xlabel("r_p")
-        # ax.set_title(env_name_short)
-        # plt.show()
-
-        # all_probabilities_without_nan = [
-        #     [p for p in probabilities if p is not np.nan]
-        #     for probabilities in all_probabilities
-        # ]
-        # f, p = stats.f_oneway(*all_probabilities_without_nan)
-        # print(f"ANOVA probabilities: {p}")
+    

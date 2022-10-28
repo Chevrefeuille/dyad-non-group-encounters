@@ -82,8 +82,8 @@ def get_mean_over_bins(x, y, bin_centers):
     mean_over_bins = []
     bin_ids = np.digitize(x, bin_centers)
     for k in range(len(bin_centers)):
-        print(len(y[bin_ids == k]))
         mean_for_bin = np.nanmean(y[bin_ids == k])
+        # print(mean_for_bin)
         mean_over_bins += [mean_for_bin]
     return mean_over_bins
 
@@ -166,7 +166,7 @@ def plot_color_map(
     extent = np.min(xi), np.max(xi), np.min(yi), np.max(yi)
 
     cmesh = ax.imshow(
-        np.flip(grid.T),
+        np.flip(grid.T, axis=0),
         cmap=cmap,
         vmin=vmin,
         vmax=vmax,
@@ -234,8 +234,8 @@ def get_bins(vmin, vmax, n_bins):
 
 def get_grid(min_x, max_x, n_bin_x, min_y, max_y, n_bin_y, n_channels=1):
     grid = np.zeros((n_channels, n_bin_x, n_bin_y))
-    xi = np.linspace(min_x, max_x, n_bin_x)
-    yi = np.linspace(min_y, max_y, n_bin_y)
+    xi = np.linspace(min_x, max_x, n_bin_x + 1)
+    yi = np.linspace(min_y, max_y, n_bin_y + 1)
     cell_size_x = (max_x - min_x) / n_bin_x
     cell_size_y = (max_y - min_y) / n_bin_y
     return grid, xi, yi, cell_size_x, cell_size_y
@@ -252,16 +252,29 @@ def update_grid(
     cell_size_y,
     channel=0,
 ):
-    cell_x_index = np.ceil((data[:, 0] - min_x) / cell_size_x).astype("int")
-    cell_y_index = np.ceil((data[:, 1] - min_y) / cell_size_y).astype("int")
+
+    cell_x_index = np.floor((data[:, 0] - min_x) / cell_size_x).astype("int")
+    cell_y_index = np.floor((data[:, 1] - min_y) / cell_size_y).astype("int")
 
     # remove date outside the range of interest
     in_roi = np.logical_and(
         np.logical_and(cell_x_index >= 0, cell_x_index < n_bin_x),
         np.logical_and(cell_y_index >= 0, cell_y_index < n_bin_y),
     )
+
     cell_x_index = cell_x_index[in_roi]
     cell_y_index = cell_y_index[in_roi]
+
+    # s = np.zeros((n_bin_x, n_bin_y))
+    # s[cell_x_index, cell_y_index] += 1
+
+    # print(cell_x_index, cell_y_index)
+    # plot_color_map(
+    #     np.linspace(min_x, 4, n_bin_x + 1),
+    #     np.linspace(min_x, 4, n_bin_x + 1),
+    #     s,
+    #     cmap="jet",
+    # )
 
     grid[channel, cell_x_index, cell_y_index] += 1
 

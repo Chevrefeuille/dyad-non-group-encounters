@@ -47,24 +47,23 @@ if __name__ == "__main__":
 
         values_per_bin = []
 
-        bin_size = 4 / N_BINS_RP
-        pdf_edges = np.linspace(0, 4, N_BINS_RP + 1)
+        N_BINS = 8
+        bin_size = 4 / N_BINS
+        pdf_edges = np.linspace(0, 4, N_BINS + 1)
         bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
 
-        fig, ax = plt.subplots()
-
-        for k in range(N_BINS_RP):
+        for k in range(N_BINS):
             bin_values = []
             for i, v in enumerate(soc_binding_values):
-                straight_line = straight_line_minimum_distances_with_interaction[
-                    v
-                ] / np.nanmean(group_size_all[v])
-                observed = observed_minimum_distances_with_interaction[v] / np.nanmean(
+                rb = straight_line_minimum_distances_with_interaction[v] / np.nanmean(
                     group_size_all[v]
                 )
-                bin_ids = np.digitize(straight_line, pdf_edges[1:])
+                r0 = observed_minimum_distances_with_interaction[v] / np.nanmean(
+                    group_size_all[v]
+                )
+                bin_ids = np.digitize(rb, pdf_edges[1:])
 
-                bin_values += [observed[bin_ids == k]]
+                bin_values += [r0[bin_ids == k]]
             values_per_bin += [bin_values]
 
         p_values = []
@@ -78,11 +77,22 @@ if __name__ == "__main__":
             p_values += [p]
 
         data = np.array([bin_centers, p_values]).T
-        pd.DataFrame(data).to_csv(
-            f"../data/plots/distance_anovas/{env_name_short}_pvalues.csv",
-            index=False,
-            header=False,
+        # pd.DataFrame(data).to_csv(
+        #     f"../data/plots/distance_anovas/{env_name_short}_pvalues.csv",
+        #     index=False,
+        #     header=False,
+        # )
+        fig, ax = plt.subplots()
+        ax.plot(bin_centers, p_values)
+        ax.set_ylim([0.0001, 1])
+        ax.plot([0, 4], [0.05, 0.05], c="red")
+        ax.set_yscale("log")
+        ax.grid(color="lightgray", linestyle="--", linewidth=0.5)
+        ax.set_ylabel(f"p-value")
+        ax.set_xlabel("r_b (scaled with group size)")
+        ax.set_title(f"p-value")
+        fig.savefig(
+            f"../data/figures/intrusion/scattering_p_values_{env_name_short}.png",
+            dpi=300,
         )
-
-        # plt.plot(p_values)
-        # plt.show()
+        plt.show()

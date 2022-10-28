@@ -6,7 +6,6 @@ from pedestrians_social_binding.constants import *
 
 
 import numpy as np
-from tqdm import tqdm
 
 from utils import *
 
@@ -35,7 +34,7 @@ if __name__ == "__main__":
         thresholds_ped = get_pedestrian_thresholds(env_name)
         thresholds_group = get_groups_thresholds()
 
-        for day in tqdm(days):
+        for day in days:
             # print(day)
             non_groups = env.get_pedestrians(
                 days=[day], thresholds=thresholds_ped, no_groups=True
@@ -46,7 +45,7 @@ if __name__ == "__main__":
                 days=[day],
                 ped_thresholds=thresholds_ped,
                 group_thresholds=thresholds_group,
-                with_social_binding=True
+                with_social_binding=True,
             )
 
             # print(len(groups))
@@ -121,70 +120,73 @@ if __name__ == "__main__":
                     if len(traj_group) <= 1:
                         continue
 
-                    traj_group_aligned, [
-                        traj_non_group_aligned
-                    ] = align_trajectories_at_origin(traj_group, [traj_non_group])
+                    d = np.linalg.norm(traj_group - traj_non_group, axis=1)
 
-                    # s
+                    if np.min(d) < 4000:
+                        GA = traj_A[:, 1:3] - traj_non_group[:, 1:3]
+                        GB = traj_B[:, 1:3] - traj_non_group[:, 1:3]
 
-                    # traj_non_group_in_vicinity = traj_non_group_aligned[
-                    #     np.logical_and(
-                    #         np.logical_and(
-                    #             np.abs(traj_non_group_aligned[:, 1] <= 4000),
-                    #             np.abs(traj_non_group_aligned[:, 2]) <= 4000,
-                    #         ),
-                    #         traj_non_group_aligned[:, 1]
-                    #         >= 0,  # demi vicinity to the right
-                    #     )
-                    # ]
+                        angles = np.arctan2(GA[:, 1], GA[:, 0]) - np.arctan2(
+                            GB[:, 1], GB[:, 0]
+                        )
 
-                    traj_non_group_in_vicinity = traj_non_group_aligned[
-                        np.logical_and(
-                            np.abs(traj_non_group_aligned[:, 1] <= 4000),
-                            np.abs(traj_non_group_aligned[:, 2]) <= 4000,
-                        ),
-                    ]
+                        angles[angles > np.pi] -= 2 * np.pi
+                        angles[angles < -np.pi] += 2 * np.pi
 
-                    if len(traj_non_group_in_vicinity) <= 2:
-                        continue
+                        angles = np.abs(np.degrees(angles))
+                        max_angle = np.max(angles)
+                        indx_max = np.argmax(angles)
 
-                    idx_first = np.argmin(
-                        np.abs(traj_non_group_in_vicinity[:, 1] - 4000)
-                    )
-                    first_vel_in_vicinity = traj_non_group_in_vicinity[idx_first, 5:7]
+                        # indx_closest = np.argmin(d)
 
-                    # plot_animated_2D_trajectories([traj_non_group_in_vicinity])
+                        if max_angle > 110:
 
-                    velocity_norm = np.linalg.norm(first_vel_in_vicinity)
-                    # plt.plot(velocity_norm)
-                    # plt.show()
+                            print(soc_binding_names[soc_binding])
 
-                    rb = compute_straight_line_minimum_distance_from_vel(
-                        traj_non_group_aligned, vicinity=4000
-                    )
-                    # rb = compute_straight_line_minimum_distance(
-                    #     traj_non_group_aligned, vicinity=4000
-                    # )
-                    r0 = compute_observed_minimum_distance(
-                        traj_non_group_in_vicinity, interpolate=True
-                    )
+                            fig, ax = plt.subplots()
 
-                    if rb:
-                        observed_minimum_distances[soc_binding] += [r0]
-                        straight_line_minimum_distances[soc_binding] += [rb]
-                        velocities[soc_binding] += [velocity_norm]
+                            plot_static_2D_trajectories(
+                                [
+                                    group_members[0].get_trajectory(),
+                                    group_members[1].get_trajectory(),
+                                    non_group.get_trajectory(),
+                                ],
+                                boundaries=env.boundaries,
+                                labels=["group-A", "group-B", "non-group"],
+                                ax=ax,
+                                show=False,
+                            )
 
-                    #     if ro < 500:
-                    #         print(soc_binding_names[soc_binding])
-                    #         plot_animated_2D_trajectories(
-                    #             [
-                    #                 group_members[0].get_trajectory(),
-                    #                 group_members[1].get_trajectory(),
-                    #                 non_group.get_trajectory(),
-                    #             ],
-                    #             boundaries=env.boundaries,
-                    #             labels=["group-A", "group-B", "non-group"],
-                    #         )
+                            ax.scatter(
+                                [
+                                    traj_A[indx_max, 1] / 1000,
+                                    traj_B[indx_max, 1] / 1000,
+                                    traj_non_group[indx_max, 1] / 1000,
+                                ],
+                                [
+                                    traj_A[indx_max, 2] / 1000,
+                                    traj_B[indx_max, 2] / 1000,
+                                    traj_non_group[indx_max, 2] / 1000,
+                                ],
+                                c="red",
+                                s=15,
+                            )
+
+                            ax.plot(
+                                [
+                                    traj_B[indx_max, 1] / 1000,
+                                    traj_non_group[indx_max, 1] / 1000,
+                                    traj_A[indx_max, 1] / 1000,
+                                ],
+                                [
+                                    traj_B[indx_max, 2] / 1000,
+                                    traj_non_group[indx_max, 2] / 1000,
+                                    traj_A[indx_max, 2] / 1000,
+                                ],
+                                c="red",
+                            )
+
+                            plt.show()
 
         for soc_binding in soc_binding_values:
             observed_minimum_distances[soc_binding] = np.array(

@@ -285,7 +285,7 @@ if __name__ == "__main__":
                         #         )
                         #         # plt.plot(dxdy)
                         #         # plt.show()
-                        #         turning_angles = compute_turning_angles(pieces[i])
+                        #         turning_angles = ning_angles(pieces[i])
                         #         print(turning_angles * 180 / np.pi)
                         #         trajectory1 = np.zeros((len(pieces[i]), 7))
                         #         trajectory1[:, 1:3] = pieces[i]

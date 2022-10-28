@@ -42,18 +42,22 @@ if __name__ == "__main__":
             f"../data/pickle/group_breadth_{env_name_short}.pkl"
         )
 
-        # with scaling
+        bin_size = 4 / 8
+        pdf_edges = np.linspace(0, 4, 8 + 1)
+        bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
 
         fit_x = np.linspace(0, 4, 1000)
 
-        f, axes = plt.subplots(1, 2, constrained_layout=True, figsize=(16, 8))
+        f, ax = plt.subplots()
         left, bottom, width, height = [0.4, 0.3, 0.5, 0.5]
-        inset_1 = axes[0].inset_axes([left, bottom, width, height])
-        inset_2 = axes[1].inset_axes([left, bottom, width, height])
-        inset_1.set_xlim(0.5, 4)
-        inset_1.set_ylim(-0.5, 1)
-        inset_2.set_xlim(0.5, 4)
-        inset_2.set_ylim(-0.5, 1)
+        # inset = ax.inset_axes([left, bottom, width, height])
+        # inset.set_xlim(0.5, 4)
+        # inset.set_ylim(-0.2 * 10**7, 0.6 * 10**7)
+
+        data_bin = np.empty((len(bin_centers), 2 * len(soc_binding_values)))
+
+        data_fit = np.empty((len(fit_x), 1 + len(soc_binding_values)))
+        data_fit[:, 0] = fit_x
 
         for i, v in enumerate(soc_binding_values):
             observed_values = observed_minimum_distances_with_interaction[
@@ -62,74 +66,99 @@ if __name__ == "__main__":
             straight_line_values = straight_line_minimum_distances_with_interaction[
                 v
             ] / np.nanmean(group_size_all[v])
-            vel = np.array(velocities[v]) / 1000
 
-            potentials = (
-                vel**2
-                * (observed_values**2 - straight_line_values**2)
-                / observed_values**2
-            )
+            observed_velocities = np.array(velocities[v])
 
-            # remove outliers
-            observed_values = observed_values[potentials > -1]
-            potentials = potentials[potentials > -1]
+            # potential = (
+            #     observed_values**2 - straight_line_values**2
+            # ) / observed_values**2
+            # ax.scatter(observed_values, potential)
 
-            exp_fit_params, _ = curve_fit(fit, observed_values, potentials, maxfev=5000)
+            ros, potentials, vs = [], [], []
+            for k in range(len(pdf_edges[1:])):
+                bin_ids = np.digitize(straight_line_values, pdf_edges[1:])
+                observed_for_bin = observed_values[bin_ids == k]
+                velocities_for_bin = observed_velocities[bin_ids == k]
+                if len(observed_for_bin) and len(velocities_for_bin):
+                    mean_ro = np.nanmean(observed_for_bin)
+                    mean_v = np.nanmean(velocities_for_bin)
+                    vs += [mean_v]
+                    rp = bin_centers[k]
+                    ros += [mean_ro]
+                    potentials += [
+                        mean_v**2 * (mean_ro**2 - rp**2) / mean_ro**2
+                    ]
 
-            poly_fit_params = np.polyfit(observed_values, potentials, 3)
-            poly_fit = np.poly1d(poly_fit_params)
+            # print(2 * i, 2 * i + 1)
+            # print(2 * i + 2, 2 * i + 3)
+            # data_bin[:, 2 * i : 2 * i + 1] = np.array(ros)[..., None]
+            # data_bin[:, 2 * i + 1 : 2 * i + 2] = np.array(potentials)[..., None]
 
-            axes[0].plot(
-                fit_x, fit(fit_x, *exp_fit_params), c=soc_binding_colors[v], ls="--"
-            )
-            axes[0].scatter(
-                observed_values,
-                potentials,
+            # exp_fit_params, _ = curve_fit(fit, ros, potentials, maxfev=2000)
+
+            # poly_fit_params = np.polyfit(ros, potentials, 3)
+            # poly_fit = np.poly1d(poly_fit_params)
+
+            # ax.plot(
+            #     fit_x, fit(fit_x, *exp_fit_params), c=soc_binding_colors[v], ls="--"
+            # )
+
+            # ax.scatter(
+            #     ros,
+            #     potentials,
+            #     edgecolors=soc_binding_colors[v],
+            #     marker=MARKERS[i],
+            #     facecolors="none",
+            #     label=soc_binding_names[v],
+            # )
+            ax.scatter(
+                ros,
+                np.array(vs) ** 2,
                 edgecolors=soc_binding_colors[v],
                 marker=MARKERS[i],
                 facecolors="none",
                 label=soc_binding_names[v],
             )
 
-            inset_1.plot(
-                fit_x, fit(fit_x, *exp_fit_params), c=soc_binding_colors[v], ls="--"
-            )
-            inset_1.scatter(
-                observed_values,
-                potentials,
-                edgecolors=soc_binding_colors[v],
-                marker=MARKERS[i],
-                facecolors="none",
-                label=soc_binding_names[v],
-            )
+            # inset.plot(
+            #     fit_x, fit(fit_x, *exp_fit_params), c=soc_binding_colors[v], ls="--"
+            # )
+            # inset.scatter(
+            #     ros,
+            #     potentials,
+            #     edgecolors=soc_binding_colors[v],
+            #     marker=MARKERS[i],
+            #     facecolors="none",
+            #     label=soc_binding_names[v],
+            # )
 
-            axes[1].plot(fit_x, poly_fit(fit_x), c=soc_binding_colors[v], ls="--")
-            axes[1].scatter(
-                observed_values,
-                potentials,
-                edgecolors=soc_binding_colors[v],
-                marker=MARKERS[i],
-                facecolors="none",
-                label=soc_binding_names[v],
-            )
+            # inset_2.plot(fit_x, poly_fit(fit_x), c=soc_binding_colors[v], ls="--")
+            # inset_2.scatter(
+            #     ros,
+            #     potentials,
+            #     edgecolors=soc_binding_colors[v],
+            #     marker=MARKERS[i],
+            #     facecolors="none",
+            #     label=soc_binding_names[v],
+            # )
 
-            inset_2.plot(fit_x, poly_fit(fit_x), c=soc_binding_colors[v], ls="--")
-            inset_2.scatter(
-                observed_values,
-                potentials,
-                edgecolors=soc_binding_colors[v],
-                marker=MARKERS[i],
-                facecolors="none",
-                label=soc_binding_names[v],
-            )
+            # data_fit[:, 1 + i : 2 + i] = fit(fit_x, *exp_fit_params)[..., None]
 
-        axes[0].legend()
-        axes[0].set_ylabel("∝V")
-        axes[0].set_xlabel("r_o (scaled with group size)")
-        axes[1].legend()
-        axes[1].set_ylabel("∝V")
-        axes[1].set_xlabel("r_o (scaled with group size)")
-        # axes[1].set_ylim(0, 1)
+        # pd.DataFrame(data_bin).to_csv(
+        #     f"../data/plots/potential/{env_name_short}_potential_bin.csv",
+        #     index=False,
+        #     header=False,
+        # )
+
+        # pd.DataFrame(data_fit).to_csv(
+        #     f"../data/plots/potential/{env_name_short}_potential_fit.csv",
+        #     index=False,
+        #     header=False,
+        # )
+
+        ax.legend()
+        ax.set_ylabel("v^2")
+        ax.set_xlabel("r_o (scaled with group size)")
         plt.show()
         # plt.savefig(
         #     f"../data/figures/intrusion/potentials/{env_name_short}_potential_scaled_with_group_width.png"
@@ -144,7 +173,7 @@ if __name__ == "__main__":
 
         # f, axes = plt.subplots(1, 2, constrained_layout=True, figsize=(16, 8))
         # left, bottom, width, height = [0.4, 0.3, 0.5, 0.5]
-        # inset_1 = axes[0].inset_axes([left, bottom, width, height])
+        # inset_1 = ax.inset_axes([left, bottom, width, height])
         # inset_2 = axes[1].inset_axes([left, bottom, width, height])
         # inset_1.set_xlim(0.5, 4)
         # inset_1.set_ylim(-0.5, 1)
@@ -178,10 +207,10 @@ if __name__ == "__main__":
         #     poly_fit_params = np.polyfit(ros, potentials, 3)
         #     poly_fit = np.poly1d(poly_fit_params)
 
-        #     axes[0].plot(
+        #     ax.plot(
         #         fit_x, fit(fit_x, *exp_fit_params), c=soc_binding_colors[v], ls="--"
         #     )
-        #     axes[0].scatter(
+        #     ax.scatter(
         #         ros,
         #         potentials,
         #         edgecolors=soc_binding_colors[v],
@@ -222,9 +251,9 @@ if __name__ == "__main__":
         #         label=soc_binding_names[v],
         #     )
 
-        # axes[0].legend()
-        # axes[0].set_ylabel("∝V")
-        # axes[0].set_xlabel("r_o (scaled with group breadth)")
+        # ax.legend()
+        # ax.set_ylabel("∝V")
+        # ax.set_xlabel("r_o (scaled with group breadth)")
         # axes[1].legend()
         # axes[1].set_ylabel("∝V")
         # axes[1].set_xlabel("r_o (scaled with group breadth)")
@@ -242,7 +271,7 @@ if __name__ == "__main__":
 
         # f, axes = plt.subplots(1, 2, constrained_layout=True, figsize=(16, 8))
         # left, bottom, width, height = [0.4, 0.3, 0.5, 0.5]
-        # inset_1 = axes[0].inset_axes([left, bottom, width, height])
+        # inset_1 = ax.inset_axes([left, bottom, width, height])
         # inset_2 = axes[1].inset_axes([left, bottom, width, height])
         # inset_1.set_xlim(0.5, 4)
         # inset_1.set_ylim(-0.5, 1)
@@ -270,10 +299,10 @@ if __name__ == "__main__":
         #     poly_fit_params = np.polyfit(ros, potentials, 3)
         #     poly_fit = np.poly1d(poly_fit_params)
 
-        #     axes[0].plot(
+        #     ax.plot(
         #         fit_x, fit(fit_x, *exp_fit_params), c=soc_binding_colors[v], ls="--"
         #     )
-        #     axes[0].scatter(
+        #     ax.scatter(
         #         ros,
         #         potentials,
         #         edgecolors=soc_binding_colors[v],
@@ -314,9 +343,9 @@ if __name__ == "__main__":
         #         label=soc_binding_names[v],
         #     )
 
-        # axes[0].legend()
-        # axes[0].set_ylabel("∝V(r_o)")
-        # axes[0].set_xlabel("r_o")
+        # ax.legend()
+        # ax.set_ylabel("∝V(r_o)")
+        # ax.set_xlabel("r_o")
         # axes[1].legend()
         # axes[1].set_ylabel("∝V(r_o)")
         # axes[1].set_xlabel("r_o")

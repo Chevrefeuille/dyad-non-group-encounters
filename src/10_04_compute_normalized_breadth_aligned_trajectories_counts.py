@@ -40,8 +40,8 @@ if __name__ == "__main__":
         #     print(f" - breadth: {5000/np.nanmean(group_breadth_all[v])}")
         #     print(f" - size: {5000/np.nanmean(group_size_all[v])}")
 
-        min_x_no_scaling, max_x_no_scaling = -5, 5
-        min_y_no_scaling, max_y_no_scaling = -5, 5
+        min_x_no_scaling, max_x_no_scaling = -4, 4
+        min_y_no_scaling, max_y_no_scaling = -4, 4
         n_bins_x_no_scaling, n_bins_y_no_scaling = 20, 20
         (
             grids_count_no_scaling,

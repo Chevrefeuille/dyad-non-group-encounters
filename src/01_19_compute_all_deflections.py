@@ -81,15 +81,15 @@ if __name__ == "__main__":
                     pieces_A = get_random_pieces(pos_A, 20)
                     pieces_B = get_random_pieces(pos_B, 20)
 
-                    # for piece_A, piece_B in zip(pieces_A, pieces_B):
-                    #     trajectory1 = np.zeros((len(piece_A), 7))
-                    #     trajectory2 = np.zeros((len(piece_B), 7))
-                    #     trajectory1[:, 1:3] = piece_A
-                    #     trajectory2[:, 1:3] = piece_B
-                    #     plot_static_2D_trajectories(
-                    #         [traj_A, trajectory1],
-                    #         boundaries=env.boundaries,
-                    #     )
+                    for piece_A, piece_B in zip(pieces_A, pieces_B):
+                        trajectory1 = np.zeros((len(piece_A), 7))
+                        trajectory2 = np.zeros((len(piece_B), 7))
+                        trajectory1[:, 1:3] = piece_A
+                        trajectory2[:, 1:3] = piece_B
+                        plot_static_2D_trajectories(
+                            [traj_A, trajectory1],
+                            boundaries=env.boundaries,
+                        )
 
                     lengths["group"]["net"] += [
                         compute_net_displacement(piece)
