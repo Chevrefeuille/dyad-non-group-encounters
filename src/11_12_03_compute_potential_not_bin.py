@@ -86,37 +86,39 @@ if __name__ == "__main__":
 
             p = (r0**2 - rb**2) / r0**2
 
-            r0s, potentials = [], []
-            for k in range(len(pdf_edges[1:])):
-                bin_ids = np.digitize(rb, pdf_edges[1:])
-                r0_for_bin = r0[bin_ids == k]
-                p_for_bin = p[bin_ids == k]
-                if len(r0_for_bin):
-                    mean_r0 = np.nanmean(r0_for_bin)
-                    mean_p = np.nanmean(p_for_bin)
-                    r0s += [mean_r0]
-                    potentials += [mean_p]
+            # r0s, potentials = [], []
+            # for k in range(len(pdf_edges[1:])):
+            #     bin_ids = np.digitize(rb, pdf_edges[1:])
+            #     r0_for_bin = r0[bin_ids == k]
+            #     p_for_bin = p[bin_ids == k]
+            #     if len(r0_for_bin):
+            #         mean_r0 = np.nanmean(r0_for_bin)
+            #         mean_p = np.nanmean(p_for_bin)
+            #         r0s += [mean_r0]
+            # potentials += [mean_p]
 
             # potentials = np.array(potentials)
             # vs = np.array(vs)
             # potentials *= vs**2
 
-            fit_params, _ = curve_fit(fit, r0s, potentials)
+            # fit_params, _ = curve_fit(fit, r0s, potentials)
 
-            ax.plot(
-                fit_x,
-                fit(fit_x, *fit_params),
-                ls="--",
-                label=soc_binding_names[v],
-                c=soc_binding_colors[v],
-            )
+            # ax.plot(
+            #     fit_x,
+            #     fit(fit_x, *fit_params),
+            #     ls="--",
+            #     label=soc_binding_names[v],
+            #     c=soc_binding_colors[v],
+            # )
             ax.scatter(
-                r0s,
-                potentials,
+                r0,
+                p,
                 label=soc_binding_names[v],
                 facecolors="none",
                 marker=MARKERS[i],
                 edgecolors=soc_binding_colors[v],
+                s=3,
+                alpha=0.3
             )
 
         r0 = np.array(observed_minimum_distances_non_groups) / 1000
@@ -130,37 +132,37 @@ if __name__ == "__main__":
 
         p = (r0**2 - rb**2) / r0**2
 
-        r0s, potentials = [], []
-        for k in range(len(pdf_edges[1:])):
-            bin_ids = np.digitize(rb, pdf_edges[1:])
-            r0_for_bin = r0[bin_ids == k]
-            p_for_bin = p[bin_ids == k]
-            if len(r0_for_bin):
-                mean_r0 = np.nanmean(r0_for_bin)
-                mean_p = np.nanmean(p_for_bin)
-                r0s += [mean_r0]
-                potentials += [mean_p]
+        # r0s, potentials = [], []
+        # for k in range(len(pdf_edges[1:])):
+        #     bin_ids = np.digitize(rb, pdf_edges[1:])
+        #     r0_for_bin = r0[bin_ids == k]
+        #     p_for_bin = p[bin_ids == k]
+        #     if len(r0_for_bin):
+        #         mean_r0 = np.nanmean(r0_for_bin)
+        #         mean_p = np.nanmean(p_for_bin)
+        #         r0s += [mean_r0]
+        #         potentials += [mean_p]
 
         # potentials = np.array(potentials)
         # vs = np.array(vs)
         # potentials *= vs**2
 
-        fit_params, _ = curve_fit(fit, r0s, potentials)
+        # fit_params, _ = curve_fit(fit, r0s, potentials)
 
-        ax.plot(
-            fit_x,
-            fit(fit_x, *fit_params),
-            ls="--",
-            label="non group",
-            c="purple",
-        )
-        ax.scatter(
-            r0s,
-            potentials,
-            label="non group",
-            marker="x",
-            c="purple",
-        )
+        # ax.plot(
+        #     fit_x,
+        #     fit(fit_x, *fit_params),
+        #     ls="--",
+        #     label="non group",
+        #     c="purple",
+        # )
+        # ax.scatter(
+        #     r0,
+        #     p,
+        #     label="non group",
+        #     marker="x",
+        #     c="purple",
+        # )
 
         ax.legend()
         ax.set_ylabel("∝V")
@@ -173,50 +175,4 @@ if __name__ == "__main__":
         # )
         plt.close()
 
-        #
-        # ========================================
-        # ========================================
-        #
-
-        f, ax = plt.subplots()
-        for i, v in enumerate(soc_binding_values):
-            observed_values = observed_minimum_distances_groups[v] / 1000
-            straight_line_values = straight_line_minimum_distances_groups[v] / 1000
-
-            mean, std, ste = get_mean_std_ste_over_bins(
-                straight_line_values, observed_values, pdf_edges[1:]
-            )
-            ax.plot(
-                bin_centers,
-                mean,
-                label=soc_binding_names[v],
-                c=soc_binding_colors[v],
-            )
-
-        observed_values = np.array(observed_minimum_distances_non_groups) / 1000
-        straight_line_values = (
-            np.array(straight_line_minimum_distances_non_groups) / 1000
-        )
-
-        mean, std, ste = get_mean_std_ste_over_bins(
-            straight_line_values, observed_values, pdf_edges[1:]
-        )
-        ax.plot(bin_centers, mean, label="non group", c="purple")
-        ax.plot(
-            [MIN, MAX],
-            [MIN, MAX],
-            label="y=x",
-            c="black",
-            linestyle="dashed",
-            linewidth=0.5,
-        )
-        ax.set_aspect("equal")
-        ax.legend()
-        ax.set_ylabel(r"$\bar{r}_0$ (m)")
-        ax.set_xlabel(r"$\bar{r}_b}$ (m)")
-        ax.set_title(env_name_short)
-        # plt.savefig(
-        #     f"../data/figures/intrusion/distances/{env_name_short}_distances_groups_vs_non_groups_bond.pdf"
-        # )
-        plt.show()
-        plt.close()
+       

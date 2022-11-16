@@ -87,100 +87,30 @@ if __name__ == "__main__":
         bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
 
         f, ax = plt.subplots()
-        left, bottom, width, height = [0.4, 0.3, 0.5, 0.5]
-        data_bin = np.empty((len(bin_centers), 2 * len(soc_binding_values)))
-
-        # data_fit = np.empty((len(fit_x), 1 + len(soc_binding_values)))
-        # data_fit[:, 0] = fit_x
-
         for g in ["groups", "non_groups"]:
-
-            r0s, potentials, vs = [], [], []
-            rb = data[g]["straight_line"]
-            r0 = data[g]["observed"]
-            v = data[g]["velocities"]
-
-            ind_bigger = r0 > rb  # potential is supposed to never be attractive
-            rb = rb[ind_bigger]
-            r0 = r0[ind_bigger]
-            v = v[ind_bigger]
-            for k in range(len(pdf_edges[1:])):
-
-                bin_ids = np.digitize(rb, pdf_edges[1:])
-                observed_for_bin = r0[bin_ids == k]
-                velocities_for_bin = v[bin_ids == k]
-                if len(observed_for_bin):
-                    mean_r0 = np.nanmean(observed_for_bin)
-                    mean_v = np.nanmean(velocities_for_bin)
-                    vs += [mean_v]
-                    bin_rb = bin_centers[k]
-                    r0s += [mean_r0]
-                    potentials += [(mean_r0**2 - bin_rb**2) / mean_r0**2]
-
-            potentials = np.array(potentials)
-            vs = np.array(vs)
-            # potentials *= vs**2
-
-            n_interp = 1000
-            fit_x = np.linspace(np.min(r0s), np.max(r0s), 1000)
-            exp_fit_params, _ = curve_fit(fit, r0s, potentials)
-
-            print(exp_fit_params)
-
+            mean, std, ste = get_mean_std_ste_over_bins(
+                data[g]["straight_line"], data[g]["observed"], pdf_edges[1:]
+            )
             ax.plot(
-                fit_x, fit(fit_x, *exp_fit_params), ls="--", label=g, c=data[g]["color"]
-            )
-            ax.scatter(
-                r0s,
-                potentials,
+                bin_centers,
+                mean,
                 label=g,
-                facecolors="none",
-                marker=data[g]["marker"],
-                edgecolors=data[g]["color"],
             )
-
+        ax.plot(
+            [MIN, MAX],
+            [MIN, MAX],
+            label="y=x",
+            c="black",
+            linestyle="dashed",
+            linewidth=0.5,
+        )
+        ax.set_aspect("equal")
         ax.legend()
-        ax.set_ylabel("∝V")
-        ax.set_xlabel(r"$r_0$ (m)")
+        ax.set_ylabel(r"$\bar{r}_0$ (m)")
+        ax.set_xlabel(r"$\bar{r}_b}$ (m)")
         ax.set_title(env_name_short)
-        ax.set_ylim([-0.5, 2])
-        ax.set_xlim([0.5, 4.5])
-        ax.grid(color="lightgray", linestyle="--", linewidth=0.5)
-        # plt.savefig(
-        #     f"../data/figures/intrusion/potentials/non_groups/potential_groups_vs_non_groups_{env_name_short}.png"
-        # )
         plt.show()
-        # plt.close()
-
-        # ================================================
-        # ================================================
-        # ================================================
-
-        # f, ax = plt.subplots()
-        # for g in ["groups", "non_groups"]:
-        #     mean, std, ste = get_mean_std_ste_over_bins(
-        #         data[g]["straight_line"], data[g]["observed"], pdf_edges[1:]
-        #     )
-        #     ax.plot(
-        #         bin_centers,
-        #         mean,
-        #         label=g,
-        #     )
-        # ax.plot(
-        #     [MIN, MAX],
-        #     [MIN, MAX],
-        #     label="y=x",
-        #     c="black",
-        #     linestyle="dashed",
-        #     linewidth=0.5,
+        # plt.savefig(
+        #     f"../data/figures/intrusion/distances/{env_name_short}_distances_groups_vs_non_groups.pdf"
         # )
-        # ax.set_aspect("equal")
-        # ax.legend()
-        # ax.set_ylabel(r"$\bar{r}_0$ (m)")
-        # ax.set_xlabel(r"$\bar{r}_b}$ (m)")
-        # ax.set_title(env_name_short)
-        # plt.show()
-        # # plt.savefig(
-        # #     f"../data/figures/intrusion/distances/{env_name_short}_distances_groups_vs_non_groups.pdf"
-        # # )
-        # # plt.close()
+        # plt.close()

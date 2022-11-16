@@ -115,11 +115,11 @@ if __name__ == "__main__":
                 data_bin[:, 1 + 2 * i] = np.array(probabilities_array[i, :][values_ok])
                 data_bin[:, 2 + 2 * i] = np.array(errors_array[i, :][values_ok])
 
-                # pd.DataFrame(data_bin).to_csv(
-                #     f"../data/plots/probabilities/{env_name_short}_probabilities_{p_lim}.csv",
-                #     index=False,
-                #     header=False,
-                # )
+                pd.DataFrame(data_bin).to_csv(
+                    f"../data/plots/probabilities/{env_name_short}_probabilities_{p_lim}.csv",
+                    index=False,
+                    header=False,
+                )
 
             axes[row][col].set_ylim([-0.1, 1])
             axes[row][col].set_xlim([-0.1, 4])

@@ -77,11 +77,11 @@ if __name__ == "__main__":
             p_values += [p]
 
         data = np.array([bin_centers, p_values]).T
-        # pd.DataFrame(data).to_csv(
-        #     f"../data/plots/distance_anovas/{env_name_short}_pvalues.csv",
-        #     index=False,
-        #     header=False,
-        # )
+        pd.DataFrame(data).to_csv(
+            f"../data/plots/distance_anovas/{env_name_short}_pvalues.csv",
+            index=False,
+            header=False,
+        )
         fig, ax = plt.subplots()
         ax.plot(bin_centers, p_values)
         ax.set_ylim([0.0001, 1])

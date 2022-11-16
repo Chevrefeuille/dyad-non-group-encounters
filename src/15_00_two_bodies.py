@@ -1,3 +1,4 @@
+from matplotlib.lines import lineStyles
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -75,18 +76,18 @@ class Body:
         return self.fixed
 
     def addForce(self, f):
-        if not self.fixed:
-            self.a[-1, :] += f / self.mass
+        self.a[-1, :] += f / self.mass
 
     def update_position(self, d_t=0.1):
         if not self.fixed:
             new_v = self.v[-1, :] + d_t * self.a[-1, :]
             self.v = np.vstack((self.v, new_v))
-            # if np.linalg.norm(self.velocity) > self.max_velocity:
-            # self.v *= self.max_velocity / np.linalg.norm(self.v)
             new_p = self.p[-1, :] + d_t * self.v[-1, :]
             self.p = np.vstack((self.p, new_p))
-            self.a = np.vstack((self.a, np.zeros(2)))
+        else:
+            self.v = np.vstack((self.v, np.zeros(2)))
+            self.p = np.vstack((self.p, self.p[-1, :]))
+        self.a = np.vstack((self.a, np.zeros(2)))
 
     def __str__(self) -> str:
         return self.name
@@ -99,9 +100,6 @@ class Simulation:
         self.d_t = d_t
         self.bodies: list[Body] = []
         self.t = [0]
-
-        # initialise plotting
-        self.fig, self.ax = plt.subplots()
 
     def get_bodies_positions(self):
         x, y = [], []
@@ -153,6 +151,8 @@ class Simulation:
         return plots
 
     def animate(self, t=10, show_v=False, show_a=False, show=True, save_path=None):
+        # initialise plotting
+        self.fig, self.ax = plt.subplots()
         n_frames = int(t / self.d_t)
         self.setup_plot(show_v, show_a)
         fps = self.d_t * 1000
@@ -189,6 +189,12 @@ class Simulation:
         for b in self.bodies:
             b.update_position(self.d_t)
 
+    def run(self, t=10):
+        n_frames = int(t / self.d_t)
+        for i in range(n_frames):
+            self.solve_physics()
+            self.update_positions()
+
     def update(self, i, show_v, show_a):
         self.solve_physics()
         x, y = self.get_bodies_positions()
@@ -224,18 +230,70 @@ class Simulation:
             data += [np.hstack((time, p, v))]
         pickle_save(save_path, data)
 
+    def plot(self, ax=None, show=True):
+        if ax == None:
+            fig, ax = plt.subplots()
+        ax.set_xlim(self.boundaries[0], self.boundaries[1])
+        ax.set_ylim(self.boundaries[2], self.boundaries[3])
+        ax.set_aspect("equal")
+        for b in self.bodies:
+            p = b.get_all_p()
+            # v = b.get_all_v()
+            alphas = np.linspace(0, 1, len(p))
+            ax.scatter(p[:, 0], p[:, 1], s=3, alpha=alphas)  # type: ignore
+        if show:
+            plt.show()
+        return ax
+
+    def get_body(self, name):
+        for b in self.bodies:
+            if b.name == name:
+                return b
+        return None
+
 
 if __name__ == "__main__":
 
-    p1 = np.array([-100.0, -10.0])
-    v1 = np.array([20.0, 0.0])
-    b1 = Body(10000, p1, v1, name="b1")
-    p2 = np.array([100.0, 10.0])
-    v2 = np.array([-20.0, 0.0])
-    b2 = Body(10000, p2, v2, name="b2")
+    bs = np.arange(0, 200, 10)  # impact parameters
+    ms = np.arange(1000, 10000, 1000)  # masses
+    m2 = 1000
 
-    sim = Simulation(boundaries=(-100, 100, -100, 100), d_t=0.1)
-    sim.add_body(b1)
-    sim.add_body(b2)
-    sim.animate(t=10, show_a=True, show_v=True, show=True)
-    sim.save_as_pkl("data.pkl")
+    fig, [[ax1, ax2], [ax3, ax4]] = plt.subplots(2, 2)
+
+    for m1 in ms:
+        Us, r0s = [], []
+        for b in bs:
+            p1 = np.array([0.0, 0.0])
+            v1 = np.array([0.0, 0.0])
+            b1 = Body(m1, p1, v1, name="b1", fixed=True)
+            p2 = np.array([100.0, b])
+            v2 = np.array([-20.0, 0.0])
+            b2 = Body(m2, p2, v2, name="b2")
+            sim = Simulation(boundaries=(-100, 100, -10, 200), d_t=0.1)
+            sim.add_body(b1)
+            sim.add_body(b2)
+            # sim.animate(t=10, show_a=True, show_v=True, show=True)
+            sim.run(t=10)
+            sim.plot(ax=ax3, show=False)
+
+            p = b2.get_all_p()
+            r0 = np.min(np.linalg.norm(p, axis=1))
+            r0s += [r0]
+            Us += [(r0**2 - b**2) / r0**2]
+
+        # r0s = np.array(r0s)
+        ax1.plot(r0s, Us, label=f"m1 = {m1}")
+        ax2.plot(bs, Us, label=f"m1 = {m1}")
+        # ax.plot(r0s, m1 / 250 / r0s, linestyle="dashed")
+
+    ax1.set_ylabel(r"$U(r_0)$")
+    ax1.set_xlabel(r"$r_0$")
+    ax1.legend()
+    ax1.grid(color="lightgray", linestyle="--", linewidth=0.5)
+
+    ax2.set_ylabel(r"$U(r_b)$")
+    ax2.set_xlabel(r"$r_b$")
+    ax2.legend()
+    ax2.grid(color="lightgray", linestyle="--", linewidth=0.5)
+
+    plt.show()

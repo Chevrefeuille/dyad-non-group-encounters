@@ -41,9 +41,11 @@ if __name__ == "__main__":
         # NOT ALONE
 
         # without scaling
-        bin_size = 4000 / N_BINS
-        pdf_edges = np.linspace(0, 4000, N_BINS + 1)
+        bin_size = 4 / N_BINS
+        pdf_edges = np.linspace(0, 4, N_BINS + 1)
         bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
+
+        fig, ax = plt.subplots()
 
         for i, v in enumerate(soc_binding_values):
             (
@@ -51,22 +53,31 @@ if __name__ == "__main__":
                 stds,
                 stdes,
             ) = get_mean_std_ste_over_bins(
-                straight_line_minimum_distances_with_interaction[v],
-                observed_minimum_distances_with_interaction[v],
+                straight_line_minimum_distances_with_interaction[v] / 1000,
+                observed_minimum_distances_with_interaction[v] / 1000,
                 pdf_edges[1:],
             )
-            plt.plot(
+            ax.plot(
                 bin_centers,
                 mean_observed_minimum_distance_per_bin,
                 label=soc_binding_names[v],
                 c=soc_binding_colors[v],
             )
-        plt.ylim(0, 4000)
-        plt.xlim(0, 4000)
-        plt.title(f"{env_name_short}")
-        plt.legend()
-        # plt.show()
-        plt.close()
+
+        ax.plot(bin_centers, bin_centers, ls="dashed", c="black")
+        ax.set_ylim(0, 4)
+        ax.set_xlim(0, 4)
+        ax.set_ylabel(r"$r_0$")
+        ax.set_xlabel(r"$r_b$")
+        ax.set_aspect("equal")
+        # plt.title(f"{env_name_short}")
+        ax.legend()
+        ax.grid(color="lightgray", linestyle="--", linewidth=0.5)
+        # fig.savefig(
+        #     f"../data/figures/intrusion/scattering_{env_name_short}.png",
+        #     dpi=300,
+        # )
+        plt.show()
 
         # with scaling
         bin_size = 4 / N_BINS
@@ -116,18 +127,18 @@ if __name__ == "__main__":
             data_bin[:, 1 + i * 2 : 1 + i * 2 + 2] = np.array(
                 [mean_observed_minimum_distance_per_bin, stdes]
             ).T
-        # pd.DataFrame(data_bin).to_csv(
-        #     f"../data/plots/intrusion/{env_name_short}_straight_line_vs_observed_bin.csv",
-        #     index=False,
-        #     header=False,
-        # )
+        pd.DataFrame(data_bin).to_csv(
+            f"../data/plots/intrusion/{env_name_short}_straight_line_vs_observed_bin.csv",
+            index=False,
+            header=False,
+        )
         # for p in pdf_edges:
         #     plt.axvline(p, color="b")
         ax.plot(bin_centers, bin_centers, ls="dashed", c="black")
         ax.set_ylim(0, 4)
         ax.set_xlim(0, 4)
-        ax.set_ylabel(r"$\bar{r_o}$")
-        ax.set_xlabel(r"$\bar{r_p}$")
+        ax.set_ylabel(r"$\bar{r_0}$")
+        ax.set_xlabel(r"$\bar{r_b}$")
         ax.set_aspect("equal")
         # plt.title(f"{env_name_short}")
         ax.legend()

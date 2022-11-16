@@ -12,10 +12,7 @@ from utils import *
 
 if __name__ == "__main__":
 
-    for env_name in [
-        "diamor:corridor",
-        "atc:corridor",
-    ]:
+    for env_name in ["atc:corridor", "diamor:corridor"]:
 
         env = Environment(
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"

@@ -109,11 +109,11 @@ if __name__ == "__main__":
             axes[row][col].grid(color="lightgray", linestyle="--", linewidth=0.5)
 
             data = np.stack((bin_centers, np.array(p_chi_square))).T
-            # pd.DataFrame(data).to_csv(
-            #     f"../data/plots/probabilities_pvalues/{env_name_short}_probabilities_pvalues_{p_lim}.csv",
-            #     index=False,
-            #     header=False,
-            # )
+            pd.DataFrame(data).to_csv(
+                f"../data/plots/probabilities_pvalues/{env_name_short}_probabilities_pvalues_{p_lim}.csv",
+                index=False,
+                header=False,
+            )
         plt.suptitle(env_name_short)
         plt.savefig(
             f"../data/figures/intrusion/probabilities/probabilities_p-values_{env_name_short}.png"
