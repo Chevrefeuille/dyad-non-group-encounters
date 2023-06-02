@@ -1,4 +1,3 @@
-from tkinter import N
 from pedestrians_social_binding.environment import Environment
 from pedestrians_social_binding.plot_utils import *
 from pedestrians_social_binding.utils import *

@@ -1,4 +1,3 @@
-from lib2to3.pgen2.token import SLASHEQUAL
 from pedestrians_social_binding.constants import *
 from pedestrians_social_binding.utils import *
 from pedestrians_social_binding.environment import Environment

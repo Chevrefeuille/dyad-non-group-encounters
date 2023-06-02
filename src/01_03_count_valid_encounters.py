@@ -1,4 +1,3 @@
-from lib2to3.pgen2.token import SLASHEQUAL
 from pedestrians_social_binding.constants import *
 from pedestrians_social_binding.utils import *
 from pedestrians_social_binding.environment import Environment
@@ -18,7 +17,6 @@ from utils import (
 )
 
 if __name__ == "__main__":
-
     for env_name in ["atc:corridor", "diamor:corridor"]:
         # print(f"- {env_name}")
         env = Environment(
@@ -42,7 +40,6 @@ if __name__ == "__main__":
         n_encounters = {}
 
         for day in days:
-
             non_groups = env.get_pedestrians(
                 days=[day], thresholds=thresholds_ped, sampling_time=500
             )
@@ -67,14 +64,16 @@ if __name__ == "__main__":
                     continue
 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
-                    non_groups, proximity_threshold=None, skip=group_members_id
+                    non_groups,
+                    proximity_threshold=None,
+                    alone=None,
+                    skip=group_members_id,
                 )
 
                 if not group_encounters:
                     continue
 
                 for non_group in group_encounters:
-
                     overlap = False
 
                     non_group_id = non_group.get_id()

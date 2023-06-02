@@ -119,13 +119,13 @@ def get_mean_std_ste_over_bins(x, y, bin_centers):
     return mean_over_bins, std_over_bins, ste_over_bins
 
 
-def get_mean_std_ste_n_over_bins(x, y, bin_centers):
+def get_mean_std_ste_n_over_bins(x, y, bin_edges):
     mean_over_bins = []
     std_over_bins = []
     ste_over_bins = []
     n_over_bins = []
-    bin_ids = np.digitize(x, bin_centers)
-    for k in range(len(bin_centers)):
+    bin_ids = np.digitize(x, bin_edges)
+    for k in range(len(bin_edges)):
         mean_for_bin = np.nanmean(y[bin_ids == k]) if len(y[bin_ids == k]) else np.nan
         # print(k, y[bin_ids == k])
         mean_over_bins += [mean_for_bin]
@@ -156,6 +156,8 @@ def plot_color_map(
     ax=None,
     fig=None,
     show=True,
+    xlim=None,
+    ylim=None,
 ):
     if vmin is None:
         vmin = np.min(grid)
@@ -179,13 +181,16 @@ def plot_color_map(
     if ylabel is not None:
         ax.set_ylabel(ylabel)
     divider = make_axes_locatable(ax)
-    if ax is not None and fig is not None:
-        fig.colorbar(cmesh, ax=ax, location="right")
-    else:
-        cax = divider.append_axes("right", size="5%", pad=0.1)
-        plt.colorbar(cmesh, cax=cax)
+
+    cax = divider.append_axes("right", size="5%", pad=0.1)
+    plt.colorbar(cmesh, cax=cax)
     # if equal:
     #     ax.set_aspect("equal")
+
+    if xlim is not None:
+        ax.set_xlim(xlim)
+    if ylim is not None:
+        ax.set_ylim(ylim)
 
     if title is not None:
         ax.set_title(title)
@@ -252,7 +257,6 @@ def update_grid(
     cell_size_y,
     channel=0,
 ):
-
     cell_x_index = np.floor((data[:, 0] - min_x) / cell_size_x).astype("int")
     cell_y_index = np.floor((data[:, 1] - min_y) / cell_size_y).astype("int")
 
@@ -276,6 +280,6 @@ def update_grid(
     #     cmap="jet",
     # )
 
-    grid[channel, cell_x_index, cell_y_index] += 1
+    np.add.at(grid[channel], (cell_x_index, cell_y_index), 1)
 
     return grid

@@ -26,10 +26,10 @@ if __name__ == "__main__":
         ) = get_social_values(env_name)
 
         observed_minimum_distances_with_interaction = pickle_load(
-            f"../data/pickle/observed_minimum_distance_{env_name_short}_with_interaction.pkl"
+            f"../data/pickle/tgf_observed_minimum_distance_{env_name_short}_with_interaction.pkl"
         )
         straight_line_minimum_distances_with_interaction = pickle_load(
-            f"../data/pickle/straight_line_minimum_distance_{env_name_short}_with_interaction.pkl"
+            f"../data/pickle/tgf_straight_line_minimum_distance_{env_name_short}_with_interaction.pkl"
         )
         group_size_all = pickle_load(f"../data/pickle/group_size_{env_name_short}.pkl")
         group_breadth_all = pickle_load(
@@ -116,13 +116,13 @@ if __name__ == "__main__":
                 data_bin[:, 2 + 2 * i] = np.array(errors_array[i, :][values_ok])
 
                 pd.DataFrame(data_bin).to_csv(
-                    f"../data/plots/probabilities/{env_name_short}_probabilities_{p_lim}.csv",
+                    f"../data/plots/tgf/probabilities/{env_name_short}_probabilities_{p_lim}.csv",
                     index=False,
                     header=False,
                 )
 
-            axes[row][col].set_ylim([-0.1, 1])
-            axes[row][col].set_xlim([-0.1, 4])
+            axes[row][col].set_ylim(-0.1, 1)
+            axes[row][col].set_xlim(-0.1, 4)
             axes[row][col].legend()
             axes[row][col].set_ylabel(f"p(r_o < {p_lim})")
             axes[row][col].set_xlabel("r_p (scaled with group size)")

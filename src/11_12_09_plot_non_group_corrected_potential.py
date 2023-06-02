@@ -9,9 +9,11 @@ from utils import *
 from scipy.optimize import curve_fit
 import pandas as pd
 
+import scipy.stats as stats
 
 # def fit(x, a, b):
 #     return a * np.exp(-b*x)
+
 
 def fit(x, a, b):
     return (a / x) ** b
@@ -41,8 +43,6 @@ def compute_binned_potential(r0, rb, pdf_edges, a, correct=True, cap=False):
 
 
 if __name__ == "__main__":
-
-
     N_BINS = 8
     MIN, MAX = 0, 4
     bin_size = (MAX - MIN) / N_BINS
@@ -52,9 +52,7 @@ if __name__ == "__main__":
 
     fit_x = np.linspace(0, 5, n_interp)
 
-
     for env_name in ["atc:corridor", "diamor:corridor"]:
-
         env_name_short = env_name.split(":")[0]
 
         (
@@ -119,14 +117,12 @@ if __name__ == "__main__":
         # data_fit[:, 0] = fit_x
 
         for g in ["groups", "non_groups"]:
-
             rb = data[g]["straight_line"]
             r0 = data[g]["observed"]
 
-
             r0s, potentials = compute_binned_potential(r0, rb, pdf_edges, a)
 
-            fit_params, _ = curve_fit(fit, r0s, potentials, bounds = ([0.8, 2], [10, 8]))
+            fit_params, _ = curve_fit(fit, r0s, potentials, bounds=([0.8, 2], [10, 8]))
             print(fit_params)
             [alpha, beta] = fit_params
             ax.plot(
@@ -134,8 +130,27 @@ if __name__ == "__main__":
                 fit(fit_x, *fit_params),
                 ls="--",
                 label=rf"$(\frac{{{round(alpha,2)}}}{{x}})^{{{round(beta,2)}}}$",
-                c=data[g]["color"]
+                c=data[g]["color"],
             )
+            y = potentials
+            y_fit = fit(r0s, *fit_params)
+            # residual sum of squares
+            ss_res = np.sum((y - y_fit) ** 2)
+            # total sum of squares
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+            # r-squared
+            r2 = 1 - (ss_res / ss_tot)
+            # print(r2)
+
+            # compute AIC
+            mse = np.mean((y - y_fit) ** 2)
+            aic = len(y) * np.log(mse) + 2 * len(fit_params)
+            print(f"{soc_binding_names[v]}: {aic:.2f}")
+
+            # compute Kstest
+            ks = stats.ks_2samp(y, y_fit)
+            print(f"{soc_binding_names[v]}: {ks}")
+
             ax.scatter(
                 r0s,
                 potentials,
@@ -143,7 +158,7 @@ if __name__ == "__main__":
                 facecolors="none",
                 marker=data[g]["marker"],
                 edgecolors=data[g]["color"],
-            )  
+            )
 
         ax.legend()
         ax.set_ylabel("∝V")
@@ -153,9 +168,7 @@ if __name__ == "__main__":
         ax.grid(color="lightgray", linestyle="--", linewidth=0.5)
         ax.set_title(env_name_short)
 
-        plt.savefig(
-            f"../data/figures/intrusion/potentials/corrected/potential_group_non_group_{env_name_short}.png"
-        )
-        # plt.show()
-
-      
+        # plt.savefig(
+        #     f"../data/figures/intrusion/potentials/corrected/potential_group_non_group_{env_name_short}.png"
+        # )
+        plt.show()

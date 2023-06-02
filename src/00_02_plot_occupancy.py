@@ -5,6 +5,9 @@ from pedestrians_social_binding.environment import Environment
 from parameters import *
 from utils import *
 
+import scienceplots
+
+plt.style.use("science")
 
 from utils import (
     get_all_days,
@@ -14,7 +17,6 @@ from utils import (
 )
 
 if __name__ == "__main__":
-
     for env_name in ["atc:corridor", "diamor:corridor"]:
         # print(f"- {env_name}")
         env = Environment(
@@ -23,7 +25,7 @@ if __name__ == "__main__":
 
         env_name_short = env_name.split(":")[0]
 
-        XMIN, XMAX, YMIN, YMAX = env.get_boundaries()       
+        XMIN, XMAX, YMIN, YMAX = env.get_boundaries()
 
         thresholds_indiv = get_pedestrian_thresholds(env_name)
 
@@ -47,21 +49,26 @@ if __name__ == "__main__":
             )
             nx = nx[in_roi]
             ny = ny[in_roi]
-            
-            grid[nx, ny] += 1
 
+            grid[nx, ny] += 1
 
         max_val = np.max(grid)
         grid /= max_val
 
-        
         xi = np.linspace(0, (XMAX - XMIN) / 1000, n_bin_x)
         yi = np.linspace(0, (YMAX - YMIN) / 1000, n_bin_y)
 
-        plot_color_map(xi, yi, grid, "x (m)", "y (m)", save_path=f"../data/figures/occupancy/occupancy_grid_{env_name_short}.png", equal=True)
-
-
-
-
-
-        
+        fig, ax = plt.subplots(figsize=(3, 3))
+        plot_color_map(
+            xi,
+            yi,
+            grid,
+            "x (m)",
+            "y (m)",
+            save_path=f"../data/figures/occupancy/occupancy_grid_{env_name_short}.pdf",
+            # show=True,
+            aspect="equal",
+            cmap="inferno_r",
+            fig=fig,
+            ax=ax,
+        )

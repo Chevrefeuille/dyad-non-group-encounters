@@ -5,6 +5,7 @@ from pedestrians_social_binding.constants import *
 
 
 import numpy as np
+from tqdm import tqdm
 
 from utils import *
 
@@ -25,18 +26,13 @@ if __name__ == "__main__":
             env_name
         )
 
-        observed_minimum_distances = {}
-        straight_line_minimum_distances = {}
-        group_sizes = {}
+        positions = {}
 
         thresholds_ped = get_pedestrian_thresholds(env_name)
         thresholds_group = get_groups_thresholds()
 
-        for day in days:
-            # print(day)
-            non_groups = env.get_pedestrians(
-                days=[day], thresholds=thresholds_ped, no_groups=True
-            )
+        for day in tqdm(days):
+            all = env.get_pedestrians(days=[day], thresholds=thresholds_ped)
 
             groups = env.get_groups(
                 size=2,
@@ -58,16 +54,20 @@ if __name__ == "__main__":
                 if soc_binding not in soc_binding_values:
                     continue
 
-                if soc_binding not in observed_minimum_distances:
-                    observed_minimum_distances[soc_binding] = []
-                    straight_line_minimum_distances[soc_binding] = []
-                    group_sizes[soc_binding] = []
+                if soc_binding not in positions:
+                    positions[soc_binding] = {
+                        "pos_Ax": [],
+                        "pos_Ay": [],
+                        "pos_Bx": [],
+                        "pos_By": [],
+                        "d": [],
+                    }
 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
-                    non_groups,
-                    proximity_threshold=4000,
+                    all,
+                    proximity_threshold=None,
+                    alone=None,
                     skip=group_members_id,
-                    alone=True,
                 )
 
                 for non_group in group_encounters:
@@ -104,46 +104,60 @@ if __name__ == "__main__":
                     #     labels=["group-A", "group-B", "non-group"],
                     # )
 
+                    # plot_static_2D_trajectories(
+                    #     [
+                    #         group_members[0].get_trajectory(),
+                    #         group_members[1].get_trajectory(),
+                    #         non_group.get_trajectory(),
+                    #     ],
+                    #     boundaries=env.boundaries,
+                    #     labels=["group-A", "group-B", "non-group"],
+                    # )
+
                     if len(traj_group) <= 1:
                         continue
 
                     traj_group_aligned, [
-                        traj_non_group_aligned
-                    ] = align_trajectories_at_origin(traj_group, [traj_non_group])
-
-                    # print(
-                    #     compute_interpersonal_distance(
-                    #         traj_group_aligned, traj_non_group_aligned
-                    #     )
-                    # )
-                    # print(compute_interpersonal_distance(traj_group, traj_non_group))
-
-                    # plot_animated_2D_trajectories(
-                    #     [traj_group_aligned, traj_non_group_aligned]
-                    # )
-
-                    rp = compute_straight_line_minimum_distance(traj_non_group_aligned)
-                    ro = compute_observed_minimum_distance(
-                        traj_non_group_aligned, interpolate=True
+                        traj_non_group_aligned,
+                        traj_A_aligned,
+                        traj_B_aligned,
+                    ] = align_trajectories_at_origin(
+                        traj_group, [traj_non_group, traj_A, traj_B]
                     )
 
-                    if rp:
-                        observed_minimum_distances[soc_binding] += [ro]
-                        straight_line_minimum_distances[soc_binding] += [rp]
+                    distance = np.linalg.norm(traj_non_group_aligned[:, 1:3], axis=1)
+
+                    positions[soc_binding]["d"] += distance.tolist()
+                    positions[soc_binding]["pos_Ax"] += traj_A_aligned[:, 1].tolist()
+                    positions[soc_binding]["pos_Ay"] += traj_A_aligned[:, 2].tolist()
+                    positions[soc_binding]["pos_Bx"] += traj_B_aligned[:, 1].tolist()
+                    positions[soc_binding]["pos_By"] += traj_B_aligned[:, 2].tolist()
+
+                    # plot_static_2D_trajectories(
+                    #     [
+                    #         traj_A_aligned,
+                    #         traj_B_aligned,
+                    #         # traj_non_group_aligned,
+                    #     ],
+                    #     labels=["A", "B"],
+                    # )
 
         for soc_binding in soc_binding_values:
-            observed_minimum_distances[soc_binding] = np.array(
-                observed_minimum_distances[soc_binding]
+            positions[soc_binding]["d"] = np.array(positions[soc_binding]["d"])
+            positions[soc_binding]["pos_Ax"] = np.array(
+                positions[soc_binding]["pos_Ax"]
             )
-            straight_line_minimum_distances[soc_binding] = np.array(
-                straight_line_minimum_distances[soc_binding]
+            positions[soc_binding]["pos_Ay"] = np.array(
+                positions[soc_binding]["pos_Ay"]
+            )
+            positions[soc_binding]["pos_Bx"] = np.array(
+                positions[soc_binding]["pos_Bx"]
+            )
+            positions[soc_binding]["pos_By"] = np.array(
+                positions[soc_binding]["pos_By"]
             )
 
         pickle_save(
-            f"../data/pickle/observed_minimum_distance_{env_name_short}_with_interaction_alone.pkl",
-            observed_minimum_distances,
-        )
-        pickle_save(
-            f"../data/pickle/straight_line_minimum_distance_{env_name_short}_with_interaction_alone.pkl",
-            straight_line_minimum_distances,
+            f"../data/pickle/positions_group_members_{env_name_short}_with_interaction.pkl",
+            positions,
         )

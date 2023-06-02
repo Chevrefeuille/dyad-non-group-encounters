@@ -36,10 +36,10 @@ if __name__ == "__main__":
         ) = get_social_values(env_name)
 
         observed_minimum_distances_with_interaction = pickle_load(
-            f"../data/pickle/observed_minimum_distance_{env_name_short}_with_interaction.pkl"
+            f"../data/pickle/tgf_observed_minimum_distance_{env_name_short}_with_interaction.pkl"
         )
         straight_line_minimum_distances_with_interaction = pickle_load(
-            f"../data/pickle/straight_line_minimum_distance_{env_name_short}_with_interaction.pkl"
+            f"../data/pickle/tgf_straight_line_minimum_distance_{env_name_short}_with_interaction.pkl"
         )
         group_size_all = pickle_load(f"../data/pickle/group_size_{env_name_short}.pkl")
         group_breadth_all = pickle_load(
@@ -100,8 +100,8 @@ if __name__ == "__main__":
             axes[row][col].plot([0, 4], [0.05, 0.05], c="red")
 
             axes[row][col].set_yscale("log")
-            axes[row][col].set_ylim([0.0001, 1])
-            axes[row][col].set_xlim([-0.1, 4])
+            axes[row][col].set_ylim(0.0001, 1)
+            axes[row][col].set_xlim(-0.1, 4)
             # axes[row][col].legend()
             axes[row][col].set_ylabel(f"p-value p(r_o < {p_lim})")
             axes[row][col].set_xlabel("r_p (scaled with group size)")
@@ -110,12 +110,12 @@ if __name__ == "__main__":
 
             data = np.stack((bin_centers, np.array(p_chi_square))).T
             pd.DataFrame(data).to_csv(
-                f"../data/plots/probabilities_pvalues/{env_name_short}_probabilities_pvalues_{p_lim}.csv",
+                f"../data/plots/tgf/probabilities_pvalues/{env_name_short}_probabilities_pvalues_{p_lim}.csv",
                 index=False,
                 header=False,
             )
         plt.suptitle(env_name_short)
-        plt.savefig(
-            f"../data/figures/intrusion/probabilities/probabilities_p-values_{env_name_short}.png"
-        )
+        # plt.savefig(
+        #     f"../data/figures/intrusion/probabilities/probabilities_p-values_{env_name_short}.png"
+        # )
         plt.show()

@@ -1,4 +1,3 @@
-from tkinter import N
 from pedestrians_social_binding.environment import Environment
 from pedestrians_social_binding.plot_utils import *
 from pedestrians_social_binding.utils import *
@@ -133,41 +132,3 @@ if __name__ == "__main__":
                         ax.plot(d_inv)
                         ax.plot(d_v)
                         ax.set_ylim([0, 4])
-                        plt.show()
-
-        #             velocity = traj_non_group_aligned[:, 5:7]
-        #             velocity_norm = np.linalg.norm(velocity, axis=1)
-        #             # plt.plot(velocity_norm)
-        #             # plt.show()
-
-        #             rp = compute_straight_line_minimum_distance(traj_non_group_aligned)
-        #             ro = compute_observed_minimum_distance(
-        #                 traj_non_group_aligned, interpolate=True
-        #             )
-
-        #             if rp:
-        #                 observed_minimum_distances[soc_binding] += [ro]
-        #                 straight_line_minimum_distances[soc_binding] += [rp]
-        #                 velocities[soc_binding] += [velocity_norm[0]]
-
-        # for soc_binding in soc_binding_values:
-        #     observed_minimum_distances[soc_binding] = np.array(
-        #         observed_minimum_distances[soc_binding]
-        #     )
-        #     straight_line_minimum_distances[soc_binding] = np.array(
-        #         straight_line_minimum_distances[soc_binding]
-        #     )
-        #     velocities[soc_binding] = np.array(velocities[soc_binding])
-
-        # pickle_save(
-        #     f"../data/pickle/observed_minimum_distance_{env_name_short}_with_interaction.pkl",
-        #     observed_minimum_distances,
-        # )
-        # pickle_save(
-        #     f"../data/pickle/straight_line_minimum_distance_{env_name_short}_with_interaction.pkl",
-        #     straight_line_minimum_distances,
-        # )
-        # pickle_save(
-        #     f"../data/pickle/velocities_{env_name_short}_with_interaction.pkl",
-        #     velocities,
-        # )

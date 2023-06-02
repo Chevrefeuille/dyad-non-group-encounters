@@ -8,9 +8,7 @@ from utils import *
 from tqdm import tqdm
 
 if __name__ == "__main__":
-
     for env_name in ["atc:corridor", "diamor:corridor"]:
-
         env = Environment(
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
         )

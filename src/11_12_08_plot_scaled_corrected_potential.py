@@ -3,6 +3,7 @@ from pedestrians_social_binding.constants import *
 
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import stats
 from parameters import *
 from utils import *
 
@@ -42,7 +43,6 @@ def compute_binned_potential(r0, rb, pdf_edges, a, correct=True, cap=False):
 
 
 if __name__ == "__main__":
-
     N_BINS = 8
     MIN, MAX = 0, 4
     bin_size = (MAX - MIN) / N_BINS
@@ -50,7 +50,6 @@ if __name__ == "__main__":
     bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
 
     for env_name in ["atc:corridor", "diamor:corridor"]:
-
         env_name_short = env_name.split(":")[0]
 
         (
@@ -93,7 +92,6 @@ if __name__ == "__main__":
         fitting_bounds = ([0.8, 2], [10, 8])
 
         for i, v in enumerate(soc_binding_values):
-
             # print(soc_binding_names[v])
             r0 = observed_minimum_distances_groups[v] / np.nanmean(group_size[v])
             rb = straight_line_minimum_distances_groups[v] / np.nanmean(group_size[v])
@@ -104,7 +102,26 @@ if __name__ == "__main__":
             data_bin[:, 2 * i + 1 : 2 * i + 2] = np.array(potentials)[..., None]
 
             fit_params, _ = curve_fit(fit, r0s, potentials, bounds=fitting_bounds)
-            print(soc_binding_names[v], fit_params)
+            y = potentials
+            y_fit = fit(r0s, *fit_params)
+            # residual sum of squares
+            ss_res = np.sum((y - y_fit) ** 2)
+            # total sum of squares
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+            # r-squared
+            r2 = 1 - (ss_res / ss_tot)
+            # print(r2)
+
+            # compute AIC
+            mse = np.mean((y - y_fit) ** 2)
+            aic = len(y) * np.log(mse) + 2 * len(fit_params)
+            print(f"{soc_binding_names[v]}: {aic:.2f}")
+
+            # compute Kstest
+            ks = stats.ks_2samp(y, y_fit)
+            print(f"{soc_binding_names[v]}: {ks.pvalue:.2f}")
+
+            # print(soc_binding_names[v], fit_params)
             data_fit[:, 1 + i : 2 + i] = fit(fit_x, *fit_params)[..., None]
 
             [alpha, beta] = fit_params
@@ -137,14 +154,14 @@ if __name__ == "__main__":
         # )
         plt.show()
 
-        pd.DataFrame(data_bin).to_csv(
-            f"../data/plots/potential_corrected/{env_name_short}_potential_bin_scaled.csv",
-            index=False,
-            header=False,
-        )
+        # pd.DataFrame(data_bin).to_csv(
+        #     f"../data/plots/potential_corrected/{env_name_short}_potential_bin_scaled.csv",
+        #     index=False,
+        #     header=False,
+        # )
 
-        pd.DataFrame(data_fit).to_csv(
-            f"../data/plots/potential_corrected/{env_name_short}_potential_fit_scaled.csv",
-            index=False,
-            header=False,
-        )
+        # pd.DataFrame(data_fit).to_csv(
+        #     f"../data/plots/potential_corrected/{env_name_short}_potential_fit_scaled.csv",
+        #     index=False,
+        #     header=False,
+        # )

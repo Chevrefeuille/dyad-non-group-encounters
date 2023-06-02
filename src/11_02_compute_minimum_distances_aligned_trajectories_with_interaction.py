@@ -1,4 +1,3 @@
-from tkinter import N
 from pedestrians_social_binding.environment import Environment
 from pedestrians_social_binding.plot_utils import *
 from pedestrians_social_binding.utils import *
@@ -46,7 +45,7 @@ if __name__ == "__main__":
                 days=[day],
                 ped_thresholds=thresholds_ped,
                 group_thresholds=thresholds_group,
-                with_social_binding=True
+                with_social_binding=True,
             )
 
             # print(len(groups))
@@ -140,7 +139,7 @@ if __name__ == "__main__":
 
                     traj_non_group_in_vicinity = traj_non_group_aligned[
                         np.logical_and(
-                            np.abs(traj_non_group_aligned[:, 1] <= 4000),
+                            np.abs(traj_non_group_aligned[:, 1]) <= 4000,
                             np.abs(traj_non_group_aligned[:, 2]) <= 4000,
                         ),
                     ]

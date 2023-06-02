@@ -6,7 +6,6 @@ import numpy as np
 from parameters import *
 from utils import *
 
-from scipy.optimize import curve_fit
 import pandas as pd
 
 
@@ -116,9 +115,11 @@ if __name__ == "__main__":
         f, ax = plt.subplots()
 
         fit_x = np.linspace(MIN, MAX, 5)
-        data_bin = np.empty((len(bin_centers), 3))
+        data_bin = np.zeros(
+            (len(bin_centers), 1 + 2 + 2 + len(soc_binding_type) * 2)
+        )  # 1 for x, 2 ng, 2g, 2 * 4 each bonding
         data_bin[:, 0] = bin_centers.T
-        data_fit = np.empty((len(fit_x), 2))
+        data_fit = np.zeros((len(fit_x), 2))
         data_fit[:, 0] = fit_x.T
 
         for i, g in enumerate(["groups", "non_groups"]):
@@ -131,7 +132,17 @@ if __name__ == "__main__":
                 mean,
                 label=g,
             )
-            data_bin[:, i + 1 : i + 2] = np.array(mean)[..., None]
+            data_bin[:, 2 * i + 1 : 2 * i + 2] = np.array(mean)[..., None]
+            data_bin[:, 2 * i + 2 : 2 * i + 3] = np.array(ste)[..., None]
+
+        for i, v in enumerate(soc_binding_values):
+            observed = observed_minimum_distances_groups[v] / 1000
+            straight_line = straight_line_minimum_distances_groups[v] / 1000
+            mean, std, ste = get_mean_std_ste_over_bins(
+                straight_line, observed, pdf_edges[1:]
+            )
+            data_bin[:, 2 * i + 5 : 2 * i + 6] = np.array(mean)[..., None]
+            data_bin[:, 2 * i + 6 : 2 * i + 7] = np.array(ste)[..., None]
 
         pd.DataFrame(data_bin).to_csv(
             f"../data/plots/correction/{env_name_short}_straight_line_vs_observed_bin.csv",
@@ -155,9 +166,9 @@ if __name__ == "__main__":
         ax.set_xlabel(r"$r_b$ (m)")
         ax.set_title(env_name_short)
         # plt.show()
-        plt.savefig(
-            f"../data/figures/intrusion/fit/coefficient_without_scaling_{env_name_short}.png"
-        )
+        # plt.savefig(
+        #     f"../data/figures/intrusion/fit/coefficient_without_scaling_{env_name_short}.png"
+        # )
         # plt.close()
 
         # ================================================================================
@@ -195,7 +206,7 @@ if __name__ == "__main__":
         print(f"scaled: {c}")
 
         fit_x = np.linspace(MIN, MAX, 5)
-        data_bin = np.empty((len(bin_centers), len(soc_binding_values) + 1))
+        data_bin = np.empty((len(bin_centers), 2 * len(soc_binding_values) + 1))
         data_bin[:, 0] = bin_centers.T
         data_fit = np.empty((len(fit_x), 2))
         data_fit[:, 0] = fit_x.T
@@ -212,7 +223,8 @@ if __name__ == "__main__":
                 bin_centers, mean, label=soc_binding_names[v], c=soc_binding_colors[v]
             )
 
-            data_bin[:, i + 1 : i + 2] = np.array(mean)[..., None]
+            data_bin[:, 2 * i + 1 : 2 * i + 2] = np.array(mean)[..., None]
+            data_bin[:, 2 * i + 2 : 2 * i + 3] = np.array(ste)[..., None]
 
         pd.DataFrame(data_bin).to_csv(
             f"../data/plots/correction/{env_name_short}_straight_line_vs_observed_scaled_bin.csv",

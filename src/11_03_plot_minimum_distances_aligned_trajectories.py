@@ -127,18 +127,18 @@ if __name__ == "__main__":
             data_bin[:, 1 + i * 2 : 1 + i * 2 + 2] = np.array(
                 [mean_observed_minimum_distance_per_bin, stdes]
             ).T
-        pd.DataFrame(data_bin).to_csv(
-            f"../data/plots/intrusion/{env_name_short}_straight_line_vs_observed_bin.csv",
-            index=False,
-            header=False,
-        )
+        # pd.DataFrame(data_bin).to_csv(
+        #     f"../data/plots/tgf/distance/{env_name_short}_straight_line_vs_observed_bin.csv",
+        #     index=False,
+        #     header=False,
+        # )
         # for p in pdf_edges:
         #     plt.axvline(p, color="b")
         ax.plot(bin_centers, bin_centers, ls="dashed", c="black")
         ax.set_ylim(0, 4)
         ax.set_xlim(0, 4)
         ax.set_ylabel(r"$\bar{r_0}$")
-        ax.set_xlabel(r"$\bar{r_b}$")
+        ax.set_xlabel(r"$\bar{r}_b$")
         ax.set_aspect("equal")
         # plt.title(f"{env_name_short}")
         ax.legend()
