@@ -123,6 +123,6 @@ if __name__ == "__main__":
 
     for ped in non_groups:
         trajectory = ped.get_trajectory()
-        resampled_trajectory = resample_trajectory(trajectory, step=500)
+        resampled_trajectory = resample_trajectory(trajectory, sampling_time=500)
 
         

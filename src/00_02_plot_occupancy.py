@@ -5,15 +5,11 @@ from pedestrians_social_binding.environment import Environment
 from parameters import *
 from utils import *
 
-import scienceplots
 
-plt.style.use("science")
+#plt.style.use("science")
 
 from utils import (
-    get_all_days,
-    get_groups_thresholds,
     get_pedestrian_thresholds,
-    get_social_values,
 )
 
 if __name__ == "__main__":
@@ -72,3 +68,5 @@ if __name__ == "__main__":
             fig=fig,
             ax=ax,
         )
+
+    

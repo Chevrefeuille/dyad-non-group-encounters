@@ -170,6 +170,10 @@ if __name__ == "__main__":
                     #         group_members + [non_group], boundaries=env.boundaries
                     #     )
 
+                    print("d_g_encounter", np.shape(d_g_encounter))
+                    print("d_G_NG_encounter", np.shape(d_G_NG_encounter))
+                    print("rel_orientation_encounter", np.shape(rel_orientation_encounter))
+                    
                     distance_breadth_orientation[soc_binding] += list(
                         np.stack(
                             (
