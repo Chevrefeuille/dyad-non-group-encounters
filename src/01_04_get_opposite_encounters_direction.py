@@ -139,6 +139,7 @@ if __name__ == "__main__":
                     pos_group_encounter = pos_group[d_G_NG < VICINITY]
                     pos_non_group_encounter = pos_non_group[d_G_NG < VICINITY]
 
+
                     if len(pos_group_encounter) < 1:
                         continue
 
@@ -149,10 +150,11 @@ if __name__ == "__main__":
                     d_g_encounter = compute_interpersonal_distance(
                         pos_A_encounter, pos_B_encounter
                     )
-
+                    print(len(traj_A_encounter), len(traj_B_encounter))
                     rel_orientation_encounter = compute_relative_orientation(
                         traj_A_encounter, traj_B_encounter
                     )
+                    rel_orientation_encounter = rel_orientation_encounter[:len(rel_orientation_encounter)//2]
                     # v_g_encounter = traj_group[:, 5:7]
 
                     # plt.plot(d_g_encounter)
@@ -170,9 +172,6 @@ if __name__ == "__main__":
                     #         group_members + [non_group], boundaries=env.boundaries
                     #     )
 
-                    print("d_g_encounter", np.shape(d_g_encounter))
-                    print("d_G_NG_encounter", np.shape(d_G_NG_encounter))
-                    print("rel_orientation_encounter", np.shape(rel_orientation_encounter))
                     
                     distance_breadth_orientation[soc_binding] += list(
                         np.stack(

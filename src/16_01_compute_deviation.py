@@ -144,21 +144,21 @@ if __name__ == "__main__":
                         )
                         distance_int, distance_ext = distance_B, distance_A
 
-                    plot_static_2D_trajectories(
-                        [
-                            traj_A_vicinity,
-                            traj_B_vicinity,
-                            traj_group_vicinity,
-                            traj_non_group_vicinity,
-                        ],
-                        boundaries=env.boundaries,
-                        colors=[
-                            "cornflowerblue",
-                            "cornflowerblue",
-                            "lightsteelblue",
-                            "orange",
-                        ],
-                    )
+                    # plot_static_2D_trajectories(
+                    #     [
+                    #         traj_A_vicinity,
+                    #         traj_B_vicinity,
+                    #         traj_group_vicinity,
+                    #         traj_non_group_vicinity,
+                    #     ],
+                    #     boundaries=env.boundaries,
+                    #     colors=[
+                    #         "cornflowerblue",
+                    #         "cornflowerblue",
+                    #         "lightsteelblue",
+                    #         "orange",
+                    #     ],
+                    # )
 
                     n_points_average = 4
                     max_dev_ng = compute_maximum_lateral_deviation_using_vel(

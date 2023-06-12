@@ -86,10 +86,10 @@ if __name__ == "__main__":
                         trajectory2 = np.zeros((len(piece_B), 7))
                         trajectory1[:, 1:3] = piece_A
                         trajectory2[:, 1:3] = piece_B
-                        plot_static_2D_trajectories(
-                            [traj_A, trajectory1],
-                            boundaries=env.boundaries,
-                        )
+                        # plot_static_2D_trajectories(
+                        #     [traj_A, trajectory1],
+                        #     boundaries=env.boundaries,
+                        # )
 
                     lengths["group"]["net"] += [
                         compute_net_displacement(piece)

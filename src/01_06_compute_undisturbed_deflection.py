@@ -273,11 +273,7 @@ if __name__ == "__main__":
                             if segment_length not in deflections["non_group"][measure]:
                                 deflections["non_group"][measure][segment_length] = []
 
-                            deflections["non_group"][measure][segment_length] += [
-                                compute_deflection(piece, measure=measure)
-                                for piece in pieces
-                                if len(piece) >= 3
-                            ]
+                            deflections["non_group"][measure][segment_length] += [compute_deflection(piece, measure=measure) for piece in pieces if len(piece) >= 3]
 
         pickle_save(
             f"../data/pickle/deflection_without_interaction_{env_name_short}.pkl",
