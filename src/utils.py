@@ -8,6 +8,17 @@ from parameters import *
 
 
 def get_pedestrian_thresholds(env_name):
+    """Return the thresholds for the pedestrians
+
+    Arguments:
+    ----------
+        env_name {str} -- name of the environment
+
+    Return
+    ------
+        thresholds_indiv {list} -- list of thresholds
+    """
+
     thresholds_indiv = []
     thresholds_indiv += [
         Threshold("v", min=VEL_MIN, max=VEL_MAX)
@@ -48,6 +59,12 @@ def get_pedestrian_thresholds(env_name):
 
 
 def get_groups_thresholds():
+    """Return the thresholds for the groups
+
+    Return
+    ------
+        group_thresholds {list} -- list of thresholds
+    """
     # threshold on the distance between the group members, max 4 m
     group_thresholds = [
         Threshold("delta", min=GROUP_BREADTH_MIN, max=GROUP_BREADTH_MAX)
@@ -56,6 +73,16 @@ def get_groups_thresholds():
 
 
 def get_all_days(env_name):
+    """Return the days for the environment
+
+    Arguments:
+    ----------
+        env_name {str} -- name of the environment
+
+    Return
+    ------
+        days {list} -- list of days
+    """
     if "atc" in env_name:
         return DAYS_ATC
     elif "diamor" in env_name:
@@ -65,6 +92,16 @@ def get_all_days(env_name):
 
 
 def get_social_values(env_name):
+    """Return the social values for the environment
+    
+    Arguments:
+    ----------
+        env_name {str} -- name of the environment
+        
+    Return
+    ------
+        social_values {list} -- list of social values
+    """
     if "atc" in env_name:
         return "soc_rel", SOCIAL_RELATIONS_EN, [2, 1, 3, 4], COLORS_SOC_REL
     elif "diamor" in env_name:
@@ -79,6 +116,19 @@ def get_social_values(env_name):
 
 
 def get_mean_over_bins(x, y, bin_centers):
+    """Return the mean of y over the bins of x
+    
+    Arguments:
+    ----------
+        x {np.array} -- x values
+        y {np.array} -- y values
+        bin_centers {np.array} -- bin centers
+        
+        Return
+        ------
+        mean_over_bins {list} -- mean of y over the bins of x
+        
+        """
     mean_over_bins = []
     bin_ids = np.digitize(x, bin_centers)
     for k in range(len(bin_centers)):
@@ -89,6 +139,20 @@ def get_mean_over_bins(x, y, bin_centers):
 
 
 def get_mean_std_over_bins(x, y, bin_centers):
+    """Return the mean and std of y over the bins of x
+    
+    Arguments:
+    ----------
+        x {np.array} -- x values
+        y {np.array} -- y values
+        bin_centers {np.array} -- bin centers
+        
+        Return
+        ------
+        mean_over_bins {list} -- mean of y over the bins of x
+        std_over_bins {list} -- std of y over the bins of x
+        
+        """
     mean_over_bins = []
     std_over_bins = []
     bin_ids = np.digitize(x, bin_centers)
@@ -101,6 +165,20 @@ def get_mean_std_over_bins(x, y, bin_centers):
 
 
 def get_mean_std_ste_over_bins(x, y, bin_centers):
+    """Return the mean, std and ste of y over the bins of x
+    
+    Arguments:
+    ----------  
+    x {np.array} -- x values
+    y {np.array} -- y values
+    bin_centers {np.array} -- bin centers
+        
+        Return
+        ------
+        mean_over_bins {list} -- mean of y over the bins of x
+        std_over_bins {list} -- std of y over the bins of x
+        ste_over_bins {list} -- ste of y over the bins of x
+        """
     mean_over_bins = []
     std_over_bins = []
     ste_over_bins = []
@@ -120,6 +198,21 @@ def get_mean_std_ste_over_bins(x, y, bin_centers):
 
 
 def get_mean_std_ste_n_over_bins(x, y, bin_edges):
+    """Return the mean, std, ste and n of y over the bins of x
+    
+    Arguments:
+    ----------
+        x {np.array} -- x values
+        y {np.array} -- y values
+        bin_edges {np.array} -- bin edges
+        
+        Return
+        ------
+        mean_over_bins {list} -- mean of y over the bins of x
+        std_over_bins {list} -- std of y over the bins of x
+        ste_over_bins {list} -- ste of y over the bins of x
+        n_over_bins {list} -- n of y over the bins of x
+        """
     mean_over_bins = []
     std_over_bins = []
     ste_over_bins = []
@@ -159,6 +252,29 @@ def plot_color_map(
     xlim=None,
     ylim=None,
 ):
+    """Plot a color map
+    
+    Arguments:
+    ----------
+        xi {np.array} -- x values
+        yi {np.array} -- y values
+        grid {np.array} -- grid of values
+        xlabel {str} -- x label
+        ylabel {str} -- y label
+        title {str} -- title
+        vmin {float} -- min value for the color map
+        vmax {float} -- max value for the color map
+        save_path {str} -- path to save the figure
+        aspect {str} -- aspect ratio, default is 'auto'
+        cmap {str} -- color map, default is 'inferno'
+        interpolation {str} -- interpolation, default is None
+        ax {matplotlib.axes} -- axes to plot on, default is None
+        fig {matplotlib.figure} -- figure to plot on, default is None
+        show {bool} -- whether to show the figure, default is True
+        xlim {tuple} -- x limits, default is None
+        ylim {tuple} -- y limits, default is None
+
+        """
     if vmin is None:
         vmin = np.min(grid)
     if vmax is None:
@@ -203,6 +319,23 @@ def plot_color_map(
 
 
 def compute_grid_count(x, y, x_min, x_max, n_x, y_min, y_max, n_y):
+    """Compute the count of x, y values in a grid
+    
+    Arguments:
+    ----------
+        x {np.array} -- x values
+        y {np.array} -- y values   
+        x_min {float} -- min x value
+        x_max {float} -- max x value
+        n_x {int} -- number of x bins
+        y_min {float} -- min y value
+        y_max {float} -- max y value
+        n_y {int} -- number of y bins
+        
+        Return
+        ------
+        grid {np.array} -- grid of counts
+        """
     grid = np.zeros((n_x, n_y))
     cell_size_x = (x_max - x_min) / n_x
     cell_size_y = (y_max - y_min) / n_y
@@ -231,6 +364,20 @@ def compute_grid_count(x, y, x_min, x_max, n_x, y_min, y_max, n_y):
 
 
 def get_bins(vmin, vmax, n_bins):
+    """Get bins for a given range and number of bins. A bin is defined by its edges and center.
+    
+    Arguments:
+    ----------
+        vmin {float} -- min value
+        vmax {float} -- max value
+        n_bins {int} -- number of bins
+        
+        Return
+        ------
+        bin_size {float} -- size of the bins
+        pdf_edges {np.array} -- edges of the bins
+        bin_centers {np.array} -- centers of the bins
+        """
     bin_size = (vmax - vmin) / n_bins
     pdf_edges = np.linspace(vmin, vmax, n_bins + 1)
     bin_centers = 0.5 * (pdf_edges[0:-1] + pdf_edges[1:])
@@ -238,6 +385,27 @@ def get_bins(vmin, vmax, n_bins):
 
 
 def get_grid(min_x, max_x, n_bin_x, min_y, max_y, n_bin_y, n_channels=1):
+    """Get a grid. A grid is a 3D array with the first dimension being the channel.
+    
+    Arguments:
+    ----------
+        min_x {float} -- min x value
+        max_x {float} -- max x value
+        n_bin_x {int} -- number of x bins
+        min_y {float} -- min y value
+        max_y {float} -- max y value
+        n_bin_y {int} -- number of y bins
+        n_channels {int} -- number of channels, default is 1
+        
+        Return
+        ------
+        grid {np.array} -- grid
+        xi {np.array} -- x bin edges
+        yi {np.array} -- y bin edges
+        cell_size_x {float} -- size of the x bins
+        cell_size_y {float} -- size of the y bins
+        
+        """
     grid = np.zeros((n_channels, n_bin_x, n_bin_y))
     xi = np.linspace(min_x, max_x, n_bin_x + 1)
     yi = np.linspace(min_y, max_y, n_bin_y + 1)
@@ -257,6 +425,25 @@ def update_grid(
     cell_size_y,
     channel=0,
 ):
+    """Update a grid with new data
+    
+    Arguments:
+    ----------
+        grid {np.array} -- grid
+        data {np.array} -- data to add to the grid
+        min_x {float} -- min x value
+        n_bin_x {int} -- number of x bins
+        cell_size_x {float} -- size of the x bins
+        min_y {float} -- min y value
+        n_bin_y {int} -- number of y bins
+        cell_size_y {float} -- size of the y bins
+        channel {int} -- channel to update, default is 0
+        
+        Return
+        ------
+        grid {np.array} -- grid
+        
+        """
     cell_x_index = np.floor((data[:, 0] - min_x) / cell_size_x).astype("int")
     cell_y_index = np.floor((data[:, 1] - min_y) / cell_size_y).astype("int")
 

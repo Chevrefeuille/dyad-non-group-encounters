@@ -91,7 +91,7 @@ if __name__ == "__main__":
                 #     # plt.plot(phase)
                 #     # plt.ylim([-np.pi, np.pi])
                 #     # plt.show()
-                pedestrian.plot_2D_trajectory(animate=True)
+                #pedestrian.plot_2D_trajectory(animate=True)
 
 
         grid_vel[grid_count > 0, :] /= grid_count[grid_count > 0, None] # averaging

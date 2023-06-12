@@ -81,12 +81,12 @@ if __name__ == "__main__":
             trajectory[:-1, 6] = [vel[1] for vel in v]
 
             background_path = f"../data/images/velocity_field_{env_name_short}.png"
-            plot_animated_2D_trajectory(
-                trajectory,
-                boundaries=env.boundaries,
-                colors=len(trajectory) * ["black"],
-                vel=True,
-                background=background_path,
-            )
+            # plot_animated_2D_trajectory(
+            #     trajectory,
+            #     boundaries=env.boundaries,
+            #     colors=len(trajectory) * ["black"],
+            #     vel=True,
+            #     background=background_path,
+            # )
         # middle_cell_x = current_cell_x * VEL_FIELD_CELL_SIZE + VEL_FIELD_CELL_SIZE / 2
         # middle_cell_y = current_cell_x * VEL_FIELD_CELL_SIZE + VEL_FIELD_CELL_SIZE / 2

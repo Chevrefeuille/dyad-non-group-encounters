@@ -22,7 +22,7 @@ if __name__ == "__main__":
         env_name_short = env_name.split(":")[0]
 
         days = get_all_days(env_name)
-        soc_binding_type, soc_binding_names, soc_binding_values =  get_social_values(env_name)
+        soc_binding_type, soc_binding_names, soc_binding_values, soc_binding_color =  get_social_values(env_name)
 
         encounters = pickle_load(f"../data/pickle/opposite_encounters_{env_name_short}.pkl")
         pair_distribution_without_interaction = pickle_load(

@@ -108,7 +108,7 @@ if __name__ == "__main__":
                     trajectory = np.zeros((len(spline_pos), 7))
                     trajectory[:, 1:3] = spline_pos
 
-                    plot_static_2D_trajectories(
-                        [trajectory, traj_group],
-                        boundaries=env.boundaries,
-                    )
+                    # plot_static_2D_trajectories(
+                    #     [trajectory, traj_group],
+                    #     boundaries=env.boundaries,
+                    # )

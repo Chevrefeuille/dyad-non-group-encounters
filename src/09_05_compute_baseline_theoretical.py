@@ -80,12 +80,12 @@ if __name__ == "__main__":
 
                 # plot_static_2D_trajectory(trajectory, boundaries=env.boundaries)
 
-                # for measure in DEFLECTION_MEASURES:
-                #     if measure not in deflections:
-                #         deflections[measure] = []
+                for measure in DEFLECTION_MEASURES:
+                    if measure not in deflections:
+                        deflections[measure] = []
 
-                #     deflections[measure] += [compute_deflection(spline_pos, measure)]
-                #     print(deflections[measure][-1])
+                    deflections[measure] += [compute_deflection(spline_pos, measure)]
+                    print(deflections[measure][-1])
 
         pickle_save(
             f"../data/pickle/deflection_theoretical_{env_name_short}.pkl",

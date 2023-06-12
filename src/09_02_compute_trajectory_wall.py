@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
         XMIN, XMAX, YMIN, YMAX = env.get_boundaries()
         days = get_all_days(env_name)
-        soc_binding_type, soc_binding_names, soc_binding_values = get_social_values(
+        soc_binding_type, soc_binding_names, soc_binding_values, get_binding_colors = get_social_values(
             env_name
         )
 
@@ -141,22 +141,22 @@ if __name__ == "__main__":
                     #     np.ceil((last_pos_group[1] - ymin) / VEL_FIELD_CELL_SIZE)
                     # )
 
-                    walls[walls > 0] = -1
-                    background = plt.imread(wall_img)
-                    plt.imshow(background, extent=[XMIN, XMAX, YMIN, YMAX])
-                    print(traj_group)
-                    plt.scatter(traj_group[:, 1], traj_group[:, 2], color="red", s=4)
+                    # walls[walls > 0] = -1
+                    # background = plt.imread(wall_img)
+                    # plt.imshow(background, extent=[XMIN, XMAX, YMIN, YMAX])
+                    # print(traj_group)
+                    # plt.scatter(traj_group[:, 1], traj_group[:, 2], color="red", s=4)
+                    # # plt.scatter(
+                    # #     walls_coordinates[:, 0] * VEL_FIELD_CELL_SIZE + xmin,
+                    # #     walls_coordinates[:, 1] * VEL_FIELD_CELL_SIZE + ymin,
+                    # #     color="blue",
+                    # # )
                     # plt.scatter(
-                    #     walls_coordinates[:, 0] * VEL_FIELD_CELL_SIZE + xmin,
-                    #     walls_coordinates[:, 1] * VEL_FIELD_CELL_SIZE + ymin,
-                    #     color="blue",
+                    #     wall_traj_group[:, 0], wall_traj_group[:, 1], color="blue", s=4
                     # )
-                    plt.scatter(
-                        wall_traj_group[:, 0], wall_traj_group[:, 1], color="blue", s=4
-                    )
-                    plt.xlim([XMIN, XMAX])
-                    plt.ylim([YMIN, YMAX])
-                    plt.show()
+                    # plt.xlim([XMIN, XMAX])
+                    # plt.ylim([YMIN, YMAX])
+                    # plt.show()
 
                     # path_finder = tcod.path.Pathfinder(flow_graph)
 
