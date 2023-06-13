@@ -15,6 +15,11 @@ from parameters import (
     TURNING_DISTRIBUTION_MIN,
 )
 
+""" The goal of this script is to compute the turning angles of the pedestrians in the corridor environment. 
+The turning angles are computed as the angle between the velocity vector of the pedestrian and the vector between the position of the pedestrian 
+and the position of the pedestrian at the next time step.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc", "diamor"]:

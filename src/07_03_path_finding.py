@@ -12,6 +12,8 @@ import tcod
 from utils import *
 
 
+
+
 directions = [
     np.array([0, 1]),  # up
     np.array([0, -1]),  # down

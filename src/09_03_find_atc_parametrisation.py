@@ -7,6 +7,10 @@ import numpy as np
 from scipy import interpolate
 from scipy.spatial.distance import cdist
 
+"""The goal of this script is to find the parametrisation of the ATC corridor.
+The parametrisation is the distance to the closest wall.
+"""
+
 if __name__ == "__main__":
 
     atc = Environment(

@@ -11,6 +11,7 @@ import numpy as np
 import tcod
 from tqdm import tqdm
 
+
 directions = [
     np.array([0, 1]),  # up
     np.array([0, -1]),  # down

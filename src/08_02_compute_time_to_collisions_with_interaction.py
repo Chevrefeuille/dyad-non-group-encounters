@@ -11,6 +11,9 @@ from tqdm import tqdm
 
 from utils import get_all_days, get_groups_thresholds, get_pedestrian_thresholds, get_social_values
 
+"""The goal of this script is to compute the time to collision for all the encounters between two pedestrians 
+in opposite direction."""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

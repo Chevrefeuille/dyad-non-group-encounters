@@ -9,6 +9,10 @@ from parameters import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+""" The goal of this script is to find intrusions of non-group pedestrians into the groups in the corridor environment.
+    The intrusions are defined as the non-group pedestrians that are closer than 4 m to the group members.
+    """
+
 
 if __name__ == "__main__":
 

@@ -9,6 +9,9 @@ import numpy as np
 from utils import *
 from scipy.spatial.distance import cdist
 
+"""The goal of this script is to compute the trajectory of the pedestrian in the wall field.
+"""
+
 
 def find_wall_trajectory(position, walls_cells):
 

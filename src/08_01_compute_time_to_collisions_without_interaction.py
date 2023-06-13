@@ -10,6 +10,9 @@ from tqdm import tqdm
 
 from parameters import *
 
+"""The goal of this script is to compute the time to collision distribution for pedestrians without interaction.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

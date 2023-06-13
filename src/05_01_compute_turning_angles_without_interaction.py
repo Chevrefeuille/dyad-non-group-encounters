@@ -9,6 +9,8 @@ from parameters import *
 
 from tqdm import tqdm
 
+""" The goal of this script is to compute the turning angles of the pedestrians without interaction in the corridor environment."""
+
 if __name__ == "__main__":
 
     for env_name in ["atc", "diamor"]:

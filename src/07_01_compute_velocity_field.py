@@ -10,6 +10,12 @@ import cv2
 
 from utils import *
 
+""" The goal of this script is to compute the velocity field of the pedestrians in the corridor environment.
+    The velocity field is computed by dividing the space in cells of size VEL_FIELD_CELL_SIZE and computing 
+    the average velocity of the pedestrians in each cell.
+    The velocity field is computed for each day and for each group size.
+    """
+
 
 def compute_instantaneous_direction(phase):
     if phase >= np.pi / 4 and phase < 3 * np.pi / 4:

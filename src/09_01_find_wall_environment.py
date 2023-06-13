@@ -10,6 +10,10 @@ import cv2
 
 from utils import *
 
+"""The goal of this script is to find the walls of the environment.
+We will use the occupancy grid to do so.
+"""
+
 
 if __name__ == "__main__":
 

@@ -11,6 +11,8 @@ import random as rnd
 
 from utils import *
 
+""" The goal of this script is to simulate the trajectory of a particle in the velocity field of the corridor environment."""
+
 
 if __name__ == "__main__":
 
