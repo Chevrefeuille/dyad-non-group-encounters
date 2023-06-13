@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 
 import scipy.stats as stats
 
+""" The goal of this script is to print a table with the mean and standard deviation of the deflection angle for each social value.
+    The deflection angle is the angle between the direction of the group and the direction of the third pedestrian.
+    The deflection angle is computed at the time of the closest encounter between the group and the third pedestrian.
+    """
 
 if __name__ == "__main__":
 

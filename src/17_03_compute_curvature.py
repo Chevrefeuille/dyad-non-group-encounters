@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
             t_f = fftfreq(N, d=0.1)[: N // 2]
 
-            print(t_f)
+            #print(t_f)
 
             smoothed_trajectory = np.vstack(
                 (
@@ -77,33 +77,36 @@ if __name__ == "__main__":
 
             curvature = compute_curvature(smoothed_trajectory)
 
-            fig, axes = plt.subplots(5, 1)
-            # plot_static_2D_trajectory(trajectory, ax=axes[0], show=False,boundaries=env.boundaries)
-            axes[0].scatter(trajectory[:-1, 1] / 1000, trajectory[:-1, 2] / 1000, s=3)
-            # axes[0].scatter(
-            #     smoothed_trajectory[1:-1, 0],
-            #     smoothed_trajectory[1:-1, 1],
-            #     s=1,
-            #     c=np.abs(curvature),
-            #     vmin=0,
-            #     vmax=1,
+            # fig, axes = plt.subplots(5, 1)
+            # # plot_static_2D_trajectory(trajectory, ax=axes[0], show=False,boundaries=env.boundaries)
+            # axes[0].scatter(trajectory[:-1, 1] / 1000, trajectory[:-1, 2] / 1000, s=3)
+            # # axes[0].scatter(
+            # #     smoothed_trajectory[1:-1, 0],
+            # #     smoothed_trajectory[1:-1, 1],
+            # #     s=1,
+            # #     c=np.abs(curvature),
+            # #     vmin=0,
+            # #     vmax=1,
+            # # )
+
+
+
+            # axes[0].set_aspect("equal")
+            # axes[0].set_xlim(XMIN / 1000, XMAX / 1000)
+            # axes[0].set_ylim(YMIN / 1000, YMAX / 1000)
+
+            # axes[1].plot(np.abs(curvature))
+            # axes[1].set_ylim(-3, 3)
+            # axes[2].plot(
+            #     t_f[1 : N // 2], 2.0 / N * np.abs(x_f[1 : N // 2]), "-b", label="x"
             # )
-            axes[0].set_aspect("equal")
-            axes[0].set_xlim(XMIN / 1000, XMAX / 1000)
-            axes[0].set_ylim(YMIN / 1000, YMAX / 1000)
+            # axes[2].plot(
+            #     t_f[1 : N // 2], 2.0 / N * np.abs(y_f[1 : N // 2]), "-r", label="y"
+            # )
+            # axes[2].legend()
+            # axes[2].grid()
 
-            axes[1].plot(np.abs(curvature))
-            axes[1].set_ylim(-3, 3)
-            axes[2].plot(
-                t_f[1 : N // 2], 2.0 / N * np.abs(x_f[1 : N // 2]), "-b", label="x"
-            )
-            axes[2].plot(
-                t_f[1 : N // 2], 2.0 / N * np.abs(y_f[1 : N // 2]), "-r", label="y"
-            )
-            axes[2].legend()
-            axes[2].grid()
+            # axes[3].plot(t, x)
+            # axes[4].plot(t, y)
 
-            axes[3].plot(t, x)
-            axes[4].plot(t, y)
-
-            plt.show()
+            # #plt.show()

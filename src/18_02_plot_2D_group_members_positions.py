@@ -78,22 +78,22 @@ if __name__ == "__main__":
 
             grid /= np.max(grid)
 
-            plot_color_map(
-                xi,
-                yi,
-                grid,
-                xlabel="x (m)",
-                ylabel="y (m)",
-                vmin=None,
-                title=soc_binding_names[v],
-                # vmax=None,
-                # interpolation=None,
-                # show=True,
-                cmap="jet",
-                # xlim=None,
-                # ylim=None,
-                save_path=f"../data/figures/group_structure/{soc_binding_names[v]}_bigger_4.pdf",
-            )
+            # plot_color_map(
+            #     xi,
+            #     yi,
+            #     grid,
+            #     xlabel="x (m)",
+            #     ylabel="y (m)",
+            #     vmin=None,
+            #     title=soc_binding_names[v],
+            #     # vmax=None,
+            #     # interpolation=None,
+            #     # show=True,
+            #     cmap="jet",
+            #     # xlim=None,
+            #     # ylim=None,
+            #     save_path=f"../data/figures/group_structure/{soc_binding_names[v]}_bigger_4.pdf",
+            # )
 
             # fig, ax = plt.subplots()
             # ax.scatter(xs, ys)

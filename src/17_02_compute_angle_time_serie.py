@@ -68,26 +68,28 @@ if __name__ == "__main__":
             # bin_ids = np.digitize(angles, bin_edges)
             # quantized_angles = bin_centers[bin_ids - 1]
 
-            fig, axes = plt.subplots(3, 1)
-            # plot_static_2D_trajectory(trajectory, ax=axes[0], show=False,boundaries=env.boundaries)
-            axes[0].scatter(trajectory[:-1,1]/1000,trajectory[:-1,2]/1000, c=butter_angles, vmin=-180, vmax=180, s=3)
-            axes[0].set_aspect("equal")
-            axes[0].set_xlim(XMIN / 1000, XMAX / 1000)
-            axes[0].set_ylim(YMIN/1000, YMAX/1000)
+            
+            
+            # fig, axes = plt.subplots(3, 1)
+            # # plot_static_2D_trajectory(trajectory, ax=axes[0], show=False,boundaries=env.boundaries)
+            # axes[0].scatter(trajectory[:-1,1]/1000,trajectory[:-1,2]/1000, c=butter_angles, vmin=-180, vmax=180, s=3)
+            # axes[0].set_aspect("equal")
+            # axes[0].set_xlim(XMIN / 1000, XMAX / 1000)
+            # axes[0].set_ylim(YMIN/1000, YMAX/1000)
 
-            t = np.arange(len(angles))
-            axes[1].plot(angles, label="raw")
-            # axes[1].plot(quantized_angles, label="raw")
-            axes[1].plot(butter_angles, label="butter filter")
-            axes[1].plot(moving_avg_angles, label="moving average")
-            axes[1].set_ylim(-180, 180)
-            axes[1].legend()
+            # t = np.arange(len(angles))
+            # axes[1].plot(angles, label="raw")
+            # # axes[1].plot(quantized_angles, label="raw")
+            # axes[1].plot(butter_angles, label="butter filter")
+            # axes[1].plot(moving_avg_angles, label="moving average")
+            # axes[1].set_ylim(-180, 180)
+            # axes[1].legend()
 
-            axes[2].plot(der_butter_angles)
-            axes[2].set_ylim(-20, 20)
+            # axes[2].plot(der_butter_angles)
+            # axes[2].set_ylim(-20, 20)
 
             
-            plt.show()
+            # plt.show()
 
 
 

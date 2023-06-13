@@ -9,6 +9,10 @@ from parameters import *
 
 from tqdm import tqdm
 
+""" The goal of this script is to compute the deflection of pedestrians in the corridor environment without interaction with other pedestrians
+It means that we compute the deflection of pedestrians when they are alone in the corridor 
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

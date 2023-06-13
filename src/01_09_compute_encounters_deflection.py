@@ -17,6 +17,12 @@ from utils import (
     get_social_values,
 )
 
+""" The goal of this script is to compute the deflection angle between two pedestrians in a group and a third pedestrian.
+    The deflection angle is the angle between the direction of the group and the direction of the third pedestrian.
+    The deflection angle is computed at the time of the closest encounter between the group and the third pedestrian.
+    
+    """
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

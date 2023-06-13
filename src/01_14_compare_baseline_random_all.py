@@ -5,6 +5,9 @@ from utils import *
 import matplotlib.pyplot as plt
 import pandas as pd
 
+""" The goal of this script is to compare the deflection with and without interaction for the random trajectories. 
+It will plot the mean and std of the deflection for the random trajectories. std is computed over the different random trajectories"
+std represent the variability of the deflection for the random trajectories. """
 
 if __name__ == "__main__":
 

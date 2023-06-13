@@ -4,6 +4,11 @@ from pedestrians_social_binding.constants import *
 from utils import *
 import matplotlib.pyplot as plt
 
+""" The goal of this script is to plot the deflection with and without interaction for the random trajectories.
+    The deflection angle is the angle between the direction of the group and the direction of the third pedestrian.
+    The deflection angle is computed at the time of the closest encounter between the group and the third pedestrian.
+    
+    """
 
 if __name__ == "__main__":
 

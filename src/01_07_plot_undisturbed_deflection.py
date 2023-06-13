@@ -4,6 +4,9 @@ from parameters import *
 from utils import *
 import numpy as np
 
+""" The goal of this script is to plot the deflection of pedestrians in the corridor environment
+    """
+
 LIMITS = {
     "straightness_index": [0.975, 1],
     "sinuosity": [0, 0.0062],
