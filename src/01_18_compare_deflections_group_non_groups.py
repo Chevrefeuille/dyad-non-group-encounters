@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 import scipy.stats as stats
 
+""" The goal of this script is to print a table with the mean and standard deviation of the deflection angle for each social value.
+"""
 
 if __name__ == "__main__":
 

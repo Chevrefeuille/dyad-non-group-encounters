@@ -4,6 +4,8 @@ from pedestrians_social_binding.constants import *
 from utils import *
 import matplotlib.pyplot as plt
 
+""" The goal of this script is to plot the deflection with and without interaction for the random trajectories.
+"""
 
 if __name__ == "__main__":
 

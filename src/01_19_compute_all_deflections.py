@@ -9,6 +9,13 @@ from parameters import *
 
 from tqdm import tqdm
 
+""" The goal of this script is to compute the deflection and the lenghts for the groups. The data will be stored in two dictionary
+in the file data/deflections/deflections_{env_name}.pkl . The dictionary will have the following structure:
+    - deflections[day][group_id] = [deflection_1, deflection_2, ...]
+    - lengths[day][group_id] = [length_1, length_2, ...]
+The second dictionnary will have the same structure but with the lengths instead of the deflections.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

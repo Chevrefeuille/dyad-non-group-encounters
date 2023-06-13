@@ -9,6 +9,13 @@ from parameters import *
 
 from tqdm import tqdm
 
+""" The goal of this script is to compute all the deflections for the encounters between pedestrians in the corridor environment.
+The data is saved in a pickle file named "deflections_{env_name_short}.pkl" in the data/pickle folder. 
+The dictionary is of the form:
+    - deflections[soc_binding][measure] = [deflection_1, deflection_2, ...]
+    - lengths[soc_binding][net/gross] = [length_1, length_2, ...]
+    """
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:
