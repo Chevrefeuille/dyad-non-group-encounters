@@ -138,54 +138,54 @@ if __name__ == "__main__":
 
                         # indx_closest = np.argmin(d)
 
-                        if max_angle > 110:
+                        # if max_angle > 110:
 
-                            print(soc_binding_names[soc_binding])
+                            # print(soc_binding_names[soc_binding])
 
-                            fig, ax = plt.subplots()
+                            # fig, ax = plt.subplots()
 
-                            plot_static_2D_trajectories(
-                                [
-                                    group_members[0].get_trajectory(),
-                                    group_members[1].get_trajectory(),
-                                    non_group.get_trajectory(),
-                                ],
-                                boundaries=env.boundaries,
-                                labels=["group-A", "group-B", "non-group"],
-                                ax=ax,
-                                show=False,
-                            )
+                            # plot_static_2D_trajectories(
+                            #     [
+                            #         group_members[0].get_trajectory(),
+                            #         group_members[1].get_trajectory(),
+                            #         non_group.get_trajectory(),
+                            #     ],
+                            #     boundaries=env.boundaries,
+                            #     labels=["group-A", "group-B", "non-group"],
+                            #     ax=ax,
+                            #     show=False,
+                            # )
 
-                            ax.scatter(
-                                [
-                                    traj_A[indx_max, 1] / 1000,
-                                    traj_B[indx_max, 1] / 1000,
-                                    traj_non_group[indx_max, 1] / 1000,
-                                ],
-                                [
-                                    traj_A[indx_max, 2] / 1000,
-                                    traj_B[indx_max, 2] / 1000,
-                                    traj_non_group[indx_max, 2] / 1000,
-                                ],
-                                c="red",
-                                s=15,
-                            )
+                            # ax.scatter(
+                            #     [
+                            #         traj_A[indx_max, 1] / 1000,
+                            #         traj_B[indx_max, 1] / 1000,
+                            #         traj_non_group[indx_max, 1] / 1000,
+                            #     ],
+                            #     [
+                            #         traj_A[indx_max, 2] / 1000,
+                            #         traj_B[indx_max, 2] / 1000,
+                            #         traj_non_group[indx_max, 2] / 1000,
+                            #     ],
+                            #     c="red",
+                            #     s=15,
+                            # )
 
-                            ax.plot(
-                                [
-                                    traj_B[indx_max, 1] / 1000,
-                                    traj_non_group[indx_max, 1] / 1000,
-                                    traj_A[indx_max, 1] / 1000,
-                                ],
-                                [
-                                    traj_B[indx_max, 2] / 1000,
-                                    traj_non_group[indx_max, 2] / 1000,
-                                    traj_A[indx_max, 2] / 1000,
-                                ],
-                                c="red",
-                            )
+                            # ax.plot(
+                            #     [
+                            #         traj_B[indx_max, 1] / 1000,
+                            #         traj_non_group[indx_max, 1] / 1000,
+                            #         traj_A[indx_max, 1] / 1000,
+                            #     ],
+                            #     [
+                            #         traj_B[indx_max, 2] / 1000,
+                            #         traj_non_group[indx_max, 2] / 1000,
+                            #         traj_A[indx_max, 2] / 1000,
+                            #     ],
+                            #     c="red",
+                            # )
 
-                            plt.show()
+                            # plt.show()
 
         for soc_binding in soc_binding_values:
             observed_minimum_distances[soc_binding] = np.array(

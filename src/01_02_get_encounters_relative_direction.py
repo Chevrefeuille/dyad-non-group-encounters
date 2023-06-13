@@ -5,6 +5,14 @@ from pedestrians_social_binding.threshold import Threshold
 from pedestrians_social_binding.plot_utils import *
 from pedestrians_social_binding.trajectory_utils import *
 
+"""The goal of this script is to compute the relative direction of the non-group pedestrian. The data follow the structure of a dictionnary and
+is saved in a pickle file named data/pickle/relative_directions_{env_name}.pkl . The dictionnary has the following structure:
+    - relative_directions[day][group_id][non_group_id] = relative_direction 
+    where relative_direction is a list of the relative directions of the non-group pedestrian with respect to the group members.
+    The relative directions are computed as follows:
+        - relative_direction = (angle, distance) where angle is the angle between the non-group pedestrian and the group members and distance
+        is the distance between the non-group pedestrian and the group members. 
+"""
 
 if __name__ == "__main__":
 

@@ -7,6 +7,10 @@ from utils import *
 
 from tqdm import tqdm
 
+"""The goal of this script is to get the encounters between pedestrians in the corridor environment. The data will be stored in a dictionary 
+in the file data/encounters/encounters_{env_name}.pkl . The dictionary will have the following structure:
+    - encounters[day][group_id] = [encounter_1, encounter_2, ...]"""
+
 if __name__ == "__main__":
     for env_name in ["atc:corridor", "diamor:corridor"]:
         env = Environment(

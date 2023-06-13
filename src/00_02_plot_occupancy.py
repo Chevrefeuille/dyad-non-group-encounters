@@ -5,6 +5,9 @@ from pedestrians_social_binding.environment import Environment
 from parameters import *
 from utils import *
 
+""" The goal of this script is to plot the occupancy of the corridor (diamor & atc) environment. The occupancy is computed 
+by counting the number of pedestrians in each cell of a grid."""
+
 
 #plt.style.use("science")
 

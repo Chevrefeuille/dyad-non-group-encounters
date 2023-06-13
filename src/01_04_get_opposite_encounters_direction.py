@@ -9,6 +9,14 @@ from parameters import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+""" The goal of this script is to count the number of valid encounters between pedestrians in the corridor environment.Valid encounter must 
+satisfy the following conditions:
+    - the pedestrians are close enough to each other
+    - the pedestrians are not in a group
+    - the pedestrians are walking in opposite directions
+    The data will be stored in a dictionary in the file data/encounters/encounters_{env_name}.pkl . The dictionary will have the following structure:
+    - encounters[day][group_id] = [encounter_1, encounter_2, ...]
+    """
 
 if __name__ == "__main__":
 

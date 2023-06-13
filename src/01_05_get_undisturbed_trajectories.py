@@ -9,6 +9,12 @@ from utils import *
 
 from tqdm import tqdm
 
+""" The goal of this script is to get the undisturbed trajectories of the pedestrians in the corridor environment. Undisturbed trajectories 
+are trajectories where the pedestrian is not in a group and is not close to another pedestrian.
+The data will be stored in a dictionary in the file data/undisturbed_trajectories/undisturbed_trajectories_{env_name}.pkl .
+The dictionary will have the following structure:
+    - undisturbed_trajectories[day][group_id] = [undisturbed_trajectory_1, undisturbed_trajectory_2, ...]"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc", "diamor"]:

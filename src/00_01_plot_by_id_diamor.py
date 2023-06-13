@@ -6,6 +6,8 @@ from pedestrians_social_binding.constants import *
 
 from utils import *
 
+""" The goal of this script is to plot the trajectories of the pedestrians in the corridor (diamor) environment.  """
+
 if __name__ == "__main__":
 
     group_ids = [

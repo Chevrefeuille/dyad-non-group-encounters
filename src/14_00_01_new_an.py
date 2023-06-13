@@ -119,16 +119,16 @@ if __name__ == "__main__":
 
                     # angles = np.abs(np.degrees(angles))
 
-                    if len(traj_non_group_in_vicinity) > 2 and np.min(d) < 2000:
+                    # if len(traj_non_group_in_vicinity) > 2 and np.min(d) < 2000:
 
-                        plot_animated_2D_trajectories(
-                            [
-                                traj_non_group_in_vicinity,
-                                traj_other_non_group_in_vicinity,
-                            ],
-                        )
+                    #     plot_animated_2D_trajectories(
+                    #         [
+                    #             traj_non_group_in_vicinity,
+                    #             traj_other_non_group_in_vicinity,
+                    #         ],
+                    #     )
 
-                        fig, ax = plt.subplots()
-                        ax.plot(d_inv)
-                        ax.plot(d_v)
-                        ax.set_ylim([0, 4])
+                    #     fig, ax = plt.subplots()
+                    #     ax.plot(d_inv)
+                    #     ax.plot(d_v)
+                    #     ax.set_ylim([0, 4])

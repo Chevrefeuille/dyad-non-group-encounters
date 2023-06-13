@@ -16,6 +16,12 @@ from utils import (
     get_social_values,
 )
 
+""" The goal of this script is to count the number of valid encounters between pedestrians in the corridor environment.Valid encounter means 
+that the pedestrians are close enough to each other and that they are not in a group. The data will be stored in a dictionary
+in the file data/encounters/encounters_{env_name}.pkl . The dictionary will have the following structure:
+    - encounters[day][group_id] = [encounter_1, encounter_2, ...]
+    """
+
 if __name__ == "__main__":
     for env_name in ["atc:corridor", "diamor:corridor"]:
         # print(f"- {env_name}")

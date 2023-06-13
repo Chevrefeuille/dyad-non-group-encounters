@@ -10,6 +10,16 @@ from parameters import *
 
 from tqdm import tqdm
 
+"""The goal of this script is to compute the deflection of the pedestrians in the corridor environment. 
+The deflection is the angle between the direction of the pedestrian and the direction of the group. The deflection for non_group_id is
+the angle between the direction of the pedestrian and the direction of the closest pedestrian.
+The data will be stored in a dictionary in the file data/deflection/deflection_{env_name}.pkl .
+The dictionary will have the following structure:
+    - deflection[day][group_id] = [deflection_1, deflection_2, ...]
+    - deflection[day][group_members_id] = [deflection_1, deflection_2, ...]
+    - deflection[day][non_group_id] = [deflection_1, deflection_2, ...]
+    """
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

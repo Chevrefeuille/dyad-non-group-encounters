@@ -111,15 +111,15 @@ if __name__ == "__main__":
                         traj_non_group_aligned
                     ] = align_trajectories_at_origin(traj_group, [traj_non_group])
 
-                    plot_static_2D_trajectories(
-                        [traj_group_aligned, traj_non_group_aligned],
-                        boundaries={
-                            "xmin": -8000,
-                            "xmax": 8000,
-                            "ymin": -8000,
-                            "ymax": 8000,
-                        },
-                    )
+                    # plot_static_2D_trajectories(
+                    #     [traj_group_aligned, traj_non_group_aligned],
+                    #     boundaries={
+                    #         "xmin": -8000,
+                    #         "xmax": 8000,
+                    #         "ymin": -8000,
+                    #         "ymax": 8000,
+                    #     },
+                    # )
 
         #             velocity = traj_non_group_aligned[:, 5:7]
         #             velocity_norm = np.linalg.norm(velocity, axis=1)
