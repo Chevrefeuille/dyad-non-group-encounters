@@ -12,6 +12,10 @@ from tqdm import tqdm
 
 from parameters import *
 
+"""The goal of this script is to compute the distribution of the aligned trajectories of two pedestrians without interaction.
+The data is saved in a pickle file.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

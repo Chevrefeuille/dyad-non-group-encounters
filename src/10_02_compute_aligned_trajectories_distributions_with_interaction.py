@@ -8,6 +8,11 @@ import numpy as np
 
 from utils import *
 
+"""The goal of this script is to compute the distribution of the angle theta between the velocity of the two pedestrians
+and the vector joining the two pedestrians.
+The data is saved in a pickle file.
+The dictionary will have the following structure:
+    - """
 
 if __name__ == "__main__":
 

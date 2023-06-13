@@ -11,6 +11,10 @@ import numpy as np
 from tqdm import tqdm
 from scipy.spatial.distance import cdist
 
+""" The goal of this script is to compute the theoretical trajectory of a group.
+The theoretical trajectory is the trajectory of the group if the group members were not interacting with each other.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor"]:

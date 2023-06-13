@@ -10,6 +10,7 @@ from utils import *
 from scipy.spatial.distance import cdist
 
 """The goal of this script is to compute the trajectory of the pedestrian in the wall field.
+The wall field is computed by the path finding algorithm, and is the distance to the closest wall.
 """
 
 

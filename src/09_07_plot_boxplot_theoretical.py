@@ -4,6 +4,9 @@ from pedestrians_social_binding.constants import *
 from utils import *
 import matplotlib.pyplot as plt
 
+""" The goal of this script is to plot the distribution of time to collisions for different social bindings.
+    The distribution is computed for each social binding and then plotted on the same graph.
+    """
 
 if __name__ == "__main__":
 
