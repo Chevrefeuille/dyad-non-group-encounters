@@ -9,6 +9,10 @@ from parameters import *
 
 from tqdm import tqdm
 
+""" The goal of this script is to compute the relative orientation of the groups in the corridor environment. 
+The relative orientation is the angle between the two pedestrians in the group. 
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc", "diamor"]:

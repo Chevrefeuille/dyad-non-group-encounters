@@ -3,6 +3,9 @@ from pedestrians_social_binding.constants import *
 
 import matplotlib.pyplot as plt
 
+""" The goal of this script is to plot the pair distribution of the encounters between pedestrians in the corridor environment.
+"""
+
 
 if __name__ == "__main__":
 

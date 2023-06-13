@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 import scipy.stats as stats
 
+""" The goal of this script is to plot the deflections of the pedestrians considaering the social binding.
+"""
 
 if __name__ == "__main__":
 
@@ -52,7 +54,7 @@ if __name__ == "__main__":
             fig.savefig(
                 f"../data/figures/deflection/all/{env_name_short}_distribution_{measure}.png"
             )
-            # plt.show()
+            plt.show()
             plt.close()
 
         for measure in DEFLECTION_MEASURES:

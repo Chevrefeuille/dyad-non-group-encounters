@@ -9,6 +9,11 @@ from parameters import *
 
 from tqdm import tqdm
 
+""" The goal of this script is to compute the breadths and depths of the groups in the corridor environment considering only the 
+undisturbed times.
+The undisturbed times is time when the group is not disturbed by other pedestrians.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc", "diamor"]:

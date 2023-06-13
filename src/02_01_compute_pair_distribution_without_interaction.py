@@ -12,6 +12,10 @@ from tqdm import tqdm
 
 from parameters import *
 
+""" The goal of this script is to compute the pair distribution function for the pedestrians in the corridor environment.
+the pair distribution is the probability of finding two pedestrians at a distance d.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

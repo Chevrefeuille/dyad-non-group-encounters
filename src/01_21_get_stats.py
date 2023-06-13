@@ -15,8 +15,8 @@ from utils import (
     get_social_values,
 )
 
-""" The goal of this script is to count the number of valid encounters between pedestrians in the corridor environment.Valid encounter means
-that the pedestrians are close enough to each other and that they are not in a group. The data will be stored in a dictionary"""
+""" The goal of this script is print statistics about the encounters between pedestrians in the corridor environment. 
+"""
 
 if __name__ == "__main__":
 

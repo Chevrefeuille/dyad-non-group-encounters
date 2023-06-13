@@ -9,6 +9,10 @@ from utils import *
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+""" The goal of this script is to compute the distribution of the encounters between pedestrians in the corridor environment considering
+    the social relations between them.
+    """
+
 if __name__ == "__main__":
 
     for env_name in ["atc", "diamor"]:

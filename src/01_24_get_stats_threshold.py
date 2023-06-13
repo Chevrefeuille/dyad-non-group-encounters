@@ -16,6 +16,9 @@ from utils import (
     get_social_values,
 )
 
+""" The goal of this script is to see ho the number of encounters between pedestrians in the corridor environment changes with the thresholds.
+"""
+
 if __name__ == "__main__":
 
     for env_name in ["atc:corridor", "diamor:corridor"]:

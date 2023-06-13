@@ -5,6 +5,8 @@ from parameters import *
 import numpy as np
 import matplotlib.pyplot as plt
 
+""" The goal of this script is to print the table of the size distributions of the groups in the corridor environment considering groups without
+    interaction."""
 
 if __name__ == "__main__":
 

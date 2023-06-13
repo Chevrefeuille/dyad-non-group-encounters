@@ -7,8 +7,12 @@ from pedestrians_social_binding.constants import *
 from parameters import *
 from utils import *
 
-
 from tqdm import tqdm
+
+""" The goal of this script is to compute the breadths and depths of the groups in the corridor environment.
+The breadths is the distance between the two pedestrians in the group.
+The depth is the distance between the group and the wall.
+"""
 
 if __name__ == "__main__":
 

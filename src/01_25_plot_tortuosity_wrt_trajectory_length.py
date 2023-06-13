@@ -6,6 +6,9 @@ from utils import *
 import matplotlib.pyplot as plt
 import pandas as pd
 
+""" The goal of this script is to plot the tortuosity of trajectories with respect to their length.
+"""
+
 if __name__ == "__main__":
 
     fig, ax = plt.subplots()
