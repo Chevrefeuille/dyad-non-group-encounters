@@ -13,9 +13,7 @@ from utils import *
 cross = lambda x, y, axis=None: np.cross(x, y, axis=axis)
 
 if __name__ == "__main__":
-
     for env_name in ["diamor:corridor"]:
-
         env = Environment(
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
         )
@@ -31,7 +29,6 @@ if __name__ == "__main__":
         ) = get_social_values(env_name)
 
         deviations = pickle_load(f"../data/pickle/{env_name_short}_deviations.pkl")
-        tortuosity = pickle_load(f"../data/pickle/{env_name_short}_tortuosity.pkl")
         rbs = pickle_load(f"../data/pickle/{env_name_short}_rbs.pkl")
 
         intensities = [0, 1, 2, 3]
@@ -58,6 +55,8 @@ if __name__ == "__main__":
 
             F, p = stats.f_oneway(*dev_non_groups)
             print(f"p-values for 0-1-2-3: {p: .2e}")
+            F, p = stats.kruskal(*dev_non_groups)
+            print(f"p-values for 0-1-2-3 (kruskal): {p: .2e}")
 
             print("--- groups ---")
             dev_groups = []
@@ -76,6 +75,8 @@ if __name__ == "__main__":
 
             F, p = stats.f_oneway(*dev_groups)
             print(f"p-values for 0-1-2-3: {p: .2e}")
+            F, p = stats.kruskal(*dev_groups)
+            print(f"p-values for 0-1-2-3 (kruskal): {p: .2e}")
 
             # plt.show()
 
@@ -90,12 +91,24 @@ if __name__ == "__main__":
             )
             F, p = stats.f_oneway(all_dev_non_groups, all_dev_groups)
             print(f"p-values all groups/non-groups: {p :.2e}")
+            F, p = stats.kruskal(all_dev_non_groups, all_dev_groups)
+            print(f"p-values all groups/non-groups (kruskal): {p :.2e}")
+            F, p = stats.ttest_ind(all_dev_non_groups, all_dev_groups, equal_var=False)
+            print(f"p-values all groups/non-groups (t-test): {p :.2e}")
 
             for i in intensities:
                 v_groups = values[i]["ext"] + values[i]["int"]
                 v_non_groups = values[i]["non_group"]
                 F, p = stats.f_oneway(v_groups, v_non_groups)
-                print(f" - intensity {i} → p-values groups/non-groups: {p :.2e}")
+                # print(f" - intensity {i} → p-values groups/non-groups: {p :.2e}")
+                # F, p = stats.kruskal(v_groups, v_non_groups)
+                # print(
+                #     f" - intensity {i} → p-values groups/non-groups (kruskal): {p :.2e}"
+                # )
+                F, p = stats.ttest_ind(v_groups, v_non_groups, equal_var=False)
+                print(
+                    f" - intensity {i} → p-values groups/non-groups (t-test): {p :.2e}"
+                )
 
             print("--- difference non-group - group ---")
             differences = []
@@ -110,6 +123,8 @@ if __name__ == "__main__":
                 print(f" - intensity {i} → {mean} ± {std} ({n})")
             F, p = stats.f_oneway(*differences)
             print(f"p-values for 0-1-2-3: {p: .2e}")
+            F, p = stats.kruskal(*differences)
+            print(f"p-values for 0-1-2-3 (kruskal): {p: .2e}")
 
             # dev_non_group_no_interaction = values[0]["non_group"]
             # dev_non_group_interaction = []

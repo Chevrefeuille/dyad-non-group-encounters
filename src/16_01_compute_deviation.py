@@ -12,10 +12,10 @@ from utils import *
 
 cross = lambda x, y, axis=None: np.cross(x, y, axis=axis)
 
+VICINITY_SIZE = 4000
+
 if __name__ == "__main__":
-
     for env_name in ["diamor:corridor"]:
-
         env = Environment(
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
         )
@@ -36,7 +36,6 @@ if __name__ == "__main__":
         rbs = {}
 
         for day in tqdm(days):
-
             non_groups = env.get_pedestrians(
                 days=[day], thresholds=thresholds_ped, no_groups=True
             )
@@ -77,13 +76,12 @@ if __name__ == "__main__":
 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
                     non_groups,
-                    proximity_threshold=None,
+                    proximity_threshold=VICINITY_SIZE,
                     alone=None,
                     skip=group_members_id,
                 )
 
                 for non_group in group_encounters:
-
                     non_group_id = non_group.get_id()
 
                     trajectories = [
@@ -106,17 +104,26 @@ if __name__ == "__main__":
                         traj_non_group,
                     ] = compute_simultaneous_observations(trajectories)
 
-                    in_vicinity = np.logical_and(
-                        np.abs(traj_group[:, 1] - traj_non_group[:, 1]) <= 4000,
-                        np.abs(traj_group[:, 2] - traj_non_group[:, 2]) <= 4000,
+                    distance_GNG = np.linalg.norm(
+                        traj_group[:, 1:3] - traj_non_group[:, 1:3],
+                        axis=1,
                     )
+
+                    in_vicinity = np.logical_and(
+                        np.abs(traj_group[:, 1] - traj_non_group[:, 1])
+                        <= VICINITY_SIZE,
+                        np.abs(traj_group[:, 2] - traj_non_group[:, 2])
+                        <= VICINITY_SIZE,
+                    )
+
+                    # in_vicinity = distance_GNG <= VICINITY_SIZE
 
                     traj_A_vicinity = traj_A[in_vicinity]
                     traj_B_vicinity = traj_B[in_vicinity]
                     traj_group_vicinity = traj_group[in_vicinity]
                     traj_non_group_vicinity = traj_non_group[in_vicinity]
 
-                    if len(traj_group_vicinity) < 3:
+                    if len(traj_group_vicinity) < 8:
                         continue
 
                     distance_A = np.linalg.norm(
@@ -144,35 +151,38 @@ if __name__ == "__main__":
                         )
                         distance_int, distance_ext = distance_B, distance_A
 
-                    plot_static_2D_trajectories(
-                        [
-                            traj_A_vicinity,
-                            traj_B_vicinity,
-                            traj_group_vicinity,
-                            traj_non_group_vicinity,
-                        ],
-                        boundaries=env.boundaries,
-                        colors=[
-                            "cornflowerblue",
-                            "cornflowerblue",
-                            "lightsteelblue",
-                            "orange",
-                        ],
-                    )
+                    # plot_static_2D_trajectories(
+                    #     [
+                    #         traj_A_vicinity,
+                    #         traj_B_vicinity,
+                    #         traj_group_vicinity,
+                    #         traj_non_group_vicinity,
+                    #     ],
+                    #     boundaries=env.boundaries,
+                    #     colors=[
+                    #         "cornflowerblue",
+                    #         "cornflowerblue",
+                    #         "lightsteelblue",
+                    #         "orange",
+                    #     ],
+                    # )
 
                     n_points_average = 4
                     max_dev_ng = compute_maximum_lateral_deviation_using_vel(
                         traj_non_group_vicinity, n_points_average, interpolate=True
                     )
                     deviations[soc_binding]["non_group"] += [max_dev_ng]
+
                     max_dev_ext = compute_maximum_lateral_deviation_using_vel(
                         traj_ext_vicinity, n_points_average, interpolate=True
                     )
                     deviations[soc_binding]["ext"] += [max_dev_ext]
+
                     max_dev_int = compute_maximum_lateral_deviation_using_vel(
                         traj_int_vicinity, n_points_average, interpolate=True
                     )
                     deviations[soc_binding]["int"] += [max_dev_int]
+
                     max_dev_group = compute_maximum_lateral_deviation_using_vel(
                         traj_group_vicinity, n_points_average, interpolate=True
                     )
@@ -204,7 +214,7 @@ if __name__ == "__main__":
                     # )
 
                     rb = compute_straight_line_minimum_distance_from_vel(
-                        traj_non_group_aligned, vicinity=4000
+                        traj_non_group_aligned, vicinity=VICINITY_SIZE
                     )
                     if rb is None:
                         rb = np.nan

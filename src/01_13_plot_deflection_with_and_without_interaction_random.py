@@ -6,9 +6,7 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == "__main__":
-
     for env_name in ["atc:corridor", "diamor:corridor"]:
-
         (
             soc_binding_type,
             soc_binding_names,
@@ -80,7 +78,7 @@ if __name__ == "__main__":
             for group_non_group in ["group", "non_group"]:
                 # plot the values without interaction
                 mean_deflection_per_bin = get_mean_over_bins(
-                    lengths_without_interaction[group_non_group],
+                    lengths_without_interaction[group_non_group]["net"],
                     np.array(deflections_without_interaction[group_non_group][measure]),
                     bin_centers_t,
                 )

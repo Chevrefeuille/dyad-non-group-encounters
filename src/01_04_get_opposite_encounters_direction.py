@@ -11,7 +11,6 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 if __name__ == "__main__":
-
     for env_name in ["atc", "diamor"]:
         # print(f"- {env_name}")
         env = Environment(
@@ -108,7 +107,6 @@ if __name__ == "__main__":
                     continue
 
                 for non_group in group_encounters:
-
                     non_group_id = non_group.get_id()
 
                     trajectories = [
@@ -153,6 +151,11 @@ if __name__ == "__main__":
                     rel_orientation_encounter = compute_relative_orientation(
                         traj_A_encounter, traj_B_encounter
                     )
+
+                    rel_orientation_encounter = rel_orientation_encounter[
+                        : int(rel_orientation_encounter.size / 2)
+                    ]
+
                     # v_g_encounter = traj_group[:, 5:7]
 
                     # plt.plot(d_g_encounter)
