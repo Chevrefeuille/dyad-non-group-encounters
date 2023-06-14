@@ -51,24 +51,10 @@ if __name__ == "__main__":
             times_undisturbed[day] = {"group": {}, "non_group": {}}
 
             all_pedestrians = env.get_pedestrians(
-                days=[day], thresholds=thresholds_ped, sampling_time=500
+                days=[day], sampling_time=500
             )
 
-            non_groups = env.get_pedestrians(
-                days=[day],
-                no_groups=True,
-                thresholds=thresholds_ped,
-                sampling_time=500,
-            )
             print(f"  - Found {len(non_groups)} non groups.")
-
-            groups = env.get_groups(
-                days=[day],
-                size=2,
-                ped_thresholds=thresholds_ped,
-                group_thresholds=thresholds_group,
-                sampling_time=500,
-            )
             print(f"  - Found {len(groups)} groups.")
 
             # find groups undisturbed trajectories

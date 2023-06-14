@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 """The goal of this script is to compute the deflection of the pedestrians in the corridor environment. 
 The deflection is the angle between the direction of the pedestrian and the direction of the group. The deflection for non_group_id is
-the angle between the direction of the pedestrian and the direction of the closest pedestrian.
+the angle between the direction of the pedestrian and the direction of the same pedestrian at a next time step.
 The data will be stored in a dictionary in the file data/deflection/deflection_{env_name}.pkl .
 The dictionary will have the following structure:
     - deflection[day][group_id] = [deflection_1, deflection_2, ...]
@@ -62,6 +62,8 @@ if __name__ == "__main__":
             # compute deflection for the groups
             for group in tqdm(groups):
                 group_id = group.get_id()
+
+                print(group_id)
                 group_as_indiv = group.get_as_individual()
 
                 members_trajectories = [m.get_trajectory() for m in group.get_members()]
@@ -71,9 +73,16 @@ if __name__ == "__main__":
 
                 group_times_undisturbed = times_undisturbed[day]["group"][group_id]
 
+                #print(group_times_undisturbed[0], group_times_undisturbed[-1])
+                #print(group_as_indiv.get_trajectory()[0,0],group_as_indiv.get_trajectory()[-1,0])
+
+
                 group_undisturbed_trajectory = get_trajectory_at_times(
                     group_as_indiv.get_trajectory(), group_times_undisturbed
                 )
+
+                print(group_undisturbed_trajectory)
+                exit()
 
                 # plot_static_2D_trajectories(
                 #     [
