@@ -82,7 +82,6 @@ if __name__ == "__main__":
                 )
 
                 print(group_undisturbed_trajectory)
-                exit()
 
                 # plot_static_2D_trajectories(
                 #     [

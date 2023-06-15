@@ -122,6 +122,13 @@ if __name__ == "__main__":
 
                 trajectory = group.get_center_of_mass_trajectory()
 
+                group_undisturbed_trajectory = get_trajectory_at_times(
+                    trajectory, group_times_undisturbed
+                )
+
+
+                print("group_undisturbed_trajectory",group_undisturbed_trajectory)
+
                 masque = np.isin(group_times_undisturbed,trajectory[:,0])
                 filter_group_times_undisturbed = group_times_undisturbed[masque]
 
@@ -134,7 +141,8 @@ if __name__ == "__main__":
 
                 ## Gérer quand il y a des nan dans la trajectoire -> séparer en deux parties et prendre en compte les deux trajectoires par la suite
 
-                if(np.all(np.isnan(group_undisturbed_trajectory))):
+                #print("group_undisturbed_trajectory", np.diff(group_undisturbed_trajectory[:,0]))
+                if(np.any(np.isnan(group_undisturbed_trajectory))):
                     print("YOUHOU")
                     list_of_sub_trajectories = compute_continuous_sub_trajectories(group_undisturbed_trajectory)
                     i = 0

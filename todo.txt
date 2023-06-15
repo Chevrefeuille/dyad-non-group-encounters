@@ -1,3 +1,2 @@
-check deflection -> 16 
-check 01_05
+check np.diff pour détecter les subtrajectories
 
