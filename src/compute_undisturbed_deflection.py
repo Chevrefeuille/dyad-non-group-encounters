@@ -21,7 +21,7 @@ The dictionary will have the following structure:
     """
 
 
-def plot_baseline(trajectory, max_dev, soc_binding):
+def plot_baseline(trajectory, max_dev, soc_binding, group, id):
     point_of_max_deviation = max_dev["position of max lateral deviation"]
     start_vel = max_dev["start_vel"]
     x_start_plot = trajectory[0,1]
@@ -50,7 +50,10 @@ def plot_baseline(trajectory, max_dev, soc_binding):
     plt.plot([x_start_plot / 1000, x_end_plot / 1000], [y_start_plot / 1000, y_end_plot / 1000], c="purple", label="velocity")
     plt.xlabel('X Coord', fontsize=12, fontweight='bold')
     plt.ylabel('Y Coord', fontsize=12, fontweight='bold')
-    plt.title('Plot of the baseline for undisturbed group')
+    if(group):
+        plt.title('Plot of the baseline for group ' + str(id))
+    else:
+        plt.title('Plot of the baseline for non group pedestrian ' + str(id))
     plt.plot([x_end_perp_plot / 1000, x_second_end_perp_plot / 1000], [y_end_perp_plot / 1000, y_second_end_perp_plot/1000]
                 , c="green", label="perpendicular of the vector of velocity")
     plt.legend()
@@ -122,13 +125,6 @@ if __name__ == "__main__":
 
                 trajectory = group.get_center_of_mass_trajectory()
 
-                group_undisturbed_trajectory = get_trajectory_at_times(
-                    trajectory, group_times_undisturbed
-                )
-
-
-                print("group_undisturbed_trajectory",group_undisturbed_trajectory)
-
                 masque = np.isin(group_times_undisturbed,trajectory[:,0])
                 filter_group_times_undisturbed = group_times_undisturbed[masque]
 
@@ -141,17 +137,23 @@ if __name__ == "__main__":
 
                 ## Gérer quand il y a des nan dans la trajectoire -> séparer en deux parties et prendre en compte les deux trajectoires par la suite
 
-                #print("group_undisturbed_trajectory", np.diff(group_undisturbed_trajectory[:,0]))
-                if(np.any(np.isnan(group_undisturbed_trajectory))):
-                    print("YOUHOU")
-                    list_of_sub_trajectories = compute_continuous_sub_trajectories(group_undisturbed_trajectory)
+                print("group_undisturbed_trajectory", np.diff(group_undisturbed_trajectory[:,0]))
+
+                test_sub_group = np.diff(group_undisturbed_trajectory[:,0])
+
+                
+                if(np.any(test_sub_group > 2000)):
+
+                    list_of_sub_trajectories = compute_continuous_sub_trajectories_using_time(group_undisturbed_trajectory)
+                    print("list_of_sub_trajectories", list_of_sub_trajectories)
                     i = 0
+
                     for sub_trajectory in list_of_sub_trajectories:
                         i+=1
                         if(sub_trajectory.shape[0] <= 10):
                             continue
 
-                        sub_group_id = group_id + "_" + i
+                        sub_group_id = str(group_id) + "_" + str(i)
                         n_points_average = 4
                         max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
                         sub_trajectory, n_points_average, interpolate=False)
@@ -163,7 +165,7 @@ if __name__ == "__main__":
                                 "social_binding": soc_binding,
                                 "max_dev": max_dev_sub
                             }
-                        if (plot_verif):
+                        if (not plot_verif):
                             plot_baseline(sub_trajectory, max_dev_sub, soc_binding)
                 else :
                     if(group_undisturbed_trajectory.shape[0] <= 10):
@@ -183,8 +185,8 @@ if __name__ == "__main__":
                             "social_binding": soc_binding,
                             "max_dev": max_dev_g
                         }
-                    if (plot_verif):
-                        plot_baseline(group_undisturbed_trajectory, max_dev_g, soc_binding)
+                    if (not plot_verif):
+                        plot_baseline(group_undisturbed_trajectory, max_dev_g, soc_binding, group=True, id=group_id)
 
                 
             for non_group in tqdm(non_groups):
@@ -211,16 +213,18 @@ if __name__ == "__main__":
                 )
 
                 ## Gérer quand il y a des nan dans la trajectoire -> séparer en deux parties et prendre en compte les deux trajectoires par la suite
+                test_sub_non_group = np.diff(non_group_undisturbed_trajectory[:,0])
+                if(np.any(test_sub_non_group > 2000)):
 
-                if(np.all(np.isnan(non_group_undisturbed_trajectory))):
                     list_of_sub_trajectories = compute_continuous_sub_trajectories(non_group_undisturbed_trajectory)
                     i = 0
+
                     for sub_trajectory in list_of_sub_trajectories:
                         i+=1
                         if(sub_trajectory.shape[0] <= 10):
                             continue
 
-                        sub_non_group_id = non_group_id + "_" + i
+                        sub_non_group_id = str(non_group_id) + "_" + str(i)
                         n_points_average = 4
                         max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
                         sub_trajectory, n_points_average, interpolate=False)
@@ -232,21 +236,28 @@ if __name__ == "__main__":
                                 "max_dev": max_dev_ng,
                             }
 
-                if (np.all(non_group_undisturbed_trajectory)):
-                    continue
+                        if (plot_verif):
+                            plot_baseline(sub_trajectory, max_dev_ng, soc_binding, group=False, id=non_group_id)
 
-                n_points_average = 4
+                else :
+                    if(non_group_undisturbed_trajectory.shape[0] <= 10):
+                        continue
 
-                # des fois revois None, à voir dans quel cas
-                max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
-                    non_group_undisturbed_trajectory, n_points_average, interpolate=False)
-                
-                if(np.all(np.isnan(max_dev_ng["max_lateral_deviation"])) ):
-                    continue
+                    if (np.all(non_group_undisturbed_trajectory)):
+                        continue
 
-                no_encounters_deviations["non_group"][str(non_group_id)] = {
-                        "max_dev": max_dev_ng,
-                    }
+                    n_points_average = 4
+
+                    # des fois revois None, à voir dans quel cas
+                    max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
+                        non_group_undisturbed_trajectory, n_points_average, interpolate=False)
+                    
+                    if(np.all(np.isnan(max_dev_ng["max_lateral_deviation"])) ):
+                        continue
+
+                    no_encounters_deviations["non_group"][str(non_group_id)] = {
+                            "max_dev": max_dev_ng,
+                        }
 
     print(no_encounters_deviations)
 

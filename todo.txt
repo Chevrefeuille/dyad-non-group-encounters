@@ -1,2 +1,3 @@
-check np.diff pour détecter les subtrajectories
+regarder trajectoire des deux membres du groupe séparément
+faire des trajectoires de distance égale
 
