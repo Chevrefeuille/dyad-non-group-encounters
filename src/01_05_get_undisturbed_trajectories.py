@@ -17,7 +17,7 @@ The dictionary will have the following structure:
 
 if __name__ == "__main__":
 
-    for env_name in ["atc", "diamor"]:
+    for env_name in ["diamor"]:
 
         env = Environment(
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
@@ -37,7 +37,6 @@ if __name__ == "__main__":
                 days=[day],
                 no_groups=True,
                 thresholds=thresholds_ped,
-                sampling_time=500,
             )
 
             groups = env.get_groups(
@@ -45,13 +44,12 @@ if __name__ == "__main__":
                 size=2,
                 ped_thresholds=thresholds_ped,
                 group_thresholds=thresholds_group,
-                sampling_time=500,
             )
 
             times_undisturbed[day] = {"group": {}, "non_group": {}}
 
             all_pedestrians = env.get_pedestrians(
-                days=[day], sampling_time=500
+                days=[day]
             )
 
             print(f"  - Found {len(non_groups)} non groups.")
