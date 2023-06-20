@@ -11,36 +11,59 @@ from parameters import *
 
 from tqdm import tqdm
 
-"""The goal of this script is to compute the deflection of the pedestrians in the corridor environment. 
-The deflection is the angle between the direction of the pedestrian and the direction of the group. The deflection for non_group_id is
-the angle between the direction of the pedestrian and the direction of the same pedestrian at a next time step.
-The data will be stored in a dictionary in the file data/deflection/deflection_{env_name}.pkl .
-The dictionary will have the following structure:
-    - deflection[day][group_id] = [deflection_1, deflection_2, ...]
-    - deflection[day][group_members_id] = [deflection_1, deflection_2, ...]
-    - deflection[day][non_group_id] = [deflection_1, deflection_2, ...]
+"""The goal of this script is to compute the deflection of the pedestrians in the corridor environment.
+The deflection is computed as the maximum lateral deviation of the pedestrian from its baseline trajectory.
+The baseline trajectory is the trajectory of the pedestrian using an average of the first 4 velocities vectors of the pedestrian.
     """
 
+
+# Parameters
+
+# Minimum number of observations to compute the deflection
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
-MAX_DISTANCE = 4000
+
+# If we want to plot the trajectory to visualize the deflection
 PLOT_VERIF = False
-PLOT_MEAN_MAX_DEV = True
+
+# If we want to plot (scatter) the mean deflection for each pedestrian
+PLOT_MEAN_MAX_DEV = False
+
+# If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
 UNDISTURBED_COMPUTE = True
 
-def compute_time_for_all_pedestrians(env):
+# If we want to plot the mean deflection for each pedestrian for an interval of speed
+SPEED_INTERVAL = True
+
+def compute_time_for_all_pedestrians(env_imput):
+
+    """ This function computes the time for all pedestrians in the environment.
+    
+    Parameters
+    ----------
+    env : Environment
+        The environment in which we want to compute the time for all pedestrians.
+        
+    Returns
+    -------
+        times_all : dict
+            A dictionary containing the time for all pedestrians in the environment.
+            The dictionary has the following structure:
+                - times_all[day][group_id] = [time_1, time_2, ...]
+                - times_all[day][non_group_id] = [time_1, time_2, ...]
+                """
+
     print("Computing time for all pedestrians...")
-    for env_name in env:
+    for env_name in env_imput:
 
         env = Environment(
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
         )
 
+        env_name = env_name.split(":")[0]
         days = DAYS_ATC if env_name == "atc" else DAYS_DIAMOR
-
         times_all = {}
 
         for day in days:
-
             thresholds_ped = get_pedestrian_thresholds(env_name)
             thresholds_group = get_groups_thresholds()
 
@@ -86,6 +109,27 @@ def compute_time_for_all_pedestrians(env):
     return times_all
 
 def plot_baseline(trajectory, max_dev, soc_binding, group, id=None):
+
+    """ This function plots the baseline trajectory of a pedestrian.
+
+    Parameters
+    ----------
+    trajectory : np.array
+        The trajectory of the pedestrian.
+    max_dev : dict
+        A dictionary containing the maximum lateral deviation of the pedestrian.
+        The dictionary has the following structure:
+            - max_dev["max lateral deviation"] = max_deviation
+            - max_dev["position of max lateral deviation"] = [time, x, y]  
+            - max_dev["start_vel"] = [x, y]
+    soc_binding : str
+        The social binding of the pedestrian.
+    group : bool
+        True if the pedestrian is in a group, False otherwise.
+    id : int
+        The id of the pedestrian or the group.
+    """
+
     point_of_max_deviation = max_dev["position of max lateral deviation"]
     start_vel = max_dev["start_vel"]
     x_start_plot = trajectory[0,1]
@@ -102,8 +146,7 @@ def plot_baseline(trajectory, max_dev, soc_binding, group, id=None):
     y_second_end_perp_plot = -vel_perpandicular[1] * 1000 + y_start_perp_plot
 
 
-
-    ## plot the trajectory
+    # plot the trajectory
     if (group):
         if(soc_binding == "other") :
             color = "pink"
@@ -142,16 +185,15 @@ if __name__ == "__main__":
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
         )
         days = DAYS_ATC if env_name_short == "atc" else DAYS_DIAMOR
-        plot_verif = True
         soc_binding_type, soc_binding_names, soc_binding_values, colors = get_social_values(
             env_name
         )
         thresholds_ped = get_pedestrian_thresholds(env_name)
         thresholds_group = get_groups_thresholds()
 
-        # Load the data of undisurbed times of groups and non groups
         str_trajectory = ""
 
+        # Load the data of undisurbed times of groups and non groups
         if(UNDISTURBED_COMPUTE):
             str_trajectory = "undisturbed"
             times_undisturbed = pickle_load(
@@ -160,9 +202,6 @@ if __name__ == "__main__":
         else:
             str_trajectory = "all"
             times_undisturbed = compute_time_for_all_pedestrians(["diamor:corridor"])
-            times_undisturbed = pickle_load(
-                f"../data/pickle/all_times_{env_name_short}.pkl"
-            )
 
         # Create the dictionary that will store the deflection
         no_encounters_deviations = {
@@ -170,9 +209,11 @@ if __name__ == "__main__":
             "non_group": {},
         }
 
-        for MAX_DISTANCE in [1500,2000,2400,2800,3200,4000,5000,6000]:
+        # Loop over the maximum distance for each trajectory to compute the deflection  
+        for MAX_DISTANCE in [1500,2500,3000,4000,5000,6000]:
             print("MAX_DISTANCE", MAX_DISTANCE)
-        # Loop over the days
+
+            # Loop over the days
             for day in days:
                 print(f"Day {day}:")
 
@@ -219,15 +260,18 @@ if __name__ == "__main__":
                         masque = np.isin(group_times_undisturbed,trajectory[:,0])
                         filter_pedestrian_times_undisturbed = group_times_undisturbed[masque]
 
+                        # We don't want trajectory with too few observations
                         if(filter_pedestrian_times_undisturbed.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
                         #     print("not enough observations for pedestrian", filter_pedestrian_times_undisturbed.shape[0])
                         #     plt.plot(trajectory[:,1],trajectory[:,2])
                         #     plt.show()
                             continue
 
+                        # get the trajectory of the pedestrian at the times where the group is undisturbed
                         pedestrian_undisturbed_trajectory = get_trajectory_at_times(
                             trajectory, filter_pedestrian_times_undisturbed
                         )
+
                         list_of_sub_trajectories = [pedestrian_undisturbed_trajectory]
                         test_sub_pedestrian = np.diff(pedestrian_undisturbed_trajectory[:,0])
 
@@ -235,7 +279,8 @@ if __name__ == "__main__":
                         if(np.any(test_sub_pedestrian > 2000)):
                             list_of_sub_trajectories = compute_continuous_sub_trajectories_using_time(pedestrian_undisturbed_trajectory)
                             
-                        else :
+                        # Debug plot to see the trajectory we don't want
+                        # else :
                             # if(pedestrian_undisturbed_trajectory.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
                             #     print("not enough observations for pedestrian_2", pedestrian_undisturbed_trajectory.shape[0])
                             #     plt.scatter(trajectory[:,1],trajectory[:,2])
@@ -244,36 +289,41 @@ if __name__ == "__main__":
                             #     plt.show()
                             #     continue
 
-                            sub_sub_trajectory = []
+                        sub_sub_trajectory = []
+                        sub_length = []
 
-                            # Separate where there is a gap in space in the trajectory, we want only continues trajectory of 4000 mm
-                            for sub_trajectory in list_of_sub_trajectories:
-                                add = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
-                                if (add == None):
-                                    continue
-                                sub_sub_trajectory += add
+                        # Separate where there is a gap in space in the trajectory, we want only continues trajectory of MAX_DISTANCE
+                        for sub_trajectory in list_of_sub_trajectories:
+                            result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            if (result == None):
+                                continue
+                            add = result[0]
+                            length = result[1]
+                            
+                            sub_sub_trajectory += add
+                            sub_length += length
 
-                            # Compute the deflection for each sub trajectory
-                            for trajectory in sub_sub_trajectory:
+                        # Compute the deflection for each sub trajectory
+                        indice = 0
+                        for trajectory in sub_sub_trajectory:
+                            length = sub_length[indice]
+                            indice += 1
 
-                                n_points_average = 4
-                                max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
-                                trajectory, n_points_average, interpolate=False)
+                            n_points_average = 4
+                            max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
+                            trajectory, n_points_average, interpolate=False, length = length)
 
-                                # if(np.all(np.isnan(max_dev_sub["max_lateral_deviation"])) ):
-                                #     continue
+                            no_encounters_deviations["group"][str(pedestrian_id)]["max_dev"].append(max_dev_sub)
 
-                                no_encounters_deviations["group"][str(pedestrian_id)]["max_dev"].append(max_dev_sub)
-
-                                if (PLOT_VERIF):
-                                    plot_baseline(trajectory, max_dev_sub, soc_binding, True, id = pedestrian_id)
+                            if (PLOT_VERIF):
+                                plot_baseline(trajectory, max_dev_sub, soc_binding, True, id = pedestrian_id)
                     
                     number_of_group_filtered += 1
 
 
                 print("number of groups filtered:", number_of_group_filtered)
-
                 print("number of non groups:", len(non_groups))
+
                 number_of_non_group_filtered = 0
                 # compute deflection for the non groups    
                 for non_group in tqdm(non_groups):
@@ -300,45 +350,47 @@ if __name__ == "__main__":
                         trajectory,
                         filter_non_group_times_undisturbed,
                     )
+                    list_of_sub_trajectories = [non_group_undisturbed_trajectory]
                     test_sub_non_group = np.diff(non_group_undisturbed_trajectory[:,0])
                     
                     # Separate where there is a gap in time in the trajectory
                     if(np.any(test_sub_non_group > 2000)):
-
                         list_of_sub_trajectories = compute_continuous_sub_trajectories(non_group_undisturbed_trajectory)
 
-                    else :
-                        if(non_group_undisturbed_trajectory.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
-                            continue
 
-                        # if (np.all(non_group_undisturbed_trajectory)):
+                    sub_sub_trajectory = []
+                    sub_length = []
+
+                    # Separate where there is a gap in space in the trajectory, we want only continues trajectory of 4000 mm
+                    for sub_trajectory in list_of_sub_trajectories:
+                        result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                        if (result == None):
+                            continue
+                        add = result[0]
+                        length = result[1]
+                        
+                        sub_sub_trajectory += add
+                        sub_length += length
+
+                    indice = 0
+                    for trajectory in sub_sub_trajectory:
+                        length = sub_length[indice]
+                        indice += 1
+
+                        n_points_average = 4
+                        max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
+                        trajectory, n_points_average, interpolate=False, length=length)
+
+                        # if(np.all(np.isnan(max_dev_sub["max_lateral_deviation"])) ):
                         #     continue
 
-                        sub_sub_trajectory = []
+                        if(len(max_dev_sub)==0):
+                            continue
 
-                        # Separate where there is a gap in space in the trajectory, we want only continues trajectory of 4000 mm
-                        for sub_trajectory in list_of_sub_trajectories:
-                            add = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
-                            if (add == None):
-                                continue
-                            sub_sub_trajectory += add
+                        no_encounters_deviations["non_group"][str(non_group_id)]["max_dev"].append(max_dev_sub)
 
-                        for trajectory in sub_sub_trajectory:
-
-                            n_points_average = 4
-                            max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
-                            trajectory, n_points_average, interpolate=False)
-
-                            # if(np.all(np.isnan(max_dev_sub["max_lateral_deviation"])) ):
-                            #     continue
-
-                            if(len(max_dev_sub)==0):
-                                continue
-
-                            no_encounters_deviations["non_group"][str(non_group_id)]["max_dev"].append(max_dev_sub)
-
-                            if (PLOT_VERIF):
-                                plot_baseline(trajectory, max_dev_sub, None, False, id = non_group_id)
+                        if (PLOT_VERIF):
+                            plot_baseline(trajectory, max_dev_sub, None, False, id = non_group_id)
 
                     number_of_non_group_filtered += 1
 
@@ -357,7 +409,7 @@ if __name__ == "__main__":
 
             for group_id in no_encounters_deviations["group"]:
                 no_encounters_deviations["group"][group_id]["mean_max_dev"] = -1
-                no_encounters_deviations["group"][group_id]["mean_velocity"] = -1
+                no_encounters_deviations["group"][group_id]["mean_velocity"] = None
                 no_encounters_deviations["group"][group_id]["mean_length"] = -1
                 mean_max_dev_group = 0
                 mean_velocity_group = 0
@@ -406,7 +458,7 @@ if __name__ == "__main__":
             list_mean_max_dev_non_group = []
             for non_group_id in no_encounters_deviations["non_group"]:
                 no_encounters_deviations["non_group"][non_group_id]["mean_max_dev"] = -1
-                no_encounters_deviations["non_group"][non_group_id]["mean_velocity"] = -1
+                no_encounters_deviations["non_group"][non_group_id]["mean_velocity"] = None
                 no_encounters_deviations["non_group"][non_group_id]["mean_length"] = -1
                 mean_max_dev_non_group = 0
                 mean_velocity_non_group = 0
@@ -462,7 +514,7 @@ if __name__ == "__main__":
                         continue
                     social_binding = no_encounters_deviations["group"][group_id]["social_binding"]
                     velocity = no_encounters_deviations["group"][group_id]["mean_velocity"]
-                    global_velocity = abs(velocity[0]) + abs(velocity[1])
+                    global_velocity = np.sqrt(velocity[0]**2 + velocity[1]**2)
                     if(social_binding == "other") :
                         color = "black"
                     else :
@@ -488,7 +540,7 @@ if __name__ == "__main__":
                         continue
                     if (np.all(np.isnan(mean_max_dev_non_group))):
                         continue
-                    global_velocity = abs(velocity[0]) + abs(velocity[1])
+                    global_velocity = np.sqrt(velocity[0]**2 + velocity[1]**2)
 
                     plt.scatter(global_velocity/1000,mean_max_dev_non_group, c = "purple", label = "Non group", s=30, alpha = 0.8)
                 # # plt.xlabel("Non group ID")
@@ -553,16 +605,81 @@ if __name__ == "__main__":
 
             plt.close()
 
+            if(SPEED_INTERVAL and MAX_DISTANCE == 1500) :
+                speed_interval = [(0,0.5),(0.5,0.75),(0.75,1),(1,1.25),(1.25,1.5),(1.5,2),(2,2.5)]
+                dict_speed_interval = {}
+                for i in range(len(speed_interval)) :
+                    dict_speed_interval[speed_interval[i]] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
 
-
-           
-
+                for group_id in no_encounters_deviations["group"] :
+                    velocity = no_encounters_deviations["group"][group_id]["mean_velocity"]
+                    social_binding = no_encounters_deviations["group"][group_id]["social_binding"]
+                    if velocity is None:
+                        continue
+                    global_velocity = np.sqrt(velocity[0]**2 + velocity[1]**2)/1000
+                    for i in range(len(speed_interval)) :
+                        if (global_velocity >= speed_interval[i][0] and global_velocity < speed_interval[i][1]) :
+                            dict_speed_interval[speed_interval[i]][str(social_binding)].append(no_encounters_deviations["group"][group_id]["mean_max_dev"])
+                            break
                 
+                for group_id in no_encounters_deviations["non_group"] :
+                    velocity = no_encounters_deviations["non_group"][group_id]["mean_velocity"]
+                    if velocity is None:
+                        continue
+                    global_velocity = np.sqrt(velocity[0]**2 + velocity[1]**2)/1000
+                    for i in range(len(speed_interval)) :
+                        if (global_velocity >= speed_interval[i][0] and global_velocity < speed_interval[i][1]) :
+                            dict_speed_interval[speed_interval[i]]["alone"].append(no_encounters_deviations["non_group"][group_id]["mean_max_dev"])
+                            break
 
-
-
-        #Plot the mean max_deviation for all pedestrians
-        # if (PLOT_MEAN_MAX_DEV):
             
 
 
+                fig2, ax2 = plt.subplots()
+                mean_max_dev_per_velocity = []
+                list_of_average = []
+                indice = 0
+                for elt in speed_interval :
+                    print("speed interval", elt)
+                    elt_elt = dict_speed_interval[elt]
+                    mean_max_dev_per_velocity += elt_elt["0"], elt_elt["1"], elt_elt["2"], elt_elt["3"], elt_elt["other"], elt_elt["alone"]
+                    flatten_list = [value for sublist in mean_max_dev_per_velocity for value in sublist]
+                    average = sum(flatten_list) / len(flatten_list)
+                    list_of_average.append(average)
+                    print("mean for a speed interval", average)
+                    fig, ax = plt.subplots()
+                    label = ["0", "1", "2", "3", "other", "alone"]
+                    for i in range(len(label)) :
+                        label[i] = label[i] + " / " + str(len(elt_elt[label[i]]))
+                    boxplot = ax.boxplot([elt_elt["0"], elt_elt["1"], elt_elt["2"], elt_elt["3"], elt_elt["other"], elt_elt["alone"]], labels = label,
+                                         showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                                            , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+
+                    ax.set_title(f"boxplot of mean max deviation for social binding for trip of {total_mean_length_pedestrian} meters and speed interval of {elt} m/s")  
+                    ax.set_xlabel("Social binding / Number of pedestrians")
+                    ax.set_ylabel("Mean max deviation (mm)")  
+
+                    if (UNDISTURBED_COMPUTE) :
+                        fig.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))                
+                    else :
+                        fig.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))
+
+                    plt.close()
+
+                print("list of average", list_of_average)
+                print("speed interval", speed_interval)
+                str_speed_interval = []
+                for elt in speed_interval :
+                    str_speed_interval.append(str(elt))
+                ax2.plot(str_speed_interval, list_of_average)
+                ax2.set_title(f"mean max deviation for social binding for trip of {total_mean_length_pedestrian} meters and speed interval of {elt} m/s")
+                ax2.set_xlabel("Speed interval (m/s)")
+                ax2.set_ylabel("Mean max deviation (mm)")
+
+                if (UNDISTURBED_COMPUTE) :
+                    fig2.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
+                else :
+                    fig2.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
+
+                plt.close()
