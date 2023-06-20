@@ -26,10 +26,10 @@ MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 PLOT_VERIF = False
 
 # If we want to plot (scatter) the mean deflection for each pedestrian
-PLOT_MEAN_MAX_DEV = False
+PLOT_MEAN_MAX_DEV = True
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = True
+UNDISTURBED_COMPUTE = False
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = True
