@@ -26,13 +26,13 @@ MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 PLOT_VERIF = False
 
 # If we want to plot (scatter) the mean deflection for each pedestrian
-PLOT_MEAN_MAX_DEV = True
+PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
-SPEED_INTERVAL = True
+SPEED_INTERVAL = False
 
 def compute_time_for_all_pedestrians(env_imput):
 
@@ -59,8 +59,8 @@ def compute_time_for_all_pedestrians(env_imput):
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
         )
 
-        env_name = env_name.split(":")[0]
-        days = DAYS_ATC if env_name == "atc" else DAYS_DIAMOR
+        env_name_short = env_name.split(":")[0]
+        days = DAYS_ATC if env_name_short == "atc" else DAYS_DIAMOR
         times_all = {}
 
         for day in days:
@@ -403,7 +403,8 @@ if __name__ == "__main__":
 
 
 
-            #Compute the mean max_deviation for all pedestrians
+            #Compute the mean max_deviation / mean_velocity / mean_length of the trajectory for all pedestrians
+
             list_global_mean_max_dev_group = [[] for i in range(5)]
             list_global_mean_length_pedestrian = [[] for i in range(6)]
 
@@ -442,6 +443,8 @@ if __name__ == "__main__":
 
                 if (mean_max_dev_group > 800):
                     mean_max_dev_group = -1
+
+                
                 no_encounters_deviations["group"][group_id]["mean_max_dev"] = mean_max_dev_group
                 no_encounters_deviations["group"][group_id]["mean_velocity"] = mean_velocity_group
                 no_encounters_deviations["group"][group_id]["mean_length"] = mean_length_group
@@ -450,11 +453,14 @@ if __name__ == "__main__":
                 if(social_binding == "other"):
                     social_binding = 4
                 
+                # the goal of these list_global is to compute the mean max_deviation / legnth of the trajectory for each social binding
+                # TODO: Maybe do the same for speed
                 if (mean_max_dev_group != -1) :
                     list_global_mean_max_dev_group[social_binding].append(mean_max_dev_group)
                     list_global_mean_length_pedestrian[social_binding].append(mean_length_group)
 
             #Compute the mean max_deviation for all non groups
+            # The same process but for non_groups
             list_mean_max_dev_non_group = []
             for non_group_id in no_encounters_deviations["non_group"]:
                 no_encounters_deviations["non_group"][non_group_id]["mean_max_dev"] = -1
@@ -470,7 +476,6 @@ if __name__ == "__main__":
                 j = 0
                 k = 0
                 l = 0
-                
                 for i in range(len(max_dev)):
                     intermediate = max_dev[i]["max_lateral_deviation"]
                     if(intermediate > MAX_DISTANCE):
@@ -479,7 +484,7 @@ if __name__ == "__main__":
                         mean_max_dev_non_group += intermediate
                         j += 1
                         mean_velocity_non_group += max_dev[i]["start_vel"]
-                        k+=1
+                        k += 1
                         mean_length_non_group += max_dev[i]["length_of_trajectory"]
                         l += 1
 
@@ -500,9 +505,12 @@ if __name__ == "__main__":
                     list_mean_max_dev_non_group.append(mean_max_dev_non_group)
                     list_global_mean_length_pedestrian[5].append(mean_length_non_group)
 
-            for i in range(len(list_global_mean_length_pedestrian)):
-                list_global_mean_length_pedestrian[i] = np.nanmean(list_global_mean_length_pedestrian[i])
-            total_mean_length_pedestrian = np.nanmean(list_global_mean_length_pedestrian)
+            # flatten_list = [value for sublist in mean_max_dev_per_velocity for value in sublist]
+            # average = sum(flatten_list) / len(flatten_list)
+            flatten_list = [value for sublist in list_global_mean_max_dev_group for value in sublist]
+            average = sum(flatten_list) / len(flatten_list)
+
+            total_mean_length_pedestrian = average
 
             #Plot the mean max_deviation for all pedestrians
             if (PLOT_MEAN_MAX_DEV):
@@ -633,7 +641,6 @@ if __name__ == "__main__":
                             break
 
             
-
 
                 fig2, ax2 = plt.subplots()
                 mean_max_dev_per_velocity = []

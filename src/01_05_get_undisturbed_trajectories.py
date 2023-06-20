@@ -17,7 +17,7 @@ The dictionary will have the following structure:
 
 if __name__ == "__main__":
 
-    for env_name in ["diamor"]:
+    for env_name in ["diamor:corridor"]:
 
         env = Environment(
             env_name, data_dir="../../atc-diamor-pedestrians/data/formatted"
