@@ -30,10 +30,13 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = True
+UNDISTURBED_COMPUTE = False
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
-SPEED_INTERVAL = False
+SPEED_INTERVAL = True
+
+# If we want to write a filte with ANOVA test
+ANOVA = True
 
 def compute_time_for_all_pedestrians(env_imput):
 
@@ -609,14 +612,15 @@ if __name__ == "__main__":
             plt.close()
 
             # Do the ANOVA thing
-            with open("../data/report_text/deflection/will/ANOVA_for_mean_max_deviation.txt", "a") as f :
-                f.write("-----------------------------------------------------------\n")
-                result = f_oneway(*data)
-                f.write("ANOVA for mean max deviation for {0} trajectory of {1} meters\n".format(str_trajectory, MAX_DISTANCE/1000))
-                f.write("F-value : {0}\n".format(result[0]))
-                f.write("p-value : {0}\n".format(result[1]))
-                f.write("-----------------------------------------------------------\n")
-            
+            if(ANOVA):
+                with open("../data/report_text/deflection/will/ANOVA_for_mean_max_deviation.txt", "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*data)
+                    f.write("ANOVA for mean max deviation for {0} trajectory of {1} meters\n".format(str_trajectory, MAX_DISTANCE/1000))
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
 
             # This one is for group/non group only
             new_data = []
@@ -647,7 +651,8 @@ if __name__ == "__main__":
 
             plt.close()
 
-            if(SPEED_INTERVAL and MAX_DISTANCE == 1500) :
+            if(SPEED_INTERVAL) :
+                # Create a dictionnary with the speed interval as key and the mean max deviation for each social binding
                 speed_interval = [(0,0.5),(0.5,0.75),(0.75,1),(1,1.25),(1.25,1.5),(1.5,2),(2,2.5)]
                 dict_speed_interval = {}
                 for i in range(len(speed_interval)) :
@@ -673,13 +678,10 @@ if __name__ == "__main__":
                             break
 
             
-
-                fig2, ax2 = plt.subplots()
                 mean_max_dev_per_velocity = []
                 list_of_average = []
                 indice = 0
                 for elt in speed_interval :
-                    print("speed interval", elt)
                     elt_elt = dict_speed_interval[elt]
                     mean_max_dev_per_velocity += elt_elt["0"], elt_elt["1"], elt_elt["2"], elt_elt["3"], elt_elt["other"], elt_elt["alone"]
                     flatten_list = [value for sublist in mean_max_dev_per_velocity for value in sublist]
@@ -688,27 +690,29 @@ if __name__ == "__main__":
                         continue
                     average = sum(flatten_list) / len(flatten_list)
                     list_of_average.append(average)
-                    print("mean for a speed interval", average)
-                    fig, ax = plt.subplots()
-                    label = ["0", "1", "2", "3", "other", "alone"]
-                    for i in range(len(label)) :
-                        label[i] = label[i] + " / " + str(len(elt_elt[label[i]]))
-                    boxplot = ax.boxplot([elt_elt["0"], elt_elt["1"], elt_elt["2"], elt_elt["3"], elt_elt["other"], elt_elt["alone"]], labels = label,
-                                         showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
-                                            , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
 
-                    ax.set_title(f"mean max deviation, trip of {total_mean_length_pedestrian} meters, speed interval of {elt} m/s")  
-                    ax.set_xlabel("Social binding / Number of pedestrians")
-                    ax.set_ylabel("Mean max deviation (mm)")  
+                    if (MAX_DISTANCE == 1500):
+                        fig, ax = plt.subplots()
+                        label = ["0", "1", "2", "3", "other", "alone"]
+                        for i in range(len(label)) :
+                            label[i] = label[i] + " / " + str(len(elt_elt[label[i]]))
+                        boxplot = ax.boxplot([elt_elt["0"], elt_elt["1"], elt_elt["2"], elt_elt["3"], elt_elt["other"], elt_elt["alone"]], labels = label,
+                                            showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                                                , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                                boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
 
-                    if (UNDISTURBED_COMPUTE) :
-                        fig.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))                
-                    else :
-                        fig.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))
+                        ax.set_title(f"mean max deviation, trip of {total_mean_length_pedestrian} meters, speed interval of {elt} m/s")  
+                        ax.set_xlabel("Social binding / Number of pedestrians")
+                        ax.set_ylabel("Mean max deviation (mm)")  
 
-                    plt.close()
+                        if (UNDISTURBED_COMPUTE) :
+                            fig.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))                
+                        else :
+                            fig.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))
 
+                        plt.close()
+
+                fig2, ax2 = plt.subplots()
                 print("list of average", list_of_average)
                 print("speed interval", speed_interval)
                 str_speed_interval = []
