@@ -30,7 +30,7 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = True
@@ -613,7 +613,13 @@ if __name__ == "__main__":
 
             # Do the ANOVA thing
             if(ANOVA):
-                with open("../data/report_text/deflection/will/ANOVA_for_mean_max_deviation.txt", "a") as f :
+                name_of_the_file = ""
+                if (UNDISTURBED_COMPUTE) :
+                    name_of_the_file = "../data/report_text/deflection/will/ANOVA_for_mean_max_deviation_undisturbed.txt"
+                else :
+                    name_of_the_file = "../data/report_text/deflection/will/ANOVA_for_mean_max_deviation.txt"
+                
+                with open(name_of_the_file, "a") as f :
                     f.write("-----------------------------------------------------------\n")
                     result = f_oneway(*data)
                     f.write("ANOVA for mean max deviation for {0} trajectory of {1} meters\n".format(str_trajectory, MAX_DISTANCE/1000))
