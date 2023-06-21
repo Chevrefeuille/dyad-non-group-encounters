@@ -32,7 +32,7 @@ PLOT_MEAN_MAX_DEV = False
 UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
-SPEED_INTERVAL = False
+SPEED_INTERVAL = True
 
 def compute_time_for_all_pedestrians(env_imput):
 
@@ -505,12 +505,11 @@ if __name__ == "__main__":
                     list_mean_max_dev_non_group.append(mean_max_dev_non_group)
                     list_global_mean_length_pedestrian[5].append(mean_length_non_group)
 
-            # flatten_list = [value for sublist in mean_max_dev_per_velocity for value in sublist]
-            # average = sum(flatten_list) / len(flatten_list)
+            #Compute the mean max_deviation for all pedestrians
             flatten_list = [value for sublist in list_global_mean_max_dev_group for value in sublist]
             average = sum(flatten_list) / len(flatten_list)
 
-            total_mean_length_pedestrian = average
+            total_mean_length_pedestrian = np.around(average,0)
 
             #Plot the mean max_deviation for all pedestrians
             if (PLOT_MEAN_MAX_DEV):
