@@ -57,6 +57,8 @@ if __name__ == "__main__":
                 group_as_indiv = group.get_as_individual()
                 group_members = group.get_members()
                 soc_binding = group.get_annotation(soc_binding_type)
+                if soc_binding not in soc_binding_values:
+                    soc_binding = "other"
                 
                 group_encounters = group_as_indiv.get_encountered_pedestrians(
                     all_pedestrians, proximity_threshold=VICINITY, skip=group_members_id
@@ -160,7 +162,6 @@ if __name__ == "__main__":
                     dict_deviation["group"][group_id]["group deviation"].append(max_dev_group)
                     dict_deviation["group"][group_id]["encounters deviation"].append(max_dev_ng)
 
-    print(dict_deviation)
     pickle_save(f"../data/pickle/{env_name_short}_encounters_deviations.pkl", dict_deviation)
             
 

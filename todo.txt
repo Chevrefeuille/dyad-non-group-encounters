@@ -1,1 +1,8 @@
-See when people encounters what happens
+plot :
+difference de deviation entre un group et un mec seul pour chaque soc_binding
+deviation en fonction du soc_binding
+deviation_group / pas group
+deviation en fonction vitesse pour chaque soc_binding / pour tous
+
+p-value
+
