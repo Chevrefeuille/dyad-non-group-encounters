@@ -1,4 +1,5 @@
 from copy import deepcopy
+import os
 from matplotlib import patches
 from pedestrians_social_binding.environment import Environment
 from pedestrians_social_binding.threshold import Threshold
@@ -24,7 +25,7 @@ The baseline trajectory is the trajectory of the pedestrian using an average of 
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 
 # If we want to plot the trajectory to visualize the deflection
-PLOT_VERIF = False
+PLOT_VERIF = True
 
 # If we want to plot (scatter) the mean deflection for each pedestrian
 PLOT_MEAN_MAX_DEV = False
@@ -33,10 +34,10 @@ PLOT_MEAN_MAX_DEV = False
 UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
-SPEED_INTERVAL = True
+SPEED_INTERVAL = False
 
 # If we want to write a filte with ANOVA test
-ANOVA = True
+ANOVA = False
 
 def compute_time_for_all_pedestrians(env_imput):
 
@@ -111,73 +112,6 @@ def compute_time_for_all_pedestrians(env_imput):
                 ] = all_trajectory[:, 0]
     print("Done.")
     return times_all
-
-def plot_baseline(trajectory, max_dev, soc_binding, group, id=None):
-
-    """ This function plots the baseline trajectory of a pedestrian.
-
-    Parameters
-    ----------
-    trajectory : np.array
-        The trajectory of the pedestrian.
-    max_dev : dict
-        A dictionary containing the maximum lateral deviation of the pedestrian.
-        The dictionary has the following structure:
-            - max_dev["max lateral deviation"] = max_deviation
-            - max_dev["position of max lateral deviation"] = [time, x, y]  
-            - max_dev["start_vel"] = [x, y]
-    soc_binding : str
-        The social binding of the pedestrian.
-    group : bool
-        True if the pedestrian is in a group, False otherwise.
-    id : int
-        The id of the pedestrian or the group.
-    """
-
-    point_of_max_deviation = max_dev["position of max lateral deviation"]
-    start_vel = max_dev["start_vel"]
-    x_start_plot = trajectory[0,1]
-    y_start_plot = trajectory[0,2]
-    x_end_plot = start_vel[0] * 1000 + x_start_plot
-    y_end_plot = start_vel[1] * 1000 + y_start_plot
-
-    vel_perpandicular = np.array([start_vel[1], -start_vel[0]])
-    x_start_perp_plot = point_of_max_deviation[1]
-    y_start_perp_plot = point_of_max_deviation[2]
-    x_end_perp_plot = vel_perpandicular[0] * 1000 + x_start_perp_plot
-    y_end_perp_plot = vel_perpandicular[1] * 1000 + y_start_perp_plot
-    x_second_end_perp_plot = -vel_perpandicular[0] * 1000 + x_start_perp_plot
-    y_second_end_perp_plot = -vel_perpandicular[1] * 1000 + y_start_perp_plot
-
-
-    # plot the trajectory
-    if (group):
-        if(soc_binding == "other") :
-            color = "pink"
-        else:
-            color = colors[soc_binding]
-    else:
-        color = "blue"
-    boundaries = env.boundaries
-    fig = plt.figure(figsize=(15, 10))
-    plt.xlim([boundaries["xmin"] / 1000, boundaries["xmax"] / 1000])
-    plt.ylim([boundaries["ymin"] / 1000, boundaries["ymax"] / 1000])
-    plt.scatter(trajectory[:,1] / 1000,trajectory[:,2] / 1000, s=10, c=color)
-    plt.scatter(point_of_max_deviation[1] / 1000, point_of_max_deviation[2] / 1000, s=10, c="black")
-    plt.plot([x_start_plot / 1000, x_end_plot / 1000], [y_start_plot / 1000, y_end_plot / 1000], c="purple", label="velocity")
-    plt.xlabel('X Coord', fontsize=12, fontweight='bold')
-    plt.ylabel('Y Coord', fontsize=12, fontweight='bold')
-    if(group):
-        plt.title('Plot of the baseline for group ' + str(id))
-    else:
-        plt.title('Plot of the baseline for non group pedestrian ' + str(id))
-    plt.plot([x_end_perp_plot / 1000, x_second_end_perp_plot / 1000], [y_end_perp_plot / 1000, y_second_end_perp_plot/1000]
-                , c="green", label="perpendicular of the vector of velocity")
-    plt.legend()
-    plt.show()
-
-
-  
 
 if __name__ == "__main__":
 
@@ -326,12 +260,13 @@ if __name__ == "__main__":
                             if (max_dev_sub == None):
                                 continue
 
-                            max_dev_sub["start_vel"] = mean_speed
+                            max_dev_sub["mean_velocity"] = mean_speed
 
                             no_encounters_deviations["group"][str(pedestrian_id)]["max_dev"].append(max_dev_sub)
 
                             if (PLOT_VERIF):
-                                plot_baseline(trajectory, max_dev_sub, soc_binding, True, id = pedestrian_id)
+                                plot_baseline(trajectory = trajectory,max_dev = max_dev_sub,soc_binding = soc_binding,group = True, id = pedestrian_id, boundaries = env.boundaries, colors = colors,
+                                              n_average = n_points_average)
                     
                     number_of_group_filtered += 1
 
@@ -405,7 +340,7 @@ if __name__ == "__main__":
                         if(len(max_dev_sub)==0):
                             continue
 
-                        max_dev_sub["start_vel"] = mean_speed
+                        max_dev_sub["mean_velocity"] = mean_speed
 
                         no_encounters_deviations["non_group"][str(non_group_id)]["max_dev"].append(max_dev_sub)
 
@@ -450,7 +385,7 @@ if __name__ == "__main__":
                     else :
                         mean_max_dev_group += intermediate
                         j += 1
-                        mean_velocity_group += max_dev[i]["start_vel"]
+                        mean_velocity_group += max_dev[i]["mean_velocity"]
                         k += 1
                         mean_length_group += max_dev[i]["length_of_trajectory"]
                         l += 1
@@ -505,7 +440,7 @@ if __name__ == "__main__":
                     else:
                         mean_max_dev_non_group += intermediate
                         j += 1
-                        mean_velocity_non_group += max_dev[i]["start_vel"]
+                        mean_velocity_non_group += max_dev[i]["mean_velocity"]
                         k += 1
                         mean_length_non_group += max_dev[i]["length_of_trajectory"]
                         l += 1
@@ -615,17 +550,17 @@ if __name__ == "__main__":
             if(ANOVA):
                 name_of_the_file = ""
                 if (UNDISTURBED_COMPUTE) :
-                    name_of_the_file = "../data/report_text/deflection/will/ANOVA_for_mean_max_deviation_undisturbed.txt"
+                    name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/ANOVA_for_mean_max_deviation_undisturbed.txt"
                 else :
-                    name_of_the_file = "../data/report_text/deflection/will/ANOVA_for_mean_max_deviation.txt"
-                
-                with open(name_of_the_file, "a") as f :
-                    f.write("-----------------------------------------------------------\n")
-                    result = f_oneway(*data)
-                    f.write("ANOVA for mean max deviation for {0} trajectory of {1} meters\n".format(str_trajectory, MAX_DISTANCE/1000))
-                    f.write("F-value : {0}\n".format(result[0]))
-                    f.write("p-value : {0}\n".format(result[1]))
-                    f.write("-----------------------------------------------------------\n")
+                    name_of_the_file = "../data/report_text/deflection/will/all_trajectories/ANOVA_for_mean_max_deviation.txt"
+                if not os.path.exists(name_of_the_file):
+                    with open(name_of_the_file, "a") as f :
+                        f.write("-----------------------------------------------------------\n")
+                        result = f_oneway(*data)
+                        f.write("ANOVA for mean max deviation for {0} trajectory of {1} meters\n".format(str_trajectory, MAX_DISTANCE/1000))
+                        f.write("F-value : {0}\n".format(result[0]))
+                        f.write("p-value : {0}\n".format(result[1]))
+                        f.write("-----------------------------------------------------------\n")
 
 
             # This one is for group/non group only

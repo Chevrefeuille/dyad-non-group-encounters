@@ -10,10 +10,6 @@ from tqdm import tqdm
 """"""
 PLOT_VERIF = False
 
-PLOT_DIFF_DEVIATION = True
-
-PLOT_SOC_DEVIATION = True
-
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
         env = Environment(
@@ -21,7 +17,7 @@ if __name__ == "__main__":
         )
         env_name_short = env_name.split(":")[0]
 
-        soc_binding_type, soc_binding_names, soc_binding_values, _ = get_social_values(
+        soc_binding_type, soc_binding_names, soc_binding_values, colors = get_social_values(
             env_name
         )
         days = get_all_days(env_name)
@@ -117,23 +113,6 @@ if __name__ == "__main__":
                     if (len(traj_group_vicinity) < 6 or len(traj_non_group_vicinity) < 6):
                         continue
 
-                    if(PLOT_VERIF) :
-                        plot_static_2D_trajectories(
-                        [
-                            traj_A_vicinity,
-                            traj_B_vicinity,
-                            traj_group_vicinity,
-                            traj_non_group_vicinity,
-                        ],
-                        boundaries=env.boundaries,
-                        colors=[
-                            "cornflowerblue",
-                            "cornflowerblue",
-                            "lightsteelblue",
-                            "orange",
-                        ],
-                    )
-
                     mean_group_speed = np.nanmean(traj_group_vicinity[:,4])/1000 
                     if (mean_group_speed < 0.5):
                         continue
@@ -157,8 +136,15 @@ if __name__ == "__main__":
                         traj_group_vicinity, n_points_average, interpolate=False, length=length_group
                     )
 
-                    max_dev_group["start_velocity"] = mean_group_speed
-                    max_dev_ng["start_velocity"] = encounter_speed
+                    if(PLOT_VERIF) :
+                        fig, ax = plot_baseline(trajectory = traj_group_vicinity , max_dev = max_dev_group,soc_binding = soc_binding,group = True, id = group_id, boundaries = env.boundaries, colors = colors,ax = None,
+                                              n_average = n_points_average, show = False)
+                        plot_baseline(trajectory = traj_non_group_vicinity , max_dev = max_dev_ng,soc_binding = soc_binding,group = False, id = non_group_id, boundaries = env.boundaries, colors = colors, ax = ax, fig = fig,
+                                      show = True
+                        )
+
+                    max_dev_group["mean_velocity"] = mean_group_speed
+                    max_dev_ng["mean_velocity"] = encounter_speed
                     dict_deviation["group"][group_id]["group deviation"].append(max_dev_group)
                     dict_deviation["group"][group_id]["encounters deviation"].append(max_dev_ng)
 
