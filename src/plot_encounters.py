@@ -14,7 +14,7 @@ ANOVA = True
 
 SPEED_INTERVAL = True
 
-
+ALL_TRAJECTORY = False
 
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
@@ -26,6 +26,9 @@ if __name__ == "__main__":
         mean_deviation_soc = [[] for i in range(6)]
         new_label = ["0", "1", "2", "3", "other", "alone"]
         group_alone_label = ["group", "alone"]
+
+        
+
 
         for group_id in dict_deviation["group"]:
             soc_binding = dict_deviation["group"][group_id]["social_binding"]
@@ -127,7 +130,6 @@ if __name__ == "__main__":
                 i += 1
                 for j in range(len(speed_soc[i])) :
                     for k in range(len(speed_interval)) :
-                        print(speed_interval[k][0], speed_soc[i][j], speed_interval[k][1])
                         if(speed_interval[k][0] <= speed_soc[i][j] < speed_interval[k][1]) :
                             dict_speed_interval[speed_interval[k]][label].append(deviation_soc[i][j])
                             list_of_speed_interval[k].append(deviation_soc[i][j])
@@ -144,5 +146,35 @@ if __name__ == "__main__":
             ax.set_xlabel("Speed interval (m/s)")
             ax.set_ylabel("Maximum lateral deviation (m)")
             ax.plot(str_speed_interval, mean_deviation_for_speed_interval, marker = "o")
-            
-            plt.show()
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_deviation_speed_interval.png")
+            plt.close(fig)
+
+            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+            ax.set_title(f"Mean speed in function of the social binding")
+            ax.set_xlabel("Social binding / Number of encounters")
+            ax.set_ylabel("Mean speed (m/s)")
+            ax.boxplot(speed_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                       medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                          boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_speed_for_soc_binding.png")
+            plt.close(fig)
+
+            for social_binding in SOCIAL_BINDING.keys() :
+                list_of_data = []
+                encounters_label = str_speed_interval.copy()
+                fig,ax = plt.subplots(1, 1, figsize=(15, 10))
+                ax.set_title(f"Mean deviation in function of the speed interval for social binding : {social_binding}")
+                ax.set_xlabel("Speed interval (m/s) / number of encounters")
+                ax.set_ylabel("Mean deviation (m)")
+                for i,speed in enumerate(speed_interval) :
+                    list_of_data.append(dict_speed_interval[speed][social_binding])
+                    encounters_label[i] += f" / {len(list_of_data[-1])}"
+                
+                ax.boxplot(list_of_data, labels=encounters_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                            medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                              boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_deviation_speed_interval_{social_binding}.png")
+                plt.show()
+                plt.close(fig)
+
+

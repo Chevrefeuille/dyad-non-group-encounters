@@ -10,6 +10,14 @@ from tqdm import tqdm
 """"""
 PLOT_VERIF = False
 
+ALL_TRAJECTORY = False
+
+MIN_NUMBER_OBSERVATIONS_LOCAL = 5
+
+MAX_DISTANCES_INTERVAL = [1500,2500,3000,4000,5000,6000]
+
+
+
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
         env = Environment(
@@ -22,9 +30,18 @@ if __name__ == "__main__":
         )
         days = get_all_days(env_name)
 
-        dict_deviation = {
-            "group": {},
-        }
+        if(ALL_TRAJECTORY):
+            dict_deviation = {
+                "group": {},
+            }
+        else :
+            dict_deviation = {
+                "MAX_DISTANCE": {"group": {}, },
+            }
+            for max_distance in MAX_DISTANCES_INTERVAL:
+                    dict_deviation["MAX_DISTANCE"][max_distance] = {
+                        "group": {},
+                    }
 
         thresholds_indiv = get_pedestrian_thresholds(env_name)
         thresholds_groups = get_groups_thresholds()
@@ -63,11 +80,19 @@ if __name__ == "__main__":
                 if not group_encounters:
                     continue
 
-                dict_deviation["group"][group_id] = {
-                    "group deviation": [],
-                    "social_binding": soc_binding,
-                    "encounters deviation": [],
-                }
+                if(ALL_TRAJECTORY):
+                    dict_deviation["group"][group_id] = {
+                        "group deviation": [],
+                        "social_binding": soc_binding,
+                        "encounters deviation": [],
+                    }
+                else :
+                    for max_distance in MAX_DISTANCES_INTERVAL:
+                        dict_deviation["MAX_DISTANCE"][max_distance]["group"][group_id] = {
+                            "group deviation": [],
+                            "social_binding": soc_binding,
+                            "encounters deviation": [],
+                        }
 
                 for non_group in group_encounters:
 
@@ -93,13 +118,6 @@ if __name__ == "__main__":
                     if relative_direction != "opposite":
                         continue
 
-                    [
-                        traj_A,
-                        traj_B,
-                        traj_group,
-                        traj_non_group,
-                    ] = compute_simultaneous_observations(trajectories)
-
                     in_vicinity = np.logical_and(
                         np.abs(traj_group[:, 1] - traj_non_group[:, 1]) <= 4000,
                         np.abs(traj_group[:, 2] - traj_non_group[:, 2]) <= 4000,
@@ -124,31 +142,71 @@ if __name__ == "__main__":
                         continue
                     elif (encounter_speed > 2.5):
                         continue
-                    
-                    n_points_average = 4
-                    length_non_group = compute_length(traj_non_group_vicinity)
-                    max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
-                        traj_non_group_vicinity, n_points_average, interpolate=False, length=length_non_group
-                    )
-
-                    length_group = compute_length(traj_group_vicinity)
-                    max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
-                        traj_group_vicinity, n_points_average, interpolate=False, length=length_group
-                    )
-
-                    if(PLOT_VERIF) :
-                        fig, ax = plot_baseline(trajectory = traj_group_vicinity , max_dev = max_dev_group,soc_binding = soc_binding,group = True, id = group_id, boundaries = env.boundaries, colors = colors,ax = None,
-                                              n_average = n_points_average, show = False)
-                        plot_baseline(trajectory = traj_non_group_vicinity , max_dev = max_dev_ng,soc_binding = soc_binding,group = False, id = non_group_id, boundaries = env.boundaries, colors = colors, ax = ax, fig = fig,
-                                      show = True
+                        
+                    if(ALL_TRAJECTORY):
+                        n_points_average = 4
+                        length_non_group = compute_length(traj_non_group_vicinity)
+                        max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
+                            traj_non_group_vicinity, n_points_average, interpolate=False, length=length_non_group
                         )
 
-                    max_dev_group["mean_velocity"] = mean_group_speed
-                    max_dev_ng["mean_velocity"] = encounter_speed
-                    dict_deviation["group"][group_id]["group deviation"].append(max_dev_group)
-                    dict_deviation["group"][group_id]["encounters deviation"].append(max_dev_ng)
+                        length_group = compute_length(traj_group_vicinity)
+                        max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
+                            traj_group_vicinity, n_points_average, interpolate=False, length=length_group
+                        )
 
-    pickle_save(f"../data/pickle/{env_name_short}_encounters_deviations.pkl", dict_deviation)
+                        if(PLOT_VERIF) :
+                            fig, ax = plot_baseline(trajectory = traj_group_vicinity , max_dev = max_dev_group,soc_binding = soc_binding,group = True, id = group_id, boundaries = env.boundaries, colors = colors,ax = None,
+                                                n_average = n_points_average, show = False)
+                            plot_baseline(trajectory = traj_non_group_vicinity , max_dev = max_dev_ng,soc_binding = soc_binding,group = False, id = non_group_id, boundaries = env.boundaries, colors = colors, ax = ax, fig = fig,
+                                        show = True
+                            )
+
+                        max_dev_group["mean_velocity"] = mean_group_speed
+                        max_dev_ng["mean_velocity"] = encounter_speed
+                        dict_deviation["group"][group_id]["group deviation"].append(max_dev_group)
+                        dict_deviation["group"][group_id]["encounters deviation"].append(max_dev_ng)
+
+                    else:
+                        for MAX_DISTANCE in MAX_DISTANCES_INTERVAL:
+                            result = compute_continuous_sub_trajectories_using_distance(traj_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            if (result == None):
+                                continue
+                            list_sub_traj_group = result[0]
+                            list_sub_length_group = result[1]
+                            result = compute_continuous_sub_trajectories_using_distance(traj_non_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            if (result == None):
+                                continue
+                            list_sub_traj_non_group = result[0]
+                            list_sub_length_non_group = result[1]
+                            indice = -1
+
+                            for sub_traj_group,sub_traj_non_group in zip(list_sub_traj_group,list_sub_traj_non_group):
+                                indice += 1
+                                n_points_average = 4
+                                length_non_group = compute_length(traj_non_group_vicinity)
+                                max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
+                                    traj_non_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_non_group[indice]
+                                )
+
+                                length_group = compute_length(traj_group_vicinity)
+                                max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
+                                    traj_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_group[indice]
+                                )
+
+                                max_dev_group["mean_velocity"] = mean_group_speed
+                                max_dev_ng["mean_velocity"] = encounter_speed
+
+                                dict_deviation["MAX_DISTANCE"][MAX_DISTANCE]["group"][group_id]["group deviation"].append(max_dev_group)
+                                dict_deviation["MAX_DISTANCE"][MAX_DISTANCE]["group"][group_id]["encounters deviation"].append(max_dev_ng)
+
+
+
+    if(ALL_TRAJECTORY):
+        pickle_save(f"../data/pickle/{env_name_short}_encounters_deviations.pkl", dict_deviation)
+
+    else:
+        pickle_save(f"../data/pickle/{env_name_short}_encounters_deviations_MAX_DISTANCE.pkl", dict_deviation)
             
 
 
