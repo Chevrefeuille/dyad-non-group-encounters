@@ -25,19 +25,19 @@ The baseline trajectory is the trajectory of the pedestrian using an average of 
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 
 # If we want to plot the trajectory to visualize the deflection
-PLOT_VERIF = True
+PLOT_VERIF = False
 
 # If we want to plot (scatter) the mean deflection for each pedestrian
-PLOT_MEAN_MAX_DEV = False
+PLOT_MEAN_MAX_DEV = True
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = True
+UNDISTURBED_COMPUTE = False
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
-SPEED_INTERVAL = False
+SPEED_INTERVAL = True
 
 # If we want to write a filte with ANOVA test
-ANOVA = False
+ANOVA = True
 
 def compute_time_for_all_pedestrians(env_imput):
 
@@ -159,7 +159,6 @@ if __name__ == "__main__":
                     days=[day],
                     no_groups=True,
                     thresholds=thresholds_ped,
-                    sampling_time=500,
                 )
 
                 groups = env.get_groups(
@@ -167,7 +166,6 @@ if __name__ == "__main__":
                     size=2,
                     ped_thresholds=thresholds_ped,
                     group_thresholds=thresholds_group,
-                    sampling_time=500,
                 )
 
                 number_of_group_filtered = 0

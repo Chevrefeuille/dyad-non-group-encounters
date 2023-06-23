@@ -14,10 +14,6 @@ ALL_TRAJECTORY = False
 
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 
-MAX_DISTANCES_INTERVAL = [1500,2500,3000,4000,5000,6000]
-
-
-
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
         env = Environment(
@@ -169,11 +165,14 @@ if __name__ == "__main__":
 
                     else:
                         for MAX_DISTANCE in MAX_DISTANCES_INTERVAL:
+                            print("MAX_DISTANCE : ",MAX_DISTANCE)
+                            print(np.diff(traj_group_vicinity[:,0]))
                             result = compute_continuous_sub_trajectories_using_distance(traj_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
                             list_sub_traj_group = result[0]
                             list_sub_length_group = result[1]
+                            print(result[1])
                             result = compute_continuous_sub_trajectories_using_distance(traj_non_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
@@ -184,12 +183,12 @@ if __name__ == "__main__":
                             for sub_traj_group,sub_traj_non_group in zip(list_sub_traj_group,list_sub_traj_non_group):
                                 indice += 1
                                 n_points_average = 4
-                                length_non_group = compute_length(traj_non_group_vicinity)
+                                print(list_sub_length_non_group[indice])
                                 max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
                                     traj_non_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_non_group[indice]
                                 )
 
-                                length_group = compute_length(traj_group_vicinity)
+                                print(list_sub_length_group[indice])
                                 max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
                                     traj_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_group[indice]
                                 )
