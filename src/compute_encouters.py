@@ -10,7 +10,7 @@ from tqdm import tqdm
 """"""
 PLOT_VERIF = False
 
-ALL_TRAJECTORY = False
+ALL_TRAJECTORY = True
 
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 
@@ -172,8 +172,6 @@ if __name__ == "__main__":
 
                     else:
                         for MAX_DISTANCE in MAX_DISTANCES_INTERVAL:
-                            print("MAX_DISTANCE : ",MAX_DISTANCE)
-                            print(np.diff(traj_group_vicinity[:,0]))
 
                             result = compute_continuous_sub_trajectories_using_distance(traj_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
