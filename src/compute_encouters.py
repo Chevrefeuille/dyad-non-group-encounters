@@ -138,6 +138,9 @@ if __name__ == "__main__":
                         continue
                     elif (encounter_speed > 2.5):
                         continue
+
+                    time_of_group_traj = traj_group_vicinity[-1, 0] - traj_group_vicinity[0, 0]
+                    time_of_non_group_traj = traj_non_group_vicinity[-1, 0] - traj_non_group_vicinity[0, 0]
                         
                     if(ALL_TRAJECTORY):
                         n_points_average = 4
@@ -160,6 +163,10 @@ if __name__ == "__main__":
 
                         max_dev_group["mean_velocity"] = mean_group_speed
                         max_dev_ng["mean_velocity"] = encounter_speed
+
+                        max_dev_group["time"] = time_of_group_traj
+                        max_dev_ng["time"] = time_of_non_group_traj
+
                         dict_deviation["group"][group_id]["group deviation"].append(max_dev_group)
                         dict_deviation["group"][group_id]["encounters deviation"].append(max_dev_ng)
 
@@ -167,12 +174,13 @@ if __name__ == "__main__":
                         for MAX_DISTANCE in MAX_DISTANCES_INTERVAL:
                             print("MAX_DISTANCE : ",MAX_DISTANCE)
                             print(np.diff(traj_group_vicinity[:,0]))
+
                             result = compute_continuous_sub_trajectories_using_distance(traj_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
                             list_sub_traj_group = result[0]
                             list_sub_length_group = result[1]
-                            print(result[1])
+
                             result = compute_continuous_sub_trajectories_using_distance(traj_non_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
@@ -183,18 +191,20 @@ if __name__ == "__main__":
                             for sub_traj_group,sub_traj_non_group in zip(list_sub_traj_group,list_sub_traj_non_group):
                                 indice += 1
                                 n_points_average = 4
-                                print(list_sub_length_non_group[indice])
+
                                 max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
                                     traj_non_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_non_group[indice]
                                 )
 
-                                print(list_sub_length_group[indice])
                                 max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
                                     traj_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_group[indice]
                                 )
 
                                 max_dev_group["mean_velocity"] = mean_group_speed
                                 max_dev_ng["mean_velocity"] = encounter_speed
+
+                                max_dev_group["time"] = time_of_group_traj
+                                max_dev_ng["time"] = time_of_non_group_traj
 
                                 dict_deviation["MAX_DISTANCE"][MAX_DISTANCE]["group"][group_id]["group deviation"].append(max_dev_group)
                                 dict_deviation["MAX_DISTANCE"][MAX_DISTANCE]["group"][group_id]["encounters deviation"].append(max_dev_ng)

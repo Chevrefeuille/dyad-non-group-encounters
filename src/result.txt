@@ -1,0 +1,13 @@
+We want to find the fuction f that define the deviation of a group of pedestrian. Hypothesis : the fuction can be write as a function using 3 variables X, T and M.
+X is the length of the trajectory of the group. T is the travel time of the group. M is the social binding of the group of pedestrian.
+Therefore F(X, T, M) is the max deviation of the group. X and T are real number but M belongs to {0, 1, 2, 3, alone}
+If we put v = X/T then the function becomes F(v*T, T, M)
+We can compute the value of F(v*T, T, M) as the max lateral deviation.
+
+To prove this result we will use controlled experimentation method.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+1) Set v and M -> see if T has an influence on the max lateral deviation
+2) Set T and M -> see if v has an influence
+3) Set v and T -> see what M change

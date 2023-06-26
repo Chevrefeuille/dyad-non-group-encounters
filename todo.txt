@@ -1,6 +1,4 @@
 plot :
+deviation en fonction du temps de parcours en utilisant les intervalles de length to compute the baseline 
 
-deviation en fonction vitesse pour chaque soc_binding / pour tous
-
-p-value
 

@@ -18,6 +18,8 @@ SPEED_INTERVAL = True
 
 ALL_TRAJECTORY = False
 
+RESULT = True
+
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
         env_name_short = env_name.split(":")[0]
@@ -38,6 +40,7 @@ if __name__ == "__main__":
             mean_length_soc = [[] for i in range(6)]
             new_label = ["0", "1", "2", "3", "other", "alone"]
             group_alone_label = ["group", "alone"]
+            time_soc = [[] for i in range(6)]
 
 
             if (not ALL_TRAJECTORY) :
@@ -62,6 +65,9 @@ if __name__ == "__main__":
                     speed_soc[5].append(max_dev_non_group[i]["mean_velocity"])
                     length_soc[indice].append(max_dev_group[i]["length_of_trajectory"])
                     length_soc[5].append(max_dev_non_group[i]["length_of_trajectory"])
+                    time_soc[indice].append(max_dev_group[i]["time"])
+                    time_soc[5].append(max_dev_non_group[i]["time"])
+
 
                 
             non_group_average = [np.mean(deviation_soc[5])]
@@ -119,15 +125,26 @@ if __name__ == "__main__":
                 plt.close(fig)
 
                 if(ANOVA):
-                    name_of_the_file = "../data/report_text/deflection/will/encounter/ANOVA_for_mean_max_deviation.txt"
-                    if not os.path.exists(name_of_the_file):
-                        with open(name_of_the_file, "a") as f :
-                            f.write("-----------------------------------------------------------\n")
-                            result = f_oneway(deviation_soc[0], deviation_soc[1], deviation_soc[2], deviation_soc[3], deviation_soc[4], deviation_soc[5])
-                            f.write("ANOVA for mean max deviation in function of the social binding in encounter situation\n")
-                            f.write("F-value : {0}\n".format(result[0]))
-                            f.write("p-value : {0}\n".format(result[1]))
-                            f.write("-----------------------------------------------------------\n")
+                    if(ALL_TRAJECTORY):
+                        name_of_the_file = "../data/report_text/deflection/will/encounter/ANOVA_for_mean_max_deviation.txt"
+                        if not os.path.exists(name_of_the_file):
+                            with open(name_of_the_file, "a") as f :
+                                f.write("-----------------------------------------------------------\n")
+                                result = f_oneway(deviation_soc[0], deviation_soc[1], deviation_soc[2], deviation_soc[3], deviation_soc[4], deviation_soc[5])
+                                f.write("ANOVA for mean max deviation in function of the social binding in encounter situation\n")
+                                f.write("F-value : {0}\n".format(result[0]))
+                                f.write("p-value : {0}\n".format(result[1]))
+                                f.write("-----------------------------------------------------------\n")
+                    else :
+                        name_of_the_file = "../data/report_text/deflection/will/encounter/ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(max_distance)
+                        if not os.path.exists(name_of_the_file):
+                            with open(name_of_the_file, "a") as f :
+                                f.write("-----------------------------------------------------------\n")
+                                result = f_oneway(deviation_soc[0], deviation_soc[1], deviation_soc[2], deviation_soc[3], deviation_soc[4], deviation_soc[5])
+                                f.write("ANOVA for mean max deviation in function of the social binding in encounter situation\n")
+                                f.write("F-value : {0}\n".format(result[0]))
+                                f.write("p-value : {0}\n".format(result[1]))
+                                f.write("-----------------------------------------------------------\n")
 
                 
 
@@ -178,62 +195,73 @@ if __name__ == "__main__":
                                 break
 
 
-                mean_deviation_for_speed_interval = [np.mean(list_of_speed_interval[i]) for i in range(len(list_of_speed_interval))]
-                str_speed_interval = []
-                for elt in speed_interval :
-                    str_speed_interval.append(str(elt))
 
-                fig,ax = plt.subplots(1, 1, figsize=(10, 10))
-                if (ALL_TRAJECTORY) :
-                    ax.set_title(f"Deviation in function of the speed interval")
-                else :
-                    ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
-                ax.set_xlabel("Speed interval (m/s)")
-                ax.set_ylabel("Maximum lateral deviation (m)")
-                ax.plot(str_speed_interval, mean_deviation_for_speed_interval, marker = "o")
-                if (ALL_TRAJECTORY) :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_deviation_speed_interval.png")
-                else :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/max_distance/speed/{env_name_short}_deviation_speed_interval_MAX_DISTANCE_{max_distance}.png")
-                plt.close(fig)
 
-                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-                if (ALL_TRAJECTORY) :
-                    ax.set_title(f"Mean speed in function of the social binding")
-                else :
-                    ax.set_title(f"Mean speed in function of the social binding for a maximum distance of {length_group_average} m")
-                ax.set_xlabel("Social binding / Number of encounters")
-                ax.set_ylabel("Mean speed (m/s)")
-                ax.boxplot(speed_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
-                        medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-                if (ALL_TRAJECTORY) :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_speed_for_soc_binding.png")
-                else :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/max_distance/speed/{env_name_short}_speed_for_soc_binding_MAX_DISTANCE_{max_distance}.png")
-                plt.close(fig)
-
-                for social_binding in SOCIAL_BINDING.keys() :
+                if(RESULT) :
+                    for social_binding in SOCIAL_BINDING.keys() :
                     list_of_data = []
-                    encounters_label = str_speed_interval.copy()
-                    fig,ax = plt.subplots(1, 1, figsize=(15, 10))
+
+
+                else :
+                    mean_deviation_for_speed_interval = [np.mean(list_of_speed_interval[i]) for i in range(len(list_of_speed_interval))]
+                    str_speed_interval = []
+                    for elt in speed_interval :
+                        str_speed_interval.append(str(elt))
+
+                    fig,ax = plt.subplots(1, 1, figsize=(10, 10))
                     if (ALL_TRAJECTORY) :
-                        ax.set_title(f"Mean deviation in function of the speed interval for social binding : {length_group_average}")
+                        ax.set_title(f"Deviation in function of the speed interval")
                     else :
-                        ax.set_title(f"Mean deviation in function of the speed interval for social binding : {social_binding} and max distance : {max_distance}")
-                    ax.set_xlabel("Speed interval (m/s) / number of encounters")
-                    ax.set_ylabel("Mean deviation (m)")
-                    for i,speed in enumerate(speed_interval) :
-                        list_of_data.append(dict_speed_interval[speed][social_binding])
-                        encounters_label[i] += f" / {len(list_of_data[-1])}"
-                    
-                    ax.boxplot(list_of_data, labels=encounters_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
-                                medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                        ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
+                    ax.set_xlabel("Speed interval (m/s)")
+                    ax.set_ylabel("Maximum lateral deviation (m)")
+                    ax.plot(str_speed_interval, mean_deviation_for_speed_interval, marker = "o")
+                    if (ALL_TRAJECTORY) :
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_deviation_speed_interval.png")
+                    else :
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/max_distance/speed/{env_name_short}_deviation_speed_interval_MAX_DISTANCE_{max_distance}.png")
+                    plt.close(fig)
+
+                    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                    if (ALL_TRAJECTORY) :
+                        ax.set_title(f"Mean speed in function of the social binding")
+                    else :
+                        ax.set_title(f"Mean speed in function of the social binding for a maximum distance of {length_group_average} m")
+                    ax.set_xlabel("Social binding / Number of encounters")
+                    ax.set_ylabel("Mean speed (m/s)")
+                    ax.boxplot(speed_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                            medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
                     if (ALL_TRAJECTORY) :
-                        fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_deviation_speed_interval_{social_binding}.png")
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_speed_for_soc_binding.png")
                     else :
-                        fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/max_distance/speed/{env_name_short}_deviation_speed_interval_{social_binding}_MAX_DISTANCE_{max_distance}.png")
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/max_distance/speed/{env_name_short}_speed_for_soc_binding_MAX_DISTANCE_{max_distance}.png")
                     plt.close(fig)
+
+                    for social_binding in SOCIAL_BINDING.keys() :
+                        list_of_data = []
+                        encounters_label = str_speed_interval.copy()
+                        fig,ax = plt.subplots(1, 1, figsize=(15, 10))
+                        if (ALL_TRAJECTORY) :
+                            ax.set_title(f"Mean deviation in function of the speed interval for social binding : {length_group_average}")
+                        else :
+                            ax.set_title(f"Mean deviation in function of the speed interval for social binding : {social_binding} and max distance : {max_distance}")
+                        ax.set_xlabel("Speed interval (m/s) / number of encounters")
+                        ax.set_ylabel("Mean deviation (m)")
+                        for i,speed in enumerate(speed_interval) :
+                            list_of_data.append(dict_speed_interval[speed][social_binding])
+                            encounters_label[i] += f" / {len(list_of_data[-1])}"
+                        
+                        ax.boxplot(list_of_data, labels=encounters_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                                    medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                    boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                        if (ALL_TRAJECTORY) :
+                            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed/{env_name_short}_deviation_speed_interval_{social_binding}.png")
+                        else :
+                            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/max_distance/speed/{env_name_short}_deviation_speed_interval_{social_binding}_MAX_DISTANCE_{max_distance}.png")
+                        plt.close(fig)
+
+
+            
 
 
