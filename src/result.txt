@@ -10,11 +10,10 @@ To prove this result we will use controlled experimentation method.
 ------------------------------------------------------------------------------------------------------------------------------
 
 1) Set v and M -> see if T has an influence on the max lateral deviation
-2) Set T and M -> see if v has an influence   
+2) Set T and M -> see if v has an influence
 3) Set v and T -> see what M change
 
 ------------------------------------------------------------------------------------------------------------------------------
 
 Interpretation of the result :
-Two possiblities :
 - There is an other variable which have an effect on the deviation

@@ -20,9 +20,11 @@ SPEED_INTERVAL = True
 
 ALL_TRAJECTORY = True
 
-RESULT_1 = True
+SPEED_GLOBAL = False
 
-RESULT_2 = True
+RESULT_1 = False
+
+RESULT_2 = False
 
 RESULT_3 = True
 
@@ -56,7 +58,7 @@ if __name__ == "__main__":
             else :
                 ind = len(MAX_DISTANCES_INTERVAL) -1
 
-            for group_id in tqdm(dict_deviation["group"]):
+            for group_id in dict_deviation["group"]:
                 soc_binding = dict_deviation["group"][group_id]["social_binding"]
                 max_dev_group = dict_deviation["group"][group_id]["group deviation"]
                 max_dev_non_group = dict_deviation["group"][group_id]["encounters deviation"]
@@ -220,8 +222,8 @@ if __name__ == "__main__":
                                 fig.savefig(f"../data/figures/result/1.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
                             plt.close(fig)
 
-                # time_interval = [(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,3000),(3000,3500),(3500,4000),(4000,10000)]
-                time_interval = [(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000)]
+                time_interval = [(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000),(4000,10000)]
+                #time_interval = [(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000)]
                 # time_interval = [(2750,2875),(2875,3000),(3000,3125),(3125,3250),(3250,3375),(3375,3500)]
 
                 list_of_time_interval = [[] for i in range(len(time_interval))]
@@ -260,7 +262,69 @@ if __name__ == "__main__":
                                 fig.savefig(f"../data/figures/result/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
                             plt.close(fig)
 
-                else :
+                dict_label = {}
+                for i in range(len(time_interval)) :
+                    for j in range(len(speed_interval)) :
+                        dict_label[(time_interval[i],speed_interval[j])] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
+
+                
+
+                if(RESULT_3) :
+
+                    for group_id in dict_deviation["group"]:
+                        soc_binding = dict_deviation["group"][group_id]["social_binding"]
+                        max_dev_group = dict_deviation["group"][group_id]["group deviation"]
+                        max_dev_non_group = dict_deviation["group"][group_id]["encounters deviation"]
+
+                        indice = SOCIAL_BINDING[str(soc_binding)]
+
+                        for i in range(len(max_dev_group)):
+                            counter_break = False
+                            for j in range(len(time_interval)) :
+                                for k in range(len(speed_interval)) :
+                                    if(time_interval[j][0] <= max_dev_group[i]["time"] < time_interval[j][1] and speed_interval[k][0] <= max_dev_group[i]["mean_velocity"] < speed_interval[k][1]) :
+                                        dict_label[(time_interval[j],speed_interval[k])][indice].append(max_dev_group[i]["max_lateral_deviation"])
+                                        counter_break = True
+                                        break
+                                if(counter_break) :
+                                    break
+                    
+                        for i in range(len(max_dev_non_group)) :
+                            counter_break = False
+                            for j in range(len(time_interval)) :
+                                for k in range(len(speed_interval)) :
+                                    if(time_interval[j][0] <= max_dev_non_group[i]["time"] < time_interval[j][1] and speed_interval[k][0] <= max_dev_non_group[i]["mean_velocity"] < speed_interval[k][1]) :
+                                        dict_label[(time_interval[j],speed_interval[k])]["alone"].append(max_dev_non_group[i]["max_lateral_deviation"])
+                                        counter_break = True
+                                        break
+                                if(counter_break) :
+                                    break
+                    for speed in speed_interval :
+                        for interval in time_interval :
+                            Y = [[] for i in range(len(SOCIAL_BINDING.keys()))]
+                            for label in dict_label[(interval,speed)].keys() :
+                                indice = SOCIAL_BINDING[label]
+                                if(len(dict_label[(interval,speed)][label]) > 0) :
+                                    for elt in dict_label[(interval,speed)][label] :
+                                        Y[indice].append(elt)
+
+                                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                                ax.boxplot(Y, labels=SOCIAL_BINDING.keys(), showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                                medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                                ax.set_xlabel("Social binding")
+                                ax.set_ylabel("Maximum lateral deviation (m)")
+                                if (ALL_TRAJECTORY) :
+                                    ax.set_title(f"Deviation in function of the social binding")
+                                    fig.savefig(f"../data/figures/result/3/{interval}/{env_name_short}_{interval}_{speed}.png")
+                                else :
+                                    ax.set_title(f"Deviation in function of the social binding for a maximum distance of {length_group_average} m")
+                                    fig.savefig(f"../data/figures/result/3.1/{interval}/{env_name_short}_{interval}_{speed}_{max_distance}.png")
+
+                                plt.close(fig)
+
+
+                if (SPEED_GLOBAL) :
                     mean_deviation_for_speed_interval = [np.mean(list_of_speed_interval[i]) for i in range(len(list_of_speed_interval))]
                     str_speed_interval = []
                     for elt in speed_interval :
