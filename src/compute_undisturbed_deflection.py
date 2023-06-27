@@ -28,16 +28,16 @@ MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 PLOT_VERIF = False
 
 # If we want to plot (scatter) the mean deflection for each pedestrian
-PLOT_MEAN_MAX_DEV = True
+PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
-SPEED_INTERVAL = True
+SPEED_INTERVAL = False
 
 # If we want to write a filte with ANOVA test
-ANOVA = True
+ANOVA = False
 
 def compute_time_for_all_pedestrians(env_imput):
 
@@ -141,15 +141,22 @@ if __name__ == "__main__":
             str_trajectory = "all"
             times_undisturbed = compute_time_for_all_pedestrians(["diamor:corridor"])
 
-        # Create the dictionary that will store the deflection
-        no_encounters_deviations = {
-            "group": {},
-            "non_group": {},
+        dict_deflection = {
+            "MAX_DISTANCE": {}
         }
 
+
         # Loop over the maximum distance for each trajectory to compute the deflection  
-        for MAX_DISTANCE in [1500,2500,3000,4000,5000,6000]:
+        for MAX_DISTANCE in MAX_DISTANCE_INTERVAL:
             print("MAX_DISTANCE", MAX_DISTANCE)
+
+                    # Create the dictionary that will store the deflection
+            no_encounters_deviations = {
+                "group": {},
+                "non_group": {},
+            }
+
+            dict_deflection["MAX_DISTANCE"][MAX_DISTANCE] = no_encounters_deviations
 
             # Loop over the days
             for day in days:
@@ -258,9 +265,12 @@ if __name__ == "__main__":
                             if (max_dev_sub == None):
                                 continue
 
+                            time_of_group_traj = trajectory[-1, 0] - trajectory[0, 0]
                             max_dev_sub["mean_velocity"] = mean_speed
+                            max_dev_sub["time"] = time_of_group_traj
 
                             no_encounters_deviations["group"][str(pedestrian_id)]["max_dev"].append(max_dev_sub)
+
 
                             if (PLOT_VERIF):
                                 plot_baseline(trajectory = trajectory,max_dev = max_dev_sub,soc_binding = soc_binding,group = True, id = pedestrian_id, boundaries = env.boundaries, colors = colors,
@@ -338,7 +348,10 @@ if __name__ == "__main__":
                         if(len(max_dev_sub)==0):
                             continue
 
+                        time_of_non_group_traj = trajectory[-1, 0] - trajectory[0, 0]
+
                         max_dev_sub["mean_velocity"] = mean_speed
+                        max_dev_sub["time"] = time_of_non_group_traj
 
                         no_encounters_deviations["non_group"][str(non_group_id)]["max_dev"].append(max_dev_sub)
 
@@ -348,7 +361,6 @@ if __name__ == "__main__":
                     number_of_non_group_filtered += 1
 
                 print("number of non groups filtered:", number_of_non_group_filtered)
-
 
 
             #END OF COMPUTE DEVIATIONS
@@ -668,3 +680,8 @@ if __name__ == "__main__":
                     fig2.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
 
                 plt.close()
+        
+        if(UNDISTURBED_COMPUTE) :
+            pickle_save(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.plk", dict_deflection)
+        else :
+            pickle_save(f"../data/pickle/deflection_MAX_DISTANCE.plk", dict_deflection)
