@@ -52,6 +52,8 @@ if __name__ == "__main__":
             NEW_LABEL = ["0", "1", "2", "3", "other", "alone"]
             group_alone_label = ["group", "alone"]
             time_soc = [[] for i in range(6)]
+            number_of_pedestrian = [0 for i in range(6)]
+            total_soc_dev = [[] for i in range(6)]
 
 
             if (not ALL_TRAJECTORY) :
@@ -67,18 +69,49 @@ if __name__ == "__main__":
                 max_dev_non_group = dict_deviation["group"][group_id]["encounters deviation"]
 
                 indice = SOCIAL_BINDING[str(soc_binding)]
+                number_of_pedestrian[indice] += 1
+                intermediate_deviation = []
+                intermediate_length = []
+                intermediate_speed = []
+                intermediate_time = []
+
+                n_g_intermediate_deviation = []
+                n_g_intermediate_length = []
+                n_g_intermediate_speed = []
+                n_g_intermediate_time = []
+
 
                 for i in range(len(max_dev_group)):
-                    deviation_soc[indice].append(max_dev_group[i]["max_lateral_deviation"])
-                    deviation_soc[5].append(max_dev_non_group[i]["max_lateral_deviation"])
-                    deviation_soc_diff[indice].append(max_dev_group[i]["max_lateral_deviation"] - max_dev_non_group[i]["max_lateral_deviation"])
-                    speed_soc[indice].append(max_dev_group[i]["mean_velocity"])
-                    speed_soc[5].append(max_dev_non_group[i]["mean_velocity"])
-                    length_soc[indice].append(max_dev_group[i]["length_of_trajectory"])
-                    length_soc[5].append(max_dev_non_group[i]["length_of_trajectory"])
-                    time_soc[indice].append(max_dev_group[i]["time"])
-                    time_soc[5].append(max_dev_non_group[i]["time"])
+                    total_soc_dev[indice].append(max_dev_group[i]["max_lateral_deviation"])
+                    intermediate_deviation.append(max_dev_group[i]["max_lateral_deviation"])
+                    intermediate_length.append(max_dev_group[i]["length_of_trajectory"])
+                    intermediate_speed.append(max_dev_group[i]["mean_velocity"])
+                    intermediate_time.append(max_dev_group[i]["time"])
 
+                for i in range(len(max_dev_non_group)):
+                    n_g_intermediate_deviation.append(max_dev_non_group[i]["max_lateral_deviation"])
+                    n_g_intermediate_length.append(max_dev_non_group[i]["length_of_trajectory"])
+                    n_g_intermediate_speed.append(max_dev_non_group[i]["mean_velocity"])
+                    n_g_intermediate_time.append(max_dev_non_group[i]["time"])
+
+                if (len(intermediate_deviation) != 0) :
+                    deviation_soc[indice].append(np.nanmean(intermediate_deviation))
+                if (len(n_g_intermediate_deviation) != 0) :
+                    deviation_soc[5].append(np.nanmean(n_g_intermediate_deviation))
+                if (len(intermediate_deviation) != 0 and len(n_g_intermediate_deviation) != 0) :
+                    deviation_soc_diff[indice].append(np.nanmean(intermediate_deviation) - np.nanmean(n_g_intermediate_deviation))
+                if (len(intermediate_speed) != 0) :
+                    speed_soc[indice].append(np.nanmean(intermediate_speed))
+                if (len(n_g_intermediate_speed) != 0) :
+                    speed_soc[5].append(np.nanmean(n_g_intermediate_speed))
+                if (len(intermediate_length) != 0) :
+                    length_soc[indice].append(np.nanmean(intermediate_length))
+                if (len(n_g_intermediate_length) != 0) :
+                    length_soc[5].append(np.nanmean(n_g_intermediate_length))
+                if (len(intermediate_time) != 0) :
+                    time_soc[indice].append(np.nanmean(intermediate_time))
+                if (len(n_g_intermediate_time) != 0) :
+                    time_soc[5].append(np.nanmean(n_g_intermediate_time))
 
                 
             non_group_average = [np.mean(deviation_soc[5])]
@@ -113,6 +146,9 @@ if __name__ == "__main__":
                 ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                #ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                #             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                #                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
                 if (ALL_TRAJECTORY) :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_deviation_soc.png")
                 else :

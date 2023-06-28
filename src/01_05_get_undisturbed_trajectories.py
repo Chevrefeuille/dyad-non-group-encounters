@@ -37,7 +37,7 @@ if __name__ == "__main__":
                 days=[day],
                 no_groups=True,
                 thresholds=thresholds_ped,
-                sampling_time=0.5
+                sampling_time=500
             )
 
             groups = env.get_groups(
@@ -45,7 +45,7 @@ if __name__ == "__main__":
                 size=2,
                 ped_thresholds=thresholds_ped,
                 group_thresholds=thresholds_group,
-                sampling_time=0.5
+                sampling_time=500
             )
 
             times_undisturbed[day] = {"group": {}, "non_group": {}}

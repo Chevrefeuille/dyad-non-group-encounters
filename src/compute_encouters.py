@@ -10,7 +10,7 @@ from tqdm import tqdm
 """"""
 PLOT_VERIF = False
 
-ALL_TRAJECTORY = True
+ALL_TRAJECTORY = False
 
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 
@@ -50,11 +50,11 @@ if __name__ == "__main__":
                 size=2,
                 ped_thresholds=thresholds_indiv,
                 group_thresholds=thresholds_groups,
-                sampling_time=0.5
+                sampling_time=500
             )
 
             all_pedestrians = env.get_pedestrians(
-                days=[day], no_groups=False, thresholds=thresholds_indiv, sampling_time=0.5
+                days=[day], no_groups=False, thresholds=thresholds_indiv, sampling_time=500
             )
 
             for group in tqdm(groups):
@@ -183,27 +183,34 @@ if __name__ == "__main__":
                             list_sub_length_non_group = result[1]
                             indice = -1
 
-                            for sub_traj_group,sub_traj_non_group in zip(list_sub_traj_group,list_sub_traj_non_group):
+                            for sub_traj_group in list_sub_traj_group:
+                                indice += 1
+                                n_points_average = 4
+                              
+                                max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
+                                    sub_traj_group, n_points_average, interpolate=False, length=list_sub_length_group[indice]
+                                )
+
+                                max_dev_group["mean_velocity"] = mean_group_speed
+                                
+                                max_dev_group["time"] = time_of_group_traj
+
+                                dict_deviation["MAX_DISTANCE"][MAX_DISTANCE]["group"][group_id]["group deviation"].append(max_dev_group)
+
+                            indice = -1
+                            for sub_traj_non_group in list_sub_traj_non_group :
                                 indice += 1
                                 n_points_average = 4
 
                                 max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
-                                    traj_non_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_non_group[indice]
+                                    sub_traj_non_group, n_points_average, interpolate=False, length=list_sub_length_non_group[indice]
                                 )
 
-                                max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
-                                    traj_group_vicinity, n_points_average, interpolate=False, length=list_sub_length_group[indice]
-                                )
-
-                                max_dev_group["mean_velocity"] = mean_group_speed
                                 max_dev_ng["mean_velocity"] = encounter_speed
 
-                                max_dev_group["time"] = time_of_group_traj
                                 max_dev_ng["time"] = time_of_non_group_traj
 
-                                dict_deviation["MAX_DISTANCE"][MAX_DISTANCE]["group"][group_id]["group deviation"].append(max_dev_group)
                                 dict_deviation["MAX_DISTANCE"][MAX_DISTANCE]["group"][group_id]["encounters deviation"].append(max_dev_ng)
-
 
 
     if(ALL_TRAJECTORY):

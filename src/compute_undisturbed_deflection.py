@@ -31,7 +31,7 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = True
+UNDISTURBED_COMPUTE = False
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = True
@@ -76,7 +76,7 @@ def compute_time_for_all_pedestrians(env_imput):
                 days=[day],
                 no_groups=True,
                 thresholds=thresholds_ped,
-                sampling_time=0.5
+                sampling_time=500
             )
 
             groups = env.get_groups(
@@ -84,7 +84,7 @@ def compute_time_for_all_pedestrians(env_imput):
                 size=2,
                 ped_thresholds=thresholds_ped,
                 group_thresholds=thresholds_group,
-                sampling_time=0.5
+                sampling_time=500
             )
 
             times_all[day] = {"group": {}, "non_group": {}}
@@ -168,6 +168,7 @@ if __name__ == "__main__":
                     days=[day],
                     no_groups=True,
                     thresholds=thresholds_ped,
+                    sampling_time=  500
                 )
 
                 groups = env.get_groups(
@@ -175,6 +176,7 @@ if __name__ == "__main__":
                     size=2,
                     ped_thresholds=thresholds_ped,
                     group_thresholds=thresholds_group,
+                    sampling_time=500
                 )
 
                 number_of_group_filtered = 0
@@ -463,8 +465,6 @@ if __name__ == "__main__":
                     mean_max_dev_non_group = mean_max_dev_non_group/j
                 if(l != 0):
                     mean_length_non_group = mean_length_non_group/l
-                if (mean_max_dev_non_group > 800) :
-                    mean_max_dev_non_group = -1
                 
                 no_encounters_deviations["non_group"][non_group_id]["mean_max_dev"] = mean_max_dev_non_group
                 no_encounters_deviations["non_group"][non_group_id]["mean_velocity"] = mean_velocity_non_group
@@ -606,7 +606,7 @@ if __name__ == "__main__":
 
             if(SPEED_INTERVAL) :
                 # Create a dictionnary with the speed interval as key and the mean max deviation for each social binding
-                speed_interval = [(0,0.5),(0.5,0.75),(0.75,1),(1,1.25),(1.25,1.5),(1.5,2),(2,2.5)]
+                speed_interval = [(0.5,0.75),(0.75,1),(1,1.25),(1.25,1.5),(1.5,2),(2,2.5)]
                 dict_speed_interval = {}
                 for i in range(len(speed_interval)) :
                     dict_speed_interval[speed_interval[i]] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
