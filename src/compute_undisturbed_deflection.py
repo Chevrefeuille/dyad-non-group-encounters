@@ -31,7 +31,7 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = False
@@ -147,7 +147,6 @@ if __name__ == "__main__":
             "MAX_DISTANCE": {}
         }
 
-
         # Loop over the maximum distance for each trajectory to compute the deflection  
         for MAX_DISTANCE in MAX_DISTANCE_INTERVAL:
             print("MAX_DISTANCE", MAX_DISTANCE)
@@ -158,7 +157,6 @@ if __name__ == "__main__":
                 "non_group": {},
             }
 
-            dict_deflection["MAX_DISTANCE"][MAX_DISTANCE] = no_encounters_deviations
 
             # Loop over the days
             for day in days:
@@ -366,8 +364,9 @@ if __name__ == "__main__":
 
                 print("number of non groups filtered:", number_of_non_group_filtered)
 
+            dict_deflection["MAX_DISTANCE"][MAX_DISTANCE] = no_encounters_deviations
 
-            pickle_save(f"../data/pickle/{env_name_short}no_encounters_deviations.pkl", no_encounters_deviations)
+        
             #END OF COMPUTE DEVIATIONS
             #START OF PLOT DEVIATIONS
 
