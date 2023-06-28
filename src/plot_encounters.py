@@ -54,6 +54,7 @@ if __name__ == "__main__":
             time_soc = [[] for i in range(6)]
             number_of_pedestrian = [0 for i in range(6)]
             total_soc_dev = [[] for i in range(6)]
+            total_soc_length = [[] for i in range(6)]
 
 
             if (not ALL_TRAJECTORY) :
@@ -83,12 +84,15 @@ if __name__ == "__main__":
 
                 for i in range(len(max_dev_group)):
                     total_soc_dev[indice].append(max_dev_group[i]["max_lateral_deviation"])
+                    total_soc_length[indice].append(max_dev_group[i]["length_of_trajectory"])
                     intermediate_deviation.append(max_dev_group[i]["max_lateral_deviation"])
                     intermediate_length.append(max_dev_group[i]["length_of_trajectory"])
                     intermediate_speed.append(max_dev_group[i]["mean_velocity"])
                     intermediate_time.append(max_dev_group[i]["time"])
 
                 for i in range(len(max_dev_non_group)):
+                    total_soc_dev[5].append(max_dev_non_group[i]["max_lateral_deviation"])
+                    total_soc_length[5].append(max_dev_non_group[i]["length_of_trajectory"])
                     n_g_intermediate_deviation.append(max_dev_non_group[i]["max_lateral_deviation"])
                     n_g_intermediate_length.append(max_dev_non_group[i]["length_of_trajectory"])
                     n_g_intermediate_speed.append(max_dev_non_group[i]["mean_velocity"])
@@ -141,14 +145,15 @@ if __name__ == "__main__":
                     ax.set_title(f"Deviation in function of the social binding")
                 else :
                     ax.set_title(f"Deviation in function of the social binding for max distance : {length_group_average}")
-                ax.set_xlabel("Social binding / Number of encounters")
+                ax.set_xlabel("Social binding / Number of encounters (situation)")
                 ax.set_ylabel("Maximum lateral deviation (m)")
-                ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                ax.boxplot(total_soc_dev, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-                #ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                #   ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                 #             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                 #                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+
                 if (ALL_TRAJECTORY) :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_deviation_soc.png")
                 else :
