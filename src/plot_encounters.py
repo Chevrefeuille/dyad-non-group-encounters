@@ -378,7 +378,7 @@ if __name__ == "__main__":
                             fig.savefig(f"../data/figures/result/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
                         plt.close(fig)
 
-            # dict_label = {}
+            dict_label = {}
             # for i in range(len(time_interval)) :
             #     for j in range(len(speed_interval)) :
             #         dict_label[(time_interval[i],speed_interval[j])] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}

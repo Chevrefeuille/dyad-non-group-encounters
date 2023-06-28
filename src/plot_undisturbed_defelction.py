@@ -34,9 +34,9 @@ if __name__ == "__main__":
         env_name_short = env_name.split(":")[0] 
 
         if(ALL_TRAJECTORIES):
-            pre_dict_deviation = pickle_load(f"../data/pickle/deflection_MAX_DISTANCE.plk")
+            pre_dict_deviation = pickle_load(f"../data/pickle/deflection_MAX_DISTANCE.pkl")
         else :
-            pre_dict_deviation = pickle_load(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.plk")
+            pre_dict_deviation = pickle_load(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.pkl")
 
 
         for max_distance in MAX_DISTANCE_INTERVAL:
