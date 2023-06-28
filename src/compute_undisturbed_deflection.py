@@ -34,7 +34,7 @@ PLOT_MEAN_MAX_DEV = False
 UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
-SPEED_INTERVAL = False
+SPEED_INTERVAL = True
 
 # If we want to write a filte with ANOVA test
 ANOVA = False
@@ -76,6 +76,7 @@ def compute_time_for_all_pedestrians(env_imput):
                 days=[day],
                 no_groups=True,
                 thresholds=thresholds_ped,
+                sampling_time=0.5
             )
 
             groups = env.get_groups(
@@ -83,6 +84,7 @@ def compute_time_for_all_pedestrians(env_imput):
                 size=2,
                 ped_thresholds=thresholds_ped,
                 group_thresholds=thresholds_group,
+                sampling_time=0.5
             )
 
             times_all[day] = {"group": {}, "non_group": {}}

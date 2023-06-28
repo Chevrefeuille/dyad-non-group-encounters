@@ -21,17 +21,23 @@ SPEED_INTERVAL = True
 
 SPEED_GLOBAL = False
 
-RESULT_1 = False
+RESULT_1 = True
 
 RESULT_2 = False
 
-RESULT_3 = True
+RESULT_3 = False
+
+ALL_TRAJECTORIES = False
 
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
         env_name_short = env_name.split(":")[0] 
 
-        pre_dict_deviation = pickle_load(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.plk")
+        if(ALL_TRAJECTORIES):
+            pre_dict_deviation = pickle_load(f"../data/pickle/deflection_MAX_DISTANCE.plk")
+        else :
+            pre_dict_deviation = pickle_load(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.plk")
+
 
         for max_distance in MAX_DISTANCE_INTERVAL:
             print("MAX_DISTANCE : ", max_distance)
@@ -95,8 +101,10 @@ if __name__ == "__main__":
                 ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-
-                fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/{env_name_short}_deviation_soc_MAX_DISTANCE_{max_distance}.png")
+                if(ALL_TRAJECTORIES) :
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/all/max_distance/{env_name_short}_deviation_soc_MAX_DISTANCE_{max_distance}.png")
+                else :
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/{env_name_short}_deviation_soc_MAX_DISTANCE_{max_distance}.png")
                 plt.close(fig)
 
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
@@ -106,40 +114,22 @@ if __name__ == "__main__":
                 ax.boxplot([flattened_list, deviation_soc[5]], labels=group_alone_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                                 , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                     boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-                fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/{env_name_short}_deviation_group_alone_MAX_DISTANCE_{max_distance}.png")
+                if(ALL_TRAJECTORIES) :
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/all/max_distance/{env_name_short}_deviation_group_alone_MAX_DISTANCE_{max_distance}.png")
+                else :
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/{env_name_short}_deviation_group_alone_MAX_DISTANCE_{max_distance}.png")
                 plt.close(fig)
 
                 if(ANOVA):
-                    name_of_the_file = "../data/report_text/deflection/will/undisturbed_2/ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(max_distance)
+                    if (ALL_TRAJECTORIES) :
+                        name_of_the_file = "../data/report_text/deflection/will/all/ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(max_distance)
+                    else :
+                        name_of_the_file = "../data/report_text/deflection/will/undisturbed_2/ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(max_distance)
                     if not os.path.exists(name_of_the_file):
                         with open(name_of_the_file, "a") as f :
                             f.write("-----------------------------------------------------------\n")
                             result = f_oneway(deviation_soc[0], deviation_soc[1], deviation_soc[2], deviation_soc[3], deviation_soc[4], deviation_soc[5])
                             f.write("ANOVA for mean max deviation in function of the social binding in encounter situation\n")
-                            f.write("F-value : {0}\n".format(result[0]))
-                            f.write("p-value : {0}\n".format(result[1]))
-                            f.write("-----------------------------------------------------------\n")
-
-                
-
-                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-                ax.set_title(f"Deviation difference in function of the social binding for max distance {length_group_average}")
-                ax.set_xlabel("Social binding / Number of encounters")
-                ax.set_ylabel("Maximum lateral deviation (m)")
-                ax.boxplot(deviation_soc_diff, labels=new_label[:-1], showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
-                                medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                                boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-
-                fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/{env_name_short}_deviation_soc_diff_MAX_DISTANCE_{max_distance}.png")
-                plt.close(fig)
-
-                if(ANOVA):
-                    name_of_the_file = "../data/report_text/deflection/will/encounter/ANOVA_for_mean_max_deviation_diff.txt"
-                    if not os.path.exists(name_of_the_file):
-                        with open(name_of_the_file, "a") as f :
-                            f.write("-----------------------------------------------------------\n")
-                            result = f_oneway(deviation_soc_diff[0], deviation_soc_diff[1], deviation_soc_diff[2], deviation_soc_diff[3], deviation_soc_diff[4])
-                            f.write("ANOVA for mean max deviation difference in function of the social binding in encounter situation\n")
                             f.write("F-value : {0}\n".format(result[0]))
                             f.write("p-value : {0}\n".format(result[1]))
                             f.write("-----------------------------------------------------------\n")
@@ -175,11 +165,16 @@ if __name__ == "__main__":
 
                             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                             ax.scatter(X, Y, label = f"speed interval = {interval} / label = {label} ")
+                            ax.set_xlim(0,5000)
+                            ax.set_ylim(0,3500)
                             ax.set_xlabel("Time (s)")
                             ax.set_ylabel("Maximum lateral deviation (m)")
 
                             ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
-                            fig.savefig(f"../data/figures/result/undisturbed_2/1.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
+                            if(ALL_TRAJECTORIES) :
+                                fig.savefig(f"../data/figures/result/all/1.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
+                            else :
+                                fig.savefig(f"../data/figures/result/undisturbed_2/1.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
                             plt.close(fig)
 
                 time_interval = [(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000),(4000,10000)]
@@ -216,7 +211,11 @@ if __name__ == "__main__":
                             ax.set_xlabel("Speed (m/s)")
                             ax.set_ylabel("Deviation (m)")
                             ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
-                            fig.savefig(f"../data/figures/result/undisturbed_2/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
+                            if (ALL_TRAJECTORIES) :
+                                fig.savefig(f"../data/figures/result/all/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
+                            else :
+                                fig.savefig(f"../data/figures/result/undisturbed_2/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
+
                             plt.close(fig)
 
                 dict_label = {}
@@ -284,12 +283,15 @@ if __name__ == "__main__":
                                 ax.set_ylabel("Maximum lateral deviation (m)")
 
                                 ax.set_title(f"Deviation in function of the social binding for a maximum distance of {length_group_average} m")
-                                name_of_the_file = f"../data/figures/result/undisturbed_2/3.1/{speed}"
+                                if(ALL_TRAJECTORIES) :
+                                    name_of_the_file = f"../data/figures/result/all/3.1/{speed}"
+                                else :
+                                    name_of_the_file = f"../data/figures/result/undisturbed_2/3.1/{speed}"
                                 final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}_{max_distance}.png"
                                 if (os .path.exists(name_of_the_file)) :
                                     fig.savefig(final_name)
                                 else :
-                                    os.mkdir(f"../data/figures/result/undisturbed_2/3.1/{speed}")
+                                    os.mkdir(name_of_the_file)
                                     fig.savefig(final_name)
 
                                 plt.close(fig)
@@ -308,12 +310,15 @@ if __name__ == "__main__":
                                 ax.set_ylabel("Maximum lateral deviation (m)")
 
                                 ax.set_title(f"Deviation in function of the social binding for a maximum distance of {length_group_average} m")
-                                name_of_the_file = f"../data/figures/result/undisturbed_2/3.1/{speed}"
+                                if(ALL_TRAJECTORIES) :
+                                    name_of_the_file = f"../data/figures/result/all/3.1/{speed}"
+                                else :
+                                    name_of_the_file = f"../data/figures/result/undisturbed_2/3.1/{speed}"
                                 final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}_{max_distance}.png"
                                 if (os .path.exists(name_of_the_file)) :
                                     fig.savefig(final_name)
                                 else :
-                                    os.mkdir(f"../data/figures/result/undisturbed_2/3.1/{speed}")
+                                    os.mkdir(name_of_the_file)
                                     fig.savefig(final_name)
 
                                 plt.close(fig)
@@ -330,7 +335,10 @@ if __name__ == "__main__":
                     ax.set_ylabel("Maximum lateral deviation (m)")
                     ax.plot(str_speed_interval, mean_deviation_for_speed_interval, marker = "o")
 
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/speed/{env_name_short}_deviation_speed_interval_MAX_DISTANCE_{max_distance}.png")
+                    if(ALL_TRAJECTORIES) :
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/all/mean_speed_interval_MAX_DISTANCE_{max_distance}.png")
+                    else:
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/speed/{env_name_short}_deviation_speed_interval_MAX_DISTANCE_{max_distance}.png")
                     plt.close(fig)
 
                     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
@@ -340,8 +348,11 @@ if __name__ == "__main__":
                     ax.boxplot(speed_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
                             medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
- 
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/speed/{env_name_short}_speed_for_soc_binding_MAX_DISTANCE_{max_distance}.png")
+
+                    if (ALL_TRAJECTORIES):
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/all/mean_speed_for_soc_binding_MAX_DISTANCE_{max_distance}.png")
+                    else :
+                        fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/speed/{env_name_short}_speed_for_soc_binding_MAX_DISTANCE_{max_distance}.png")
                     plt.close(fig)
 
                     for social_binding in SOCIAL_BINDING.keys() :
@@ -359,7 +370,10 @@ if __name__ == "__main__":
                         ax.boxplot(list_of_data, labels=encounters_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
                                     medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                     boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-                        fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/speed/{env_name_short}_deviation_speed_interval_{social_binding}_MAX_DISTANCE_{max_distance}.png")
+                        if(ALL_TRAJECTORIES) :
+                            fig.savefig(f"../data/figures/deflection/will/boxplot/all/mean_deviation_speed_interval_{social_binding}_MAX_DISTANCE_{max_distance}.png")
+                        else :
+                            fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_2/max_distance/speed/{env_name_short}_deviation_speed_interval_{social_binding}_MAX_DISTANCE_{max_distance}.png")
                         plt.close(fig)
 
 

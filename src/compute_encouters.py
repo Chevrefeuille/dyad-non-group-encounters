@@ -34,7 +34,7 @@ if __name__ == "__main__":
             dict_deviation = {
                 "MAX_DISTANCE": {"group": {}, },
             }
-            for max_distance in MAX_DISTANCES_INTERVAL:
+            for max_distance in MAX_DISTANCE_INTERVAL:
                     dict_deviation["MAX_DISTANCE"][max_distance] = {
                         "group": {},
                     }
@@ -45,19 +45,16 @@ if __name__ == "__main__":
         for day in days:
             print(f"Day {day}:")
 
-            non_groups = env.get_pedestrians(
-                days=[day], no_groups=True, thresholds=thresholds_indiv
-            )
-
             groups = env.get_groups(
                 days=[day],
                 size=2,
                 ped_thresholds=thresholds_indiv,
                 group_thresholds=thresholds_groups,
+                sampling_time=0.5
             )
 
             all_pedestrians = env.get_pedestrians(
-                days=[day], no_groups=False, thresholds=thresholds_indiv
+                days=[day], no_groups=False, thresholds=thresholds_indiv, sampling_time=0.5
             )
 
             for group in tqdm(groups):
@@ -83,7 +80,7 @@ if __name__ == "__main__":
                         "encounters deviation": [],
                     }
                 else :
-                    for max_distance in MAX_DISTANCES_INTERVAL:
+                    for max_distance in MAX_DISTANCE_INTERVAL:
                         dict_deviation["MAX_DISTANCE"][max_distance]["group"][group_id] = {
                             "group deviation": [],
                             "social_binding": soc_binding,
@@ -171,7 +168,7 @@ if __name__ == "__main__":
                         dict_deviation["group"][group_id]["encounters deviation"].append(max_dev_ng)
 
                     else:
-                        for MAX_DISTANCE in MAX_DISTANCES_INTERVAL:
+                        for MAX_DISTANCE in MAX_DISTANCE_INTERVAL:
 
                             result = compute_continuous_sub_trajectories_using_distance(traj_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):

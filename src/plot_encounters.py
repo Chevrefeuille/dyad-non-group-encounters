@@ -1,3 +1,4 @@
+from parameters import *
 import matplotlib.pyplot as plt
 import numpy as np
 from pedestrians_social_binding.utils import *
@@ -12,21 +13,23 @@ from tqdm import tqdm
 
 SOCIAL_BINDING = {"0": 0, "1": 1, "2": 2, "3": 3, "other": 4, "alone": 5}
 
-PLOT_SOC_DEVIATION = False
+PLOT_SOC_DEVIATION = True
 
 ANOVA = False
 
 SPEED_INTERVAL = True
 
-ALL_TRAJECTORY = False
+ALL_TRAJECTORY = True
 
-SPEED_GLOBAL = False
+SPEED_GLOBAL = True
 
 RESULT_1 = False
 
 RESULT_2 = False
 
-RESULT_3 = True
+RESULT_3 = False
+
+SPEED_INTERVAL_2 = True
 
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
@@ -39,24 +42,24 @@ if __name__ == "__main__":
             pre_dict_deviation = pre_dict_deviation["MAX_DISTANCE"]
 
         ind = -1
-        while (ind != len(MAX_DISTANCES_INTERVAL)-1) :
+        while (ind != len(MAX_DISTANCE_INTERVAL)-1) :
             deviation_soc = [[] for i in range(6)]
             deviation_soc_diff = [[] for i in range(5)]
             speed_soc = [[] for i in range(6)]
             length_soc = [[] for i in range(6)]
             mean_deviation_soc = [[] for i in range(6)]
             mean_length_soc = [[] for i in range(6)]
-            new_label = ["0", "1", "2", "3", "other", "alone"]
+            NEW_LABEL = ["0", "1", "2", "3", "other", "alone"]
             group_alone_label = ["group", "alone"]
             time_soc = [[] for i in range(6)]
 
 
             if (not ALL_TRAJECTORY) :
                 ind += 1
-                max_distance = MAX_DISTANCES_INTERVAL[ind]
+                max_distance = MAX_DISTANCE_INTERVAL[ind]
                 dict_deviation = pre_dict_deviation[max_distance]
             else :
-                ind = len(MAX_DISTANCES_INTERVAL) -1
+                ind = len(MAX_DISTANCE_INTERVAL) -1
 
             for group_id in dict_deviation["group"]:
                 soc_binding = dict_deviation["group"][group_id]["social_binding"]
@@ -90,6 +93,7 @@ if __name__ == "__main__":
             length_flattened_list = [y for x in length_soc for y in x]
             length_group_average = [np.mean(length_flattened_list)]
 
+            new_label = NEW_LABEL.copy()
             for i in range(6):
                 new_label[i] = new_label[i] + " / " + str(len_deviation_soc[i])
 
@@ -197,189 +201,209 @@ if __name__ == "__main__":
                     for j in range(len(speed_soc[i])) :
                         for k in range(len(speed_interval)) :
                             if(speed_interval[k][0] <= speed_soc[i][j] < speed_interval[k][1]) :
-                                dict_speed_interval[speed_interval[k]][label].append([deviation_soc[i][j],time_soc[i][j]])
-                                list_of_speed_interval[k].append([deviation_soc[i][j],time_soc[i][j]])
+                                dict_speed_interval[speed_interval[k]][label].append(deviation_soc[i][j])
+                                list_of_speed_interval[k].append(deviation_soc[i][j])
                                 break
 
-                if(RESULT_1) :
-                    for interval in speed_interval :
-                        for label in dict_speed_interval[interval].keys() :
-                            X, Y = [], []
-                            if(len(dict_speed_interval[interval][label]) > 0) :
-                                for elt in dict_speed_interval[interval][label] :
-                                    X.append(elt[1])
-                                    Y.append(elt[0])
+                # Create a boxplot for each speed interval
+                for i,interval in enumerate(speed_interval) :
+                    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                    ax.set_title(f"Deviation in function of the social binding for speed interval {interval}")
+                    ax.set_xlabel("Social binding / Number of encounters")
+                    ax.set_ylabel("Maximum lateral deviation (m)")
+                    label = NEW_LABEL.copy()
+                    for j,name in enumerate(NEW_LABEL) :
+                        label[j] = label[j] + " / " + str(len(dict_speed_interval[interval][name]))
 
-                            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-                            ax.scatter(X, Y, label = f"speed interval = {interval} / label = {label} ")
-                            ax.set_xlabel("Time (s)")
-                            ax.set_ylabel("Maximum lateral deviation (m)")
-                            if (ALL_TRAJECTORY) :
-                                ax.set_title(f"Deviation in function of the time travelling")
-                                fig.savefig(f"../data/figures/result/1/{label}/{env_name_short}_{label}_{interval}.png")
-                            else :
-                                ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
-                                fig.savefig(f"../data/figures/result/1.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
-                            plt.close(fig)
-
-                time_interval = [(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000),(4000,10000)]
-                #time_interval = [(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000)]
-                # time_interval = [(2750,2875),(2875,3000),(3000,3125),(3125,3250),(3250,3375),(3375,3500)]
-
-                list_of_time_interval = [[] for i in range(len(time_interval))]
-                dict_time_interval = {}
-                for i in range(len(time_interval)) :
-                    dict_time_interval[time_interval[i]] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
-
-                i = -1
-                for label in SOCIAL_BINDING.keys() :
-                    i += 1
-                    for j in range(len(time_soc[i])) :
-                        for k in range(len(time_interval)) :
-                            if(time_interval[k][0] <= time_soc[i][j] < time_interval[k][1]) :
-                                dict_time_interval[time_interval[k]][label].append([deviation_soc[i][j],speed_soc[i][j]])
-                                list_of_time_interval[k].append([deviation_soc[i][j],speed_soc[i][j]])
-                                break
-                            
-                if(RESULT_2) :
-                    for interval in time_interval :
-                        for label in dict_time_interval[interval].keys() :
-                            X, Y = [], []
-                            if(len(dict_time_interval[interval][label]) > 0) :
-                                for elt in dict_time_interval[interval][label] :
-                                    X.append(elt[1])
-                                    Y.append(elt[0])
-
-                            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-                            ax.scatter(X, Y, label = f"time interval = {interval} / label = {label} ")
-                            ax.set_xlabel("Speed (m/s)")
-                            ax.set_ylabel("Deviation (m)")
-                            if (ALL_TRAJECTORY) :
-                                ax.set_title(f"Deviation in function of the speed")
-                                fig.savefig(f"../data/figures/result/2/{label}/{env_name_short}_{label}_{interval}.png")
-                            else :
-                                ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
-                                fig.savefig(f"../data/figures/result/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
-                            plt.close(fig)
-
-                dict_label = {}
-                for i in range(len(time_interval)) :
-                    for j in range(len(speed_interval)) :
-                        dict_label[(time_interval[i],speed_interval[j])] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
-
-                
-
-                if(RESULT_3) :
-
-                    for group_id in dict_deviation["group"]:
-                        soc_binding = dict_deviation["group"][group_id]["social_binding"]
-                        max_dev_group = dict_deviation["group"][group_id]["group deviation"]
-                        max_dev_non_group = dict_deviation["group"][group_id]["encounters deviation"]
-
-                        indice = SOCIAL_BINDING[str(soc_binding)]
-
-                        for i in range(len(max_dev_group)):
-                            counter_break = False
-                            for j in range(len(time_interval)) :
-                                for k in range(len(speed_interval)) :
-                                    if(time_interval[j][0] <= max_dev_group[i]["time"] < time_interval[j][1] and speed_interval[k][0] <= max_dev_group[i]["mean_velocity"] < speed_interval[k][1]) :
-                                        dict_label[(time_interval[j],speed_interval[k])][str(soc_binding)].append(max_dev_group[i]["max_lateral_deviation"])
-                                        counter_break = True
-                                        break
-                                if(counter_break) :
-                                    break
+                    ax.boxplot([dict_speed_interval[interval][name] for name in NEW_LABEL], labels=label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                                    medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                    boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/speed_interval/{env_name_short}_deviation_speed_interval_{interval}.png")
+                    plt.close(fig)
                     
-                        for i in range(len(max_dev_non_group)) :
-                            counter_break = False
-                            for j in range(len(time_interval)) :
-                                for k in range(len(speed_interval)) :
-                                    if(time_interval[j][0] <= max_dev_non_group[i]["time"] < time_interval[j][1] and speed_interval[k][0] <= max_dev_non_group[i]["mean_velocity"] < speed_interval[k][1]) :
-                                        dict_label[(time_interval[j],speed_interval[k])]["alone"].append(max_dev_non_group[i]["max_lateral_deviation"])
-                                        counter_break = True
-                                        break
-                                if(counter_break) :
+
+            if(RESULT_1) :
+                for interval in speed_interval :
+                    for label in dict_speed_interval[interval].keys() :
+                        X, Y = [], []
+                        if(len(dict_speed_interval[interval][label]) > 0) :
+                            for elt in dict_speed_interval[interval][label] :
+                                X.append(elt[1])
+                                Y.append(elt[0])
+
+                        fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                        ax.scatter(X, Y, label = f"speed interval = {interval} / label = {label} ")
+                        
+                        ax.set_xlim(0,5000)
+                        ax.set_ylim(0,3500)
+                        ax.set_xlabel("Time (s)")
+                        ax.set_ylabel("Maximum lateral deviation (m)")
+                        if (ALL_TRAJECTORY) :
+                            ax.set_title(f"Deviation in function of the time travelling")
+                            fig.savefig(f"../data/figures/result/1/{label}/{env_name_short}_{label}_{interval}.png")
+                        else :
+                            ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
+                            fig.savefig(f"../data/figures/result/1.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
+                        plt.close(fig)
+
+            time_interval = [(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000),(4000,10000)]
+            #time_interval = [(2500,2750),(2750,3000),(3000,3250),(3250,3500),(3500,3750),(3750,4000)]
+            # time_interval = [(2750,2875),(2875,3000),(3000,3125),(3125,3250),(3250,3375),(3375,3500)]
+
+            list_of_time_interval = [[] for i in range(len(time_interval))]
+            dict_time_interval = {}
+            for i in range(len(time_interval)) :
+                dict_time_interval[time_interval[i]] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
+
+            i = -1
+            for label in SOCIAL_BINDING.keys() :
+                i += 1
+                for j in range(len(time_soc[i])) :
+                    for k in range(len(time_interval)) :
+                        if(time_interval[k][0] <= time_soc[i][j] < time_interval[k][1]) :
+                            dict_time_interval[time_interval[k]][label].append([deviation_soc[i][j],speed_soc[i][j]])
+                            list_of_time_interval[k].append([deviation_soc[i][j],speed_soc[i][j]])
+                            break
+                        
+            if(RESULT_2) :
+                for interval in time_interval :
+                    for label in dict_time_interval[interval].keys() :
+                        X, Y = [], []
+                        if(len(dict_time_interval[interval][label]) > 0) :
+                            for elt in dict_time_interval[interval][label] :
+                                X.append(elt[1])
+                                Y.append(elt[0])
+
+                        fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                        ax.scatter(X, Y, label = f"time interval = {interval} / label = {label} ")
+                        ax.set_xlabel("Speed (m/s)")
+                        ax.set_ylabel("Deviation (m)")
+                        if (ALL_TRAJECTORY) :
+                            ax.set_title(f"Deviation in function of the speed")
+                            fig.savefig(f"../data/figures/result/2/{label}/{env_name_short}_{label}_{interval}.png")
+                        else :
+                            ax.set_title(f"Deviation in function of the speed interval for a maximum distance of {length_group_average} m")
+                            fig.savefig(f"../data/figures/result/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
+                        plt.close(fig)
+
+            dict_label = {}
+            for i in range(len(time_interval)) :
+                for j in range(len(speed_interval)) :
+                    dict_label[(time_interval[i],speed_interval[j])] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
+
+            
+
+            if(RESULT_3) :
+
+                for group_id in dict_deviation["group"]:
+                    soc_binding = dict_deviation["group"][group_id]["social_binding"]
+                    max_dev_group = dict_deviation["group"][group_id]["group deviation"]
+                    max_dev_non_group = dict_deviation["group"][group_id]["encounters deviation"]
+
+                    indice = SOCIAL_BINDING[str(soc_binding)]
+
+                    for i in range(len(max_dev_group)):
+                        counter_break = False
+                        for j in range(len(time_interval)) :
+                            for k in range(len(speed_interval)) :
+                                if(time_interval[j][0] <= max_dev_group[i]["time"] < time_interval[j][1] and speed_interval[k][0] <= max_dev_group[i]["mean_velocity"] < speed_interval[k][1]) :
+                                    dict_label[(time_interval[j],speed_interval[k])][str(soc_binding)].append(max_dev_group[i]["max_lateral_deviation"])
+                                    counter_break = True
                                     break
-                    for speed in tqdm(speed_interval) :
-                        for interval in tqdm(time_interval) :
-                            Y = [[] for i in range(len(SOCIAL_BINDING.keys()))]
-                            Y_group = [[],[]]
-                            for label in dict_label[(interval,speed)].keys() :
-                                indice = SOCIAL_BINDING[label]
-                                if(len(dict_label[(interval,speed)][label]) > 0) :
-                                    for elt in dict_label[(interval,speed)][label] :
-                                        Y[indice].append(elt)
-                                        if indice == "alone" :
-                                            Y_group[1].append(elt)
-                                        else :
-                                            Y_group[0].append(elt)
-
-                                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-
-                                label = ["0", "1", "2", "3", "other", "alone"]
-                                for l,name in enumerate(label) : 
-                                    label[l] += f" / {len(Y[SOCIAL_BINDING[name]])})"
-                                
-                                ax.boxplot(Y, labels=label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
-                                medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                                boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-                                ax.set_xlabel("Social binding / Number of pedestrians")
-                                ax.set_ylabel("Maximum lateral deviation (m)")
-
-                                if (ALL_TRAJECTORY) :
-                                    ax.set_title(f"Deviation in function of the social binding")
-                                    name_of_the_file = f"../data/figures/result/3/{speed}"
-                                    final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}.png"
-                                    if (os.path.exists(name_of_the_file)):
-                                        fig.savefig(final_name)
+                            if(counter_break) :
+                                break
+                
+                    for i in range(len(max_dev_non_group)) :
+                        counter_break = False
+                        for j in range(len(time_interval)) :
+                            for k in range(len(speed_interval)) :
+                                if(time_interval[j][0] <= max_dev_non_group[i]["time"] < time_interval[j][1] and speed_interval[k][0] <= max_dev_non_group[i]["mean_velocity"] < speed_interval[k][1]) :
+                                    dict_label[(time_interval[j],speed_interval[k])]["alone"].append(max_dev_non_group[i]["max_lateral_deviation"])
+                                    counter_break = True
+                                    break
+                            if(counter_break) :
+                                break
+                for speed in tqdm(speed_interval) :
+                    for interval in tqdm(time_interval) :
+                        Y = [[] for i in range(len(SOCIAL_BINDING.keys()))]
+                        Y_group = [[],[]]
+                        for label in dict_label[(interval,speed)].keys() :
+                            indice = SOCIAL_BINDING[label]
+                            if(len(dict_label[(interval,speed)][label]) > 0) :
+                                for elt in dict_label[(interval,speed)][label] :
+                                    Y[indice].append(elt)
+                                    if indice == 5 :
+                                        Y_group[1].append(elt)
                                     else :
-                                        os.mkdir(f"../data/figures/result/3/{speed}")
-                                        fig.savefig(final_name)
+                                        Y_group[0].append(elt)
+
+                            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+
+                            label = ["0", "1", "2", "3", "other", "alone"]
+                            for l,name in enumerate(label) : 
+                                label[l] += f" / {len(Y[SOCIAL_BINDING[name]])})"
+                            
+                            ax.boxplot(Y, labels=label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                            medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                            ax.set_xlabel("Social binding / Number of pedestrians")
+                            ax.set_ylabel("Maximum lateral deviation (m)")
+
+                            if (ALL_TRAJECTORY) :
+                                ax.set_title(f"Deviation in function of the social binding")
+                                name_of_the_file = f"../data/figures/result/3/{speed}"
+                                final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}.png"
+                                if (os.path.exists(name_of_the_file)):
+                                    fig.savefig(final_name)
                                 else :
-                                    ax.set_title(f"Deviation in function of the social binding for a maximum distance of {length_group_average} m")
-                                    name_of_the_file = f"../data/figures/result/3.1/{speed}"
-                                    final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}_{max_distance}.png"
-                                    if (os .path.exists(name_of_the_file)) :
-                                        fig.savefig(final_name)
-                                    else :
-                                        os.mkdir(f"../data/figures/result/3.1/{speed}")
-                                        fig.savefig(final_name)
-
-                                plt.close(fig)
-
-
-                                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-
-                                label = ["group", "alone"]
-                                for l in range (len(label)) : 
-                                    label[l] += f" / {len(Y_group[l])})"
-
-                                ax.boxplot(Y_group, labels=label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
-                                medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                                boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-                                ax.set_xlabel("Social binding / Number of pedestrians")
-                                ax.set_ylabel("Maximum lateral deviation (m)")
-
-                                if (ALL_TRAJECTORY) :
-                                    ax.set_title(f"Deviation in function of the social binding")
-                                    name_of_the_file = f"../data/figures/result/3/group/{speed}"
-                                    final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}.png"
-                                    if (os.path.exists(name_of_the_file)):
-                                        fig.savefig(final_name)
-                                    else :
-                                        os.mkdir(f"../data/figures/result/3/group/{speed}")
-                                        fig.savefig(final_name)
-
+                                    os.mkdir(f"../data/figures/result/3/{speed}")
+                                    fig.savefig(final_name)
+                            else :
+                                ax.set_title(f"Deviation in function of the social binding for a maximum distance of {length_group_average} m")
+                                name_of_the_file = f"../data/figures/result/3.1/{speed}"
+                                final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}_{max_distance}.png"
+                                if (os .path.exists(name_of_the_file)) :
+                                    fig.savefig(final_name)
                                 else :
-                                    ax.set_title(f"Deviation in function of the social binding for a maximum distance of {length_group_average} m")
-                                    name_of_the_file = f"../data/figures/result/3.1/group/{speed}"
-                                    final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}_{max_distance}.png"
-                                    if (os .path.exists(name_of_the_file)) :
-                                        fig.savefig(final_name)
-                                    else :
-                                        os.mkdir(f"../data/figures/result/3.1/group/{speed}")
-                                        fig.savefig(final_name)
+                                    os.mkdir(f"../data/figures/result/3.1/{speed}")
+                                    fig.savefig(final_name)
 
-                                plt.close(fig)
+                            plt.close(fig)
+
+
+                            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+
+                            label = ["group", "alone"]
+                            for l in range (len(label)) : 
+                                label[l] += f" / {len(Y_group[l])})"
+
+                            ax.boxplot(Y_group, labels=label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black'),
+                            medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                            ax.set_xlabel("Social binding / Number of pedestrians")
+                            ax.set_ylabel("Maximum lateral deviation (m)")
+
+                            if (ALL_TRAJECTORY) :
+                                ax.set_title(f"Deviation in function of the social binding")
+                                name_of_the_file = f"../data/figures/result/3/group/{speed}"
+                                final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}.png"
+                                if (os.path.exists(name_of_the_file)):
+                                    fig.savefig(final_name)
+                                else :
+                                    os.mkdir(f"../data/figures/result/3/group/{speed}")
+                                    fig.savefig(final_name)
+
+                            else :
+                                ax.set_title(f"Deviation in function of the social binding for a maximum distance of {length_group_average} m")
+                                name_of_the_file = f"../data/figures/result/3.1/group/{speed}"
+                                final_name = name_of_the_file + f"/{env_name_short}_{interval}_{speed}_{max_distance}.png"
+                                if (os .path.exists(name_of_the_file)) :
+                                    fig.savefig(final_name)
+                                else :
+                                    os.mkdir(f"../data/figures/result/3.1/group/{speed}")
+                                    fig.savefig(final_name)
+
+                            plt.close(fig)
 
                 if (SPEED_GLOBAL) :
                     mean_deviation_for_speed_interval = [np.mean(list_of_speed_interval[i]) for i in range(len(list_of_speed_interval))]
@@ -439,6 +463,8 @@ if __name__ == "__main__":
                         else :
                             fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/max_distance/speed/{env_name_short}_deviation_speed_interval_{social_binding}_MAX_DISTANCE_{max_distance}.png")
                         plt.close(fig)
+
+
 
 
             
