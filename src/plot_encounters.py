@@ -17,11 +17,11 @@ PLOT_SOC_DEVIATION = True
 
 ANOVA = False
 
-SPEED_INTERVAL = True
+SPEED_INTERVAL = False
 
 ALL_TRAJECTORY = True
 
-SPEED_GLOBAL = True
+SPEED_GLOBAL = False
 
 RESULT_1 = False
 
@@ -30,6 +30,9 @@ RESULT_2 = False
 RESULT_3 = False
 
 SPEED_INTERVAL_2 = True
+PLOT_SPEED = True
+PLOT_TIME = True
+PLOT_LENGTH = True
 
 if __name__ == "__main__":
     for env_name in ["diamor:corridor"]:
@@ -53,8 +56,14 @@ if __name__ == "__main__":
             group_alone_label = ["group", "alone"]
             time_soc = [[] for i in range(6)]
             number_of_pedestrian = [0 for i in range(6)]
+
             total_soc_dev = [[] for i in range(6)]
             total_soc_length = [[] for i in range(6)]
+            total_soc_speed = [[] for i in range(6)]
+            total_soc_time = [[] for i in range(6)]
+            total_soc_dev_diff = [[] for i in range(5)]
+
+            
 
 
             if (not ALL_TRAJECTORY) :
@@ -81,41 +90,48 @@ if __name__ == "__main__":
                 n_g_intermediate_speed = []
                 n_g_intermediate_time = []
 
-
                 for i in range(len(max_dev_group)):
-                    total_soc_dev[indice].append(max_dev_group[i]["max_lateral_deviation"])
-                    total_soc_length[indice].append(max_dev_group[i]["length_of_trajectory"])
                     intermediate_deviation.append(max_dev_group[i]["max_lateral_deviation"])
                     intermediate_length.append(max_dev_group[i]["length_of_trajectory"])
                     intermediate_speed.append(max_dev_group[i]["mean_velocity"])
                     intermediate_time.append(max_dev_group[i]["time"])
 
+                    deviation_soc[indice].append(max_dev_group[i]["max_lateral_deviation"])
+                    deviation_soc_diff[indice].append(max_dev_group[i]["max_lateral_deviation"] - max_dev_non_group[i]["max_lateral_deviation"])
+                    speed_soc[indice].append(max_dev_group[i]["mean_velocity"])
+                    length_soc[indice].append(max_dev_group[i]["length_of_trajectory"])
+                    time_soc[indice].append(max_dev_group[i]["time"])
+
+
                 for i in range(len(max_dev_non_group)):
-                    total_soc_dev[5].append(max_dev_non_group[i]["max_lateral_deviation"])
-                    total_soc_length[5].append(max_dev_non_group[i]["length_of_trajectory"])
+                    deviation_soc[5].append(max_dev_non_group[i]["max_lateral_deviation"])
+                    speed_soc[5].append(max_dev_non_group[i]["mean_velocity"])
+                    length_soc[5].append(max_dev_non_group[i]["length_of_trajectory"])
+                    time_soc[5].append(max_dev_non_group[i]["time"])
+
                     n_g_intermediate_deviation.append(max_dev_non_group[i]["max_lateral_deviation"])
                     n_g_intermediate_length.append(max_dev_non_group[i]["length_of_trajectory"])
                     n_g_intermediate_speed.append(max_dev_non_group[i]["mean_velocity"])
                     n_g_intermediate_time.append(max_dev_non_group[i]["time"])
 
                 if (len(intermediate_deviation) != 0) :
-                    deviation_soc[indice].append(np.nanmean(intermediate_deviation))
+                    total_soc_dev[indice].append(np.nanmean(intermediate_deviation))
                 if (len(n_g_intermediate_deviation) != 0) :
-                    deviation_soc[5].append(np.nanmean(n_g_intermediate_deviation))
+                    total_soc_dev[5].append(np.nanmean(n_g_intermediate_deviation))
                 if (len(intermediate_deviation) != 0 and len(n_g_intermediate_deviation) != 0) :
-                    deviation_soc_diff[indice].append(np.nanmean(intermediate_deviation) - np.nanmean(n_g_intermediate_deviation))
+                    total_soc_dev_diff[indice].append(np.nanmean(intermediate_deviation) - np.nanmean(n_g_intermediate_deviation))
                 if (len(intermediate_speed) != 0) :
-                    speed_soc[indice].append(np.nanmean(intermediate_speed))
+                    total_soc_speed[indice].append(np.nanmean(intermediate_speed))
                 if (len(n_g_intermediate_speed) != 0) :
-                    speed_soc[5].append(np.nanmean(n_g_intermediate_speed))
+                    total_soc_speed[5].append(np.nanmean(n_g_intermediate_speed))
                 if (len(intermediate_length) != 0) :
-                    length_soc[indice].append(np.nanmean(intermediate_length))
+                    total_soc_length[indice].append(np.nanmean(intermediate_length))
                 if (len(n_g_intermediate_length) != 0) :
-                    length_soc[5].append(np.nanmean(n_g_intermediate_length))
+                    total_soc_length[5].append(np.nanmean(n_g_intermediate_length))
                 if (len(intermediate_time) != 0) :
-                    time_soc[indice].append(np.nanmean(intermediate_time))
+                    total_soc_time[indice].append(np.nanmean(intermediate_time))
                 if (len(n_g_intermediate_time) != 0) :
-                    time_soc[5].append(np.nanmean(n_g_intermediate_time))
+                    total_soc_time[5].append(np.nanmean(n_g_intermediate_time))
 
                 
             non_group_average = [np.mean(deviation_soc[5])]
@@ -128,31 +144,66 @@ if __name__ == "__main__":
             mean_length_soc = [np.mean(length_soc[i]) for i in range(6)]
 
             length_flattened_list = [y for x in length_soc for y in x]
-            length_group_average = [np.mean(length_flattened_list)]
+            length_group_average = np.around(np.mean(length_flattened_list)/1000, decimals=4)
+
+            time_flattened_list = [y for x in time_soc for y in x]
+            time_group_average = np.around(np.mean(time_flattened_list)/1000, decimals=3)
 
             new_label = NEW_LABEL.copy()
             for i in range(6):
-                new_label[i] = new_label[i] + " / " + str(len_deviation_soc[i])
+                new_label[i] = new_label[i] + " / " + str(len(total_soc_dev[i])) + " / " + str(len_deviation_soc[i])
 
             group_alone_label[0] = group_alone_label[0] + " / " + str(len(flattened_list))
             group_alone_label[1] = group_alone_label[1] + " / " + str(len(deviation_soc[5]))
             
+            if(PLOT_LENGTH) :
+                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                ax.set_title(f"Length of the trajectory in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
+                ax.set_xlabel("Social binding / Participants / Situation")
+                ax.set_ylabel("Length of the trajectory (m)")
+                ax.boxplot(length_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                            , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
+                fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_length.png")
+                plt.close()
+
+            if(PLOT_SPEED) :
+                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                ax.set_title(f"Speed in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
+                ax.set_xlabel("Social binding / Participants / Situation")
+                ax.set_ylabel("Speed (m/s)")
+                ax.boxplot(speed_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                            , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
+                fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_speed.png")
+                plt.close()
+
+            if(PLOT_TIME) :
+                fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+                ax.set_title(f"Time in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
+                ax.set_xlabel("Social binding / Participants / Situation")
+                ax.set_ylabel("Time (s)")
+                ax.boxplot(time_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                            , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                                boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
+                fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_time.png")
+                plt.close()
 
             if(PLOT_SOC_DEVIATION) :
 
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                 if (ALL_TRAJECTORY) :
-                    ax.set_title(f"Deviation in function of the social binding")
+                    ax.set_title(f"Deviation in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
                 else :
                     ax.set_title(f"Deviation in function of the social binding for max distance : {length_group_average}")
-                ax.set_xlabel("Social binding / Number of encounters (situation)")
+                ax.set_xlabel("Social binding / Participants / Situation")
                 ax.set_ylabel("Maximum lateral deviation (m)")
-                ax.boxplot(total_soc_dev, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-                #   ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
-                #             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                #                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                # ax.boxplot(total_soc_dev, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                #         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                #             boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
 
                 if (ALL_TRAJECTORY) :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_deviation_soc.png")
@@ -164,7 +215,7 @@ if __name__ == "__main__":
                 if (ALL_TRAJECTORY) :
                     ax.set_title(f"Mean deviation for group / alone encounters")
                 else :
-                    ax.set_title(f"Mean deviation for group / alone encounters for max distance : {length_group_average}")
+                    ax.set_title(f"Mean deviation for group / alone encounters for max distance : {length_group_average} meters")
                 ax.set_xlabel("Social binding / Number of encounters")
                 ax.set_ylabel("Mean maximum lateral deviation (m)")
                 ax.boxplot([flattened_list, deviation_soc[5]], labels=group_alone_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
@@ -202,7 +253,7 @@ if __name__ == "__main__":
 
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                 if (ALL_TRAJECTORY) :
-                    ax.set_title(f"Deviation difference in function of the social binding")
+                    ax.set_title(f"Deviation difference in function of the social binding / {length_group_average}")
                 else :
                     ax.set_title(f"Deviation difference in function of the social binding for max distance {length_group_average}")
                 ax.set_xlabel("Social binding / Number of encounters")
@@ -327,10 +378,10 @@ if __name__ == "__main__":
                             fig.savefig(f"../data/figures/result/2.1/{label}/{env_name_short}_{label}_{interval}_{max_distance}.png")
                         plt.close(fig)
 
-            dict_label = {}
-            for i in range(len(time_interval)) :
-                for j in range(len(speed_interval)) :
-                    dict_label[(time_interval[i],speed_interval[j])] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
+            # dict_label = {}
+            # for i in range(len(time_interval)) :
+            #     for j in range(len(speed_interval)) :
+            #         dict_label[(time_interval[i],speed_interval[j])] = {"0" : [], "1" : [], "2" : [], "3" : [], "other" : [], "alone" : []}
 
             
 

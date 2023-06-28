@@ -10,7 +10,7 @@ from tqdm import tqdm
 """"""
 PLOT_VERIF = False
 
-ALL_TRAJECTORY = False
+ALL_TRAJECTORY = True
 
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 
@@ -63,6 +63,7 @@ if __name__ == "__main__":
                 group_as_indiv = group.get_as_individual()
                 group_members = group.get_members()
                 soc_binding = group.get_annotation(soc_binding_type)
+                print(soc_binding)
                 if soc_binding not in soc_binding_values:
                     soc_binding = "other"
                 
@@ -150,13 +151,16 @@ if __name__ == "__main__":
                         max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
                             traj_group_vicinity, n_points_average, interpolate=False, length=length_group
                         )
-
                         if(PLOT_VERIF) :
-                            fig, ax = plot_baseline(trajectory = traj_group_vicinity , max_dev = max_dev_group,soc_binding = soc_binding,group = True, id = group_id, boundaries = env.boundaries, colors = colors,ax = None,
-                                                n_average = n_points_average, show = False)
-                            plot_baseline(trajectory = traj_non_group_vicinity , max_dev = max_dev_ng,soc_binding = soc_binding,group = False, id = non_group_id, boundaries = env.boundaries, colors = colors, ax = ax, fig = fig,
-                                        show = True
-                            )
+                            
+                            if (soc_binding == 3) :
+                                print("3")
+                                fig, ax = plot_baseline(trajectory = traj_group_vicinity , max_dev = max_dev_group,soc_binding = soc_binding,group = True, id = group_id, boundaries = env.boundaries, colors = colors,ax = None,
+                                                    n_average = n_points_average, show = False)
+                                plot_baseline(trajectory = traj_non_group_vicinity , max_dev = max_dev_ng,soc_binding = soc_binding,group = False, id = non_group_id, boundaries = env.boundaries, colors = colors, ax = ax, fig = fig,
+                                            show = True
+                                )
+                                plt.close() 
 
                         max_dev_group["mean_velocity"] = mean_group_speed
                         max_dev_ng["mean_velocity"] = encounter_speed
