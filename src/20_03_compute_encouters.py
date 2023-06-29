@@ -25,6 +25,7 @@ if __name__ == "__main__":
             env_name
         )
         days = get_all_days(env_name)
+        days = [days[0]]
 
         if(ALL_TRAJECTORY):
             dict_deviation = {

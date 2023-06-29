@@ -39,6 +39,8 @@ SPEED_INTERVAL = False
 # If we want to write a filte with ANOVA test
 ANOVA = False
 
+MAX_TIME_INTERVAL = [2000,2500,3000,4000]
+
 def compute_time_for_all_pedestrians(env_imput):
 
     """ This function computes the time for all pedestrians in the environment.
@@ -144,12 +146,12 @@ if __name__ == "__main__":
             times_undisturbed = compute_time_for_all_pedestrians(["diamor:corridor"])
 
         dict_deflection = {
-            "MAX_DISTANCE": {}
+            "MAX_TIME": {}
         }
 
         # Loop over the maximum distance for each trajectory to compute the deflection  
-        for MAX_DISTANCE in MAX_DISTANCE_INTERVAL:
-            print("MAX_DISTANCE", MAX_DISTANCE)
+        for MAX_TIME in MAX_TIME_INTERVAL:
+            print("MAX_TIME", MAX_TIME)
 
                     # Create the dictionary that will store the deflection
             no_encounters_deviations = {
@@ -237,22 +239,20 @@ if __name__ == "__main__":
                         sub_sub_trajectory = []
                         sub_length = []
 
-                        # Separate where there is a gap in space in the trajectory, we want only continues trajectory of MAX_DISTANCE
+                        # Separate where there is a gap in space in the trajectory, we want only continues trajectory of MAX_TIME
                         for sub_trajectory in list_of_sub_trajectories:
-                            result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            result = compute_continuous_sub_trajectories_using_time(sub_trajectory, MAX_TIME)
                             if (result == None):
                                 continue
-                            add = result[0]
-                            length = result[1]
-                            
+                            add = result
+
                             sub_sub_trajectory += add
-                            sub_length += length
 
                         # Compute the deflection for each sub trajectory
                         indice = 0
                         for trajectory in sub_sub_trajectory:
-                            length = sub_length[indice]
                             indice += 1
+                            length = compute_length(trajectory)
                             
                             mean_speed = np.nanmean(trajectory[:,4])/1000 
                             if (mean_speed < 0.5):
@@ -260,9 +260,12 @@ if __name__ == "__main__":
                             elif (mean_speed > 2.5):
                                 continue
 
+                            if(len(trajectory) < 4):
+                                continue
+
                             n_points_average = 4
                             max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
-                            trajectory, n_points_average, interpolate=False, length = length)
+                            trajectory, n_points_average, interpolate=False, length=length)
 
                             if (max_dev_sub == None):
                                 continue
@@ -323,19 +326,21 @@ if __name__ == "__main__":
 
                     # Separate where there is a gap in space in the trajectory, we want only continues trajectory of 4000 mm
                     for sub_trajectory in list_of_sub_trajectories:
-                        result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                        result = compute_continuous_sub_trajectories_using_time(sub_trajectory, MAX_TIME)
                         if (result == None):
                             continue
-                        add = result[0]
-                        length = result[1]
+                        add = result
                         
                         sub_sub_trajectory += add
-                        sub_length += length
 
                     indice = 0
                     for trajectory in sub_sub_trajectory:
-                        length = sub_length[indice]
                         indice += 1
+
+                        if(len(trajectory) < 4):
+                                continue
+
+                        length = compute_length(trajectory)
 
                         mean_speed = np.nanmean(trajectory[:,4])/1000
                         if (mean_speed < 0.5):
@@ -364,12 +369,12 @@ if __name__ == "__main__":
 
                 print("number of non groups filtered:", number_of_non_group_filtered)
 
-            dict_deflection["MAX_DISTANCE"][MAX_DISTANCE] = no_encounters_deviations
+            dict_deflection["MAX_TIME"][MAX_TIME] = no_encounters_deviations
 
         
             #END OF COMPUTE DEVIATIONS
         
         if(UNDISTURBED_COMPUTE) :
-            pickle_save(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.pkl", dict_deflection)
+            pickle_save(f"../data/pickle/undisturbed_deflection_MAX_TIME.pkl", dict_deflection)
         else :
-            pickle_save(f"../data/pickle/deflection_MAX_DISTANCE.pkl", dict_deflection)
+            pickle_save(f"../data/pickle/deflection_MAX_TIME.pkl", dict_deflection)

@@ -1,4 +1,5 @@
 plot :
-deviation en fonction du temps de parcours en utilisant les intervalles de length to compute the baseline 
+separer les alones people, pas utiliser le deuxième jour
+retirer disturbed pedestrians du all trajectories pour regarder ce qu'il se passe
 
 

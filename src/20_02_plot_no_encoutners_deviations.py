@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 
 
-UNDISTURBED_COMPUTE = True
+UNDISTURBED_COMPUTE = False
 PLOT_MEAN_MAX_DEV = False
 SPEED_INTERVAL = True
 ANOVA = True
@@ -323,7 +323,6 @@ if __name__ == "__main__":
 
 
             if(PLOT_TIME):
-                print(list_global_mean_time_pedestrian)
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                 ax.set_title(f"Time in function of the social binding / {total_mean_length_pedestrian} meters  |  {total_mean_time_pedestrian} s")
                 ax.set_xlabel("Social binding / Participants / Situation")
