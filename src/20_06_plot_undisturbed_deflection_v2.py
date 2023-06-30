@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 
 
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 PLOT_MEAN_MAX_DEV = False
 SPEED_INTERVAL = True
 ANOVA = True
@@ -43,8 +43,6 @@ if __name__ == "__main__":
             str_trajectory = "all"
             pre_dict = pickle_load(f"../data/pickle/deflection_MAX_DISTANCE.pkl")
             
-
-
 
         for MAX_DISTANCE in MAX_DISTANCE_INTERVAL:
             print("MAX_DISTANCE", MAX_DISTANCE)
@@ -115,7 +113,9 @@ if __name__ == "__main__":
             # The same process but for non_groups
             list_mean_max_dev_non_group = []
 
+            print("no_encounters_deviations[non_group]", no_encounters_deviations["non_group"])
             for non_group_id in no_encounters_deviations["non_group"]:
+                # print("a")
                 no_encounters_deviations["non_group"][non_group_id]["mean_max_dev"] = -1
                 no_encounters_deviations["non_group"][non_group_id]["mean_velocity"] = None
                 no_encounters_deviations["non_group"][non_group_id]["mean_length"] = -1
@@ -125,10 +125,12 @@ if __name__ == "__main__":
                 mean_length_non_group = 0
                 mean_time_non_group = 0
                 max_dev = no_encounters_deviations["non_group"][non_group_id]["max_dev"]
-            
+                #print("max_dev", max_dev)
                 if len(max_dev) == 0:
+                    # print("b")
                     continue
                 k = 0
+                # print("c")
                 for i in range(len(max_dev)):
                     intermediate = max_dev[i]["max_lateral_deviation"]
                     if(intermediate > MAX_DISTANCE):
@@ -228,13 +230,17 @@ if __name__ == "__main__":
             for i in range(6) :
                 list_of_social_binding[i] = list_of_social_binding[i] + " / " + str(num_data[i])
             
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(1, 1 , figsize=(10, 10))
+            plot_list = list_of_social_binding.copy()
+            del(plot_list[4])
+            plot_data = data.copy()
+            del(plot_data[4])
 
-            boxplot = ax.boxplot(data, labels = list_of_social_binding
+            boxplot = ax.boxplot(plot_data, labels = plot_list
                     ,showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                     , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                     boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-            ax.set_title(f"boxplot of mean max deviation, trip of {total_mean_length_pedestrian} meters | {total_mean_time_pedestrian} seconds")
+            ax.set_title(f"boxplot of mean max deviation for undisturbed pedestrian, trip of {total_mean_length_pedestrian} meters | {total_mean_time_pedestrian} seconds")
 
             plt.ylabel("Mean max deviation (mm)")
             plt.xlabel("Social binding / Number of pedestrians")
@@ -244,6 +250,9 @@ if __name__ == "__main__":
             else :
                 plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             plt.close()
+
+            for elt in plot_data :
+                print(np.mean(elt))
 
             # Do the ANOVA thing
             if(ANOVA):

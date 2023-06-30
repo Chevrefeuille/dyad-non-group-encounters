@@ -31,7 +31,7 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = True
+UNDISTURBED_COMPUTE = False
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = False
@@ -343,6 +343,7 @@ if __name__ == "__main__":
                             continue
                         elif (mean_speed > 2.5):
                             continue
+                        
                         
                         n_points_average = 4
                         max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(

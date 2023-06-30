@@ -31,7 +31,7 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = False
@@ -39,7 +39,7 @@ SPEED_INTERVAL = False
 # If we want to write a filte with ANOVA test
 ANOVA = False
 
-MAX_DISTANCE_INTERVAL = [2000,2500,3000,4000]
+MAX_DISTANCE_INTERVAL = [1500,2500,3000]
 
 def compute_time_for_all_pedestrians(env_imput):
 
@@ -192,15 +192,15 @@ if __name__ == "__main__":
 
                         # get the trajectory of the pedestrian, filter it to keep only the times where the group is in the corridor
                         pedestrian_id = pedestrian.get_id()
-                        no_encounters_deviations["group"][str(pedestrian_id)] = {
+                        no_encounters_deviations["group"][pedestrian_id] = {
                             "social_binding": soc_binding,
                             "max_dev": [],
                         }
 
                         trajectory = pedestrian.get_trajectory()
 
-                        if(group_id in disturbed_times[day]):
-                            undisturbed_masque = np.isin(group_all_times, disturbed_times[day][group_id])
+                        if(group_id in disturbed_times[day]["group"]):
+                            undisturbed_masque = np.isin(group_all_times, disturbed_times[day]["group"][group_id])
                             undisturbed_times = group_all_times[~undisturbed_masque]
                         else:
                             undisturbed_times = group_all_times
@@ -274,7 +274,7 @@ if __name__ == "__main__":
                             max_dev_sub["mean_velocity"] = mean_speed
                             max_dev_sub["time"] = time_of_group_traj
 
-                            no_encounters_deviations["group"][str(pedestrian_id)]["max_dev"].append(max_dev_sub)
+                            no_encounters_deviations["group"][pedestrian_id]["max_dev"].append(max_dev_sub)
 
 
                             if (PLOT_VERIF):
@@ -290,20 +290,21 @@ if __name__ == "__main__":
                 number_of_non_group_filtered = 0
                 # compute deflection for the non groups    
                 for non_group in tqdm(non_groups):
-
                     non_group_id = non_group.get_id()
                     if non_group_id not in all_times[day]["non_group"]:
                         continue
                     non_group_all_times = all_times[day]["non_group"][
                         non_group_id
                     ]
-                    no_encounters_deviations["non_group"][str(non_group_id)] = {
+                    no_encounters_deviations["non_group"][non_group_id] = {
                             "max_dev":[]
                         }
                     
+                    trajectory = non_group.get_trajectory()
+                    
                     # get the trajectory of the pedestrian, filter it to keep only the times where the pedestrian is in the corridor
-                    if(non_group_id in disturbed_times[day]):
-                        undisturbed_masque = np.isin(non_group_all_times, disturbed_times[day][non_group_id])
+                    if(non_group_id in disturbed_times[day]["non_group"]):
+                        undisturbed_masque = np.isin(non_group_all_times, disturbed_times[day]["non_group"][non_group_id])
                         undisturbed_times = non_group_all_times[~undisturbed_masque]
                     else:
                         undisturbed_times = non_group_all_times
@@ -361,7 +362,7 @@ if __name__ == "__main__":
                         max_dev_sub["mean_velocity"] = mean_speed
                         max_dev_sub["time"] = time_of_non_group_traj
 
-                        no_encounters_deviations["non_group"][str(non_group_id)]["max_dev"].append(max_dev_sub)
+                        no_encounters_deviations["non_group"][non_group_id]["max_dev"].append(max_dev_sub)
 
                         if (PLOT_VERIF):
                             plot_baseline(trajectory, max_dev_sub, None, False, id = non_group_id)
@@ -377,5 +378,4 @@ if __name__ == "__main__":
         
         if(UNDISTURBED_COMPUTE) :
             pickle_save(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.pkl", dict_deflection)
-        else :
-            pickle_save(f"../data/pickle/deflection_MAX_DISTANCE.pkl", dict_deflection)
+

@@ -67,7 +67,6 @@ if __name__ == "__main__":
                 mean_length_group = 0
                 mean_time_group = 0
                 max_dev = no_encounters_deviations["group"][group_id]["max_dev"]
-                # print("max_dev", max_dev)
                 if len(max_dev) == 0:
                     continue
                 k = 0
@@ -125,13 +124,15 @@ if __name__ == "__main__":
                 mean_length_non_group = 0
                 mean_time_non_group = 0
                 max_dev = no_encounters_deviations["non_group"][non_group_id]["max_dev"]
-            
+                print("max_dev", max_dev)
+
                 if len(max_dev) == 0:
                     continue
                 k = 0
                 for i in range(len(max_dev)):
                     intermediate = max_dev[i]["max_lateral_deviation"]
                     if(intermediate > MAX_DISTANCE):
+                        
                         continue
                     else:
                         k += 1
@@ -228,19 +229,28 @@ if __name__ == "__main__":
             for i in range(6) :
                 list_of_social_binding[i] = list_of_social_binding[i] + " / " + str(num_data[i])
             
-            fig, ax = plt.subplots()
+            plot_list = list_of_social_binding.copy()
+            del(plot_list[4])
+            plot_data = data.copy()
+            del(plot_data[4])
 
-            boxplot = ax.boxplot(data, labels = list_of_social_binding
+            fig, ax = plt.subplots(1 , 1, figsize=(10, 10))
+
+
+
+            boxplot = ax.boxplot(plot_data, labels = plot_list
                     ,showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                     , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                     boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-            ax.set_title(f"boxplot of mean max deviation, trip of {total_mean_length_pedestrian} meters | {total_mean_time_pedestrian} seconds")
-
+            if (UNDISTURBED_COMPUTE) :
+                ax.set_title(f"boxplot of mean max deviation for undisturbed pedestrian, trip of {total_mean_length_pedestrian} meters | {total_mean_time_pedestrian} seconds")
+            else :
+                ax.set_title(f"boxplot of mean max deviation for all pedestrian, trip of {total_mean_length_pedestrian} meters | {total_mean_time_pedestrian} seconds")
             plt.ylabel("Mean max deviation (mm)")
             plt.xlabel("Social binding / Number of pedestrians")
                 
             if (UNDISTURBED_COMPUTE) :
-                plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
+                plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/{2}/boxplot_mean_max_deviation_for_undisturbed_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             else :
                 plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             plt.close()
@@ -262,6 +272,10 @@ if __name__ == "__main__":
                         f.write("-----------------------------------------------------------\n")
 
 
+            for elt in plot_data :
+                print(np.mean(elt))
+                print("-----------------------------------------------------------")
+
             # This one is for group/non group only
             new_data = []
             intermediate_data = []
@@ -275,7 +289,7 @@ if __name__ == "__main__":
             for i in range(2) :
                 new_label[i] = new_label[i] + " / " + str(len(new_data[i]))
 
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
             boxplot = ax.boxplot(new_data, labels = new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                             boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
@@ -380,7 +394,7 @@ if __name__ == "__main__":
                     list_of_average.append(average)
 
                     if (MAX_DISTANCE == 1500):
-                        fig, ax = plt.subplots()
+                        fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                         label = ["0", "1", "2", "3", "other", "alone"]
                         for i in range(len(label)) :
                             label[i] = label[i] + " / " + str(len(elt_elt[label[i]]))
@@ -400,7 +414,7 @@ if __name__ == "__main__":
 
                         plt.close()
 
-                fig2, ax2 = plt.subplots()
+                fig2, ax2 = plt.subplots(1, 1, figsize=(10, 10))
                 print("list of average", list_of_average)
                 print("speed interval", speed_interval)
                 str_speed_interval = []

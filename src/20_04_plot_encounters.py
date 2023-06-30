@@ -214,12 +214,18 @@ if __name__ == "__main__":
 
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                 if (ALL_TRAJECTORY) :
-                    ax.set_title(f"Deviation in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
+                    ax.set_title(f"Deviation in function of the social binding in encounter situation : {length_group_average} meters  |  {time_group_average} s")
                 else :
                     ax.set_title(f"Deviation in function of the social binding for max distance : {length_group_average}")
                 ax.set_xlabel("Social binding / Participants / Situation")
                 ax.set_ylabel("Maximum lateral deviation (m)")
-                ax.boxplot(deviation_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+
+                plot_data = deviation_soc.copy()
+                del(plot_data[4])
+                plot_label = new_label.copy()
+                del(plot_label[4])
+
+                ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
                 # ax.boxplot(total_soc_dev, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
@@ -227,6 +233,12 @@ if __name__ == "__main__":
                 #     
                 #         boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
                 fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_deviation.png")
+                plt.close()
+
+                for elt in plot_data :
+                    print(np.mean(elt))
+
+
 
             if(PLOT_NG) :
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
