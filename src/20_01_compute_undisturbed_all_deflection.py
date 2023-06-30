@@ -138,7 +138,7 @@ if __name__ == "__main__":
         if(UNDISTURBED_COMPUTE):
             str_trajectory = "undisturbed"
             times_undisturbed = pickle_load(
-                f"../data/pickle/undisturbed_times_{env_name_short}.pkl"
+                f"../data/pickle/undisturbed_times_{env_name}.pkl"
             )
         else:
             str_trajectory = "all"

@@ -197,11 +197,13 @@ if __name__ == "__main__":
                             "max_dev": [],
                         }
 
-                        if(group_id not in disturbed_times[day]):
-                            continue
+                        trajectory = pedestrian.get_trajectory()
 
-                        undisturbed_masque = np.isin(group_all_times, disturbed_times[day][group_id])
-                        undisturbed_times = group_all_times[~undisturbed_masque]
+                        if(group_id in disturbed_times[day]):
+                            undisturbed_masque = np.isin(group_all_times, disturbed_times[day][group_id])
+                            undisturbed_times = group_all_times[~undisturbed_masque]
+                        else:
+                            undisturbed_times = group_all_times
 
                         # We don't want trajectory with too few observations
                         if(undisturbed_times.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
@@ -300,9 +302,11 @@ if __name__ == "__main__":
                         }
                     
                     # get the trajectory of the pedestrian, filter it to keep only the times where the pedestrian is in the corridor
-
-                    undisturbed_masque = np.isin(non_group_all_times, disturbed_times[day][non_group_id])
-                    undisturbed_times = non_group_all_times[~undisturbed_masque]
+                    if(non_group_id in disturbed_times[day]):
+                        undisturbed_masque = np.isin(non_group_all_times, disturbed_times[day][non_group_id])
+                        undisturbed_times = non_group_all_times[~undisturbed_masque]
+                    else:
+                        undisturbed_times = non_group_all_times
 
                     if(undisturbed_times.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
                         continue

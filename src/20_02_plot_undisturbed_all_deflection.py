@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 
 
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 PLOT_MEAN_MAX_DEV = False
 SPEED_INTERVAL = True
 ANOVA = True
