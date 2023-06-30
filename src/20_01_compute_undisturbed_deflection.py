@@ -25,7 +25,7 @@ The baseline trajectory is the trajectory of the pedestrian using an average of 
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
 
 # If we want to plot the trajectory to visualize the deflection
-PLOT_VERIF = False
+PLOT_VERIF = True
 
 # If we want to plot (scatter) the mean deflection for each pedestrian
 PLOT_MEAN_MAX_DEV = False
@@ -150,7 +150,7 @@ if __name__ == "__main__":
         }
 
         # Loop over the maximum distance for each trajectory to compute the deflection  
-        for MAX_DISTANCE in MAX_DISTANCE_INTERVAL:
+        for MAX_DISTANCE in [8000]:
             print("MAX_DISTANCE", MAX_DISTANCE)
 
                     # Create the dictionary that will store the deflection

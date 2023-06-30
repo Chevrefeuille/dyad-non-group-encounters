@@ -8,7 +8,7 @@ from utils import *
 from tqdm import tqdm
 
 """"""
-PLOT_VERIF = False
+PLOT_VERIF = True
 
 ALL_TRAJECTORY = True
 
