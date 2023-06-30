@@ -224,7 +224,9 @@ if __name__ == "__main__":
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
                 # ax.boxplot(total_soc_dev, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                 #         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                #             boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                #     
+                #         boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+                fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/{env_name_short}_deviation.png")
 
             if(PLOT_NG) :
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))

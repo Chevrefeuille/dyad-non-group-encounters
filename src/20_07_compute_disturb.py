@@ -127,11 +127,9 @@ if __name__ == "__main__":
                     times_disturbed[day]["group"][group_id] = np.concatenate(global_trajectory)
 
                         
-                    
-
-
+                
         pickle_save(
-            f"../data/pickle/disturbed_times_{env_name}.pkl", times_disturbed
+            f"../data/pickle/disturbed_times_time.pkl", times_disturbed
         )
 
             

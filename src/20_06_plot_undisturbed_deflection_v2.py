@@ -114,6 +114,7 @@ if __name__ == "__main__":
             #Compute the mean max_deviation for all non groups
             # The same process but for non_groups
             list_mean_max_dev_non_group = []
+
             for non_group_id in no_encounters_deviations["non_group"]:
                 no_encounters_deviations["non_group"][non_group_id]["mean_max_dev"] = -1
                 no_encounters_deviations["non_group"][non_group_id]["mean_velocity"] = None
@@ -212,9 +213,9 @@ if __name__ == "__main__":
                 # plt.ylabel("Mean max deviation (mm)")
                 # plt.title("Mean max deviation for all non groups")
                 if (UNDISTURBED_COMPUTE) :
-                    plt.savefig("../data/figures/deflection/will/scatter/undisturbed_trajectories/{2}/mean_max_deviation_for_all_pedestrians_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory, MAX_DISTANCE/1000, MAX_DISTANCE))
+                    plt.savefig("../data/figures/deflection/will/scatter/undisturbed_trajectories/2/{2}/mean_max_deviation_for_all_pedestrians_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory, MAX_DISTANCE/1000, MAX_DISTANCE))
                 else :
-                    plt.savefig("../data/figures/deflection/will/scatter/all_trajectories/{2}/mean_max_deviation_for_all_pedestrians_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory, MAX_DISTANCE/1000, MAX_DISTANCE))
+                    plt.savefig("../data/figures/deflection/will/scatter/all_trajectories/2/{2}/mean_max_deviation_for_all_pedestrians_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory, MAX_DISTANCE/1000, MAX_DISTANCE))
 
                 plt.close()
 
@@ -239,9 +240,9 @@ if __name__ == "__main__":
             plt.xlabel("Social binding / Number of pedestrians")
                 
             if (UNDISTURBED_COMPUTE) :
-                plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
+                plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             else :
-                plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
+                plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             plt.close()
 
             # Do the ANOVA thing
@@ -284,9 +285,9 @@ if __name__ == "__main__":
             plt.xlabel("Social binding / Number of pedestrians")
 
             if (UNDISTURBED_COMPUTE) :
-                plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/{2}/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
+                plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{2}/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             else :
-                plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/{2}/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
+                plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/{2}/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
 
             plt.close()
 
@@ -301,9 +302,9 @@ if __name__ == "__main__":
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
                 if (UNDISTURBED_COMPUTE) :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/{MAX_DISTANCE}/boxplot_speed_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/boxplot_speed_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 else :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/{MAX_DISTANCE}/boxplot_speed_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/2/{MAX_DISTANCE}/boxplot_speed_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 plt.close()
 
             if(PLOT_LENGTH):
@@ -316,9 +317,9 @@ if __name__ == "__main__":
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
                 if (UNDISTURBED_COMPUTE) :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/{MAX_DISTANCE}/boxplot_length_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/boxplot_length_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 else :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/{MAX_DISTANCE}/boxplot_length_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/2/{MAX_DISTANCE}/boxplot_length_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 plt.close()
 
 
@@ -332,9 +333,9 @@ if __name__ == "__main__":
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
                 if (UNDISTURBED_COMPUTE) :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/{MAX_DISTANCE}/boxplot_time_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/boxplot_time_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 else :
-                    fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/{MAX_DISTANCE}/boxplot_time_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/2/{MAX_DISTANCE}/boxplot_time_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 plt.close()
 
 
@@ -393,9 +394,9 @@ if __name__ == "__main__":
                         ax.set_ylabel("Mean max deviation (mm)")  
 
                         if (UNDISTURBED_COMPUTE) :
-                            fig.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))                
+                            fig.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))                
                         else :
-                            fig.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))
+                            fig.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))
 
                         plt.close()
 
@@ -411,9 +412,9 @@ if __name__ == "__main__":
                 ax2.set_ylabel("Mean max deviation (mm)")
 
                 if (UNDISTURBED_COMPUTE) :
-                    fig2.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
+                    fig2.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
                 else :
-                    fig2.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
+                    fig2.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
 
                 plt.close()
         
