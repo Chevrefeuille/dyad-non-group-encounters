@@ -24,6 +24,7 @@ if __name__ == "__main__":
         )
 
         days = DAYS_ATC if env_name == "atc" else DAYS_DIAMOR
+        days = [days[0]]
 
         times_undisturbed = {}
 

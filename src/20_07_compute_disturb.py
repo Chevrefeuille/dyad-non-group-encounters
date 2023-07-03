@@ -92,8 +92,8 @@ if __name__ == "__main__":
                         continue
 
                     in_vicinity = np.logical_and(
-                        np.abs(traj_group[:, 1] - traj_non_group[:, 1]) <= 4000,
-                        np.abs(traj_group[:, 2] - traj_non_group[:, 2]) <= 4000,
+                        np.abs(traj_group[:, 1] - traj_non_group[:, 1]) <= 10000,
+                        np.abs(traj_group[:, 2] - traj_non_group[:, 2]) <= 10000,
                     )
 
                     traj_A_vicinity = traj_A[in_vicinity]

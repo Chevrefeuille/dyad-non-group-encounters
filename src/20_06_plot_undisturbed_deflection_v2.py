@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
         if(UNDISTURBED_COMPUTE):
             str_trajectory = "undisturbed"
-            pre_dict = pickle_load(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE.pkl")
+            pre_dict = pickle_load(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE_2.pkl")
             
         else:
             str_trajectory = "all"
@@ -113,9 +113,7 @@ if __name__ == "__main__":
             # The same process but for non_groups
             list_mean_max_dev_non_group = []
 
-            print("no_encounters_deviations[non_group]", no_encounters_deviations["non_group"])
             for non_group_id in no_encounters_deviations["non_group"]:
-                # print("a")
                 no_encounters_deviations["non_group"][non_group_id]["mean_max_dev"] = -1
                 no_encounters_deviations["non_group"][non_group_id]["mean_velocity"] = None
                 no_encounters_deviations["non_group"][non_group_id]["mean_length"] = -1
@@ -125,12 +123,9 @@ if __name__ == "__main__":
                 mean_length_non_group = 0
                 mean_time_non_group = 0
                 max_dev = no_encounters_deviations["non_group"][non_group_id]["max_dev"]
-                #print("max_dev", max_dev)
                 if len(max_dev) == 0:
-                    # print("b")
                     continue
                 k = 0
-                # print("c")
                 for i in range(len(max_dev)):
                     intermediate = max_dev[i]["max_lateral_deviation"]
                     if(intermediate > MAX_DISTANCE):

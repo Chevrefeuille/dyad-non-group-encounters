@@ -124,7 +124,6 @@ if __name__ == "__main__":
                 mean_length_non_group = 0
                 mean_time_non_group = 0
                 max_dev = no_encounters_deviations["non_group"][non_group_id]["max_dev"]
-                print("max_dev", max_dev)
 
                 if len(max_dev) == 0:
                     continue
@@ -254,6 +253,7 @@ if __name__ == "__main__":
             else :
                 plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             plt.close()
+
 
             # Do the ANOVA thing
             if(ANOVA):

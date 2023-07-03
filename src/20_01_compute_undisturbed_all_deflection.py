@@ -31,7 +31,7 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = False
