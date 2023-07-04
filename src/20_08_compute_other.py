@@ -52,11 +52,11 @@ def compute_time_for_all_pedestrians(env_imput):
         
     Returns
     -------
-        times_all : dict
+        times_other : dict
             A dictionary containing the time for all pedestrians in the environment.
             The dictionary has the following structure:
-                - times_all[day][group_id] = [time_1, time_2, ...]
-                - times_all[day][non_group_id] = [time_1, time_2, ...]
+                - times_other[day][group_id] = [time_1, time_2, ...]
+                - times_other[day][non_group_id] = [time_1, time_2, ...]
                 """
 
     print("Computing time for all pedestrians...")
@@ -68,7 +68,7 @@ def compute_time_for_all_pedestrians(env_imput):
 
         env_name_short = env_name.split(":")[0]
         days = DAYS_ATC if env_name_short == "atc" else DAYS_DIAMOR
-        times_all = {}
+        times_other = {}
 
         for day in days:
             thresholds_ped = get_pedestrian_thresholds(env_name)
@@ -89,7 +89,7 @@ def compute_time_for_all_pedestrians(env_imput):
                 sampling_time=500
             )
 
-            times_all[day] = {"group": {}, "non_group": {}}
+            times_other[day] = {"group": {}, "non_group": {}}
 
             print(f"  - Found {len(non_groups)} non groups.")
             print(f"  - Found {len(groups)} groups.")
@@ -102,7 +102,7 @@ def compute_time_for_all_pedestrians(env_imput):
                 if not len(trajectory):
                     continue
 
-                times_all[day]["group"][group_id] = trajectory[:, 0]
+                times_other[day]["group"][group_id] = trajectory[:, 0]
 
             for non_group in tqdm(non_groups):
                 non_group_id = non_group.get_id()
@@ -111,11 +111,11 @@ def compute_time_for_all_pedestrians(env_imput):
                 if not len(all_trajectory):
                     continue
 
-                times_all[day]["non_group"][
+                times_other[day]["non_group"][
                     non_group_id
                 ] = all_trajectory[:, 0]
     print("Done.")
-    return times_all
+    return times_other
 
 if __name__ == "__main__":
 
@@ -137,6 +137,7 @@ if __name__ == "__main__":
 
         all_times = compute_time_for_all_pedestrians(["diamor:corridor"])
         disturbed_times = pickle_load(f"../data/pickle/disturbed_times_time.pkl")
+        undisturbed_times = pickle_load(f"../data/pickle/undisturbed_times_{env_name}.pkl")
 
         dict_deflection = {
             "MAX_DISTANCE": {}
@@ -200,13 +201,22 @@ if __name__ == "__main__":
                         trajectory = pedestrian.get_trajectory()
 
                         if(group_id in disturbed_times[day]["group"]):
-                            undisturbed_masque = np.isin(group_all_times, disturbed_times[day]["group"][group_id])
-                            undisturbed_times = group_all_times[~undisturbed_masque]
+                            disturbed_mask = np.isin(group_all_times, disturbed_times[day]["group"][group_id])
                         else:
-                            undisturbed_times = group_all_times
+                            disturbed_mask = np.zeros(group_all_times.shape[0], dtype=bool)
+
+                        if(group_id in undisturbed_times[day]["group"]):
+                            undisturbed_mask = np.isin(group_all_times, undisturbed_times[day]["group"][group_id])
+                        else:
+                            undisturbed_mask = np.zeros(group_all_times.shape[0], dtype=bool)
+
+                        other_mask = np.logical_not(np.logical_or(disturbed_mask, undisturbed_mask))
+                        other_times = group_all_times[other_mask]
+
+
 
                         # We don't want trajectory with too few observations
-                        if(undisturbed_times.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
+                        if(other_times.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
                         #     print("not enough observations for pedestrian", filter_pedestrian_all_times.shape[0])
                         #     plt.plot(trajectory[:,1],trajectory[:,2])
                         #     plt.show()
@@ -214,7 +224,7 @@ if __name__ == "__main__":
 
                         # get the trajectory of the pedestrian at the times where the group is undisturbed
                         pedestrian_undisturbed_trajectory = get_trajectory_at_times(
-                            trajectory, undisturbed_times
+                            trajectory, other_times
                         )
 
                         list_of_sub_trajectories = [pedestrian_undisturbed_trajectory]
@@ -304,17 +314,26 @@ if __name__ == "__main__":
                     
                     # get the trajectory of the pedestrian, filter it to keep only the times where the pedestrian is in the corridor
                     if(non_group_id in disturbed_times[day]["non_group"]):
-                        undisturbed_masque = np.isin(non_group_all_times, disturbed_times[day]["non_group"][non_group_id])
-                        undisturbed_times = non_group_all_times[~undisturbed_masque]
+                        disturbed_mask = np.isin(non_group_all_times, disturbed_times[day]["non_group"][non_group_id])
                     else:
-                        undisturbed_times = non_group_all_times
+                        disturbed_mask = np.zeros(non_group_all_times.shape[0], dtype=bool)
 
-                    if(undisturbed_times.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
+                    if(non_group_id in undisturbed_times[day]["non_group"]):
+                        undisturbed_mask = np.isin(non_group_all_times, undisturbed_times[day]["non_group"][non_group_id])
+
+                    else:
+                        undisturbed_mask = np.zeros(non_group_all_times.shape[0], dtype=bool)
+
+                    other_mask = np.logical_not(np.logical_or(disturbed_mask, undisturbed_mask))
+                    other_times = non_group_all_times[other_mask]
+
+
+                    if(other_times.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
                         continue
 
                     non_group_undisturbed_trajectory = get_trajectory_at_times(
                         trajectory,
-                        undisturbed_times,
+                        other_times,
                     )
                     list_of_sub_trajectories = [non_group_undisturbed_trajectory]
                     test_sub_non_group = np.diff(non_group_undisturbed_trajectory[:,0])
@@ -377,5 +396,5 @@ if __name__ == "__main__":
             #END OF COMPUTE DEVIATIONS
         
         if(UNDISTURBED_COMPUTE) :
-            pickle_save(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE_2.pkl", dict_deflection)
+            pickle_save(f"../data/pickle/deflection_MAX_DISTANCE_other.pkl", dict_deflection)
 

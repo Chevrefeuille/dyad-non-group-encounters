@@ -1,4 +1,5 @@
 from copy import deepcopy
+import csv
 import os
 from matplotlib import patches
 from pedestrians_social_binding.environment import Environment
@@ -15,15 +16,19 @@ from tqdm import tqdm
 
 
 
-UNDISTURBED_COMPUTE = True
+
+
+UNDISTURBED_COMPUTE = False
+OTHER_COMPUTE = False
 PLOT_MEAN_MAX_DEV = False
 SPEED_INTERVAL = True
-ANOVA = True
+ANOVA = False
 
 PLOT_SPEED = True
 PLOT_TIME = True
 PLOT_LENGTH = True
 
+result_dict_global = {"all": [], "undisturbed": [], "other": []}
 
 if __name__ == "__main__":
 
@@ -39,6 +44,10 @@ if __name__ == "__main__":
             str_trajectory = "undisturbed"
             pre_dict = pickle_load(f"../data/pickle/undisturbed_deflection_MAX_DISTANCE_2.pkl")
             
+        elif(OTHER_COMPUTE):
+            str_trajectory = "other"
+            pre_dict = pickle_load(f"../data/pickle/deflection_MAX_DISTANCE_other.pkl")
+
         else:
             str_trajectory = "all"
             pre_dict = pickle_load(f"../data/pickle/deflection_MAX_DISTANCE.pkl")
@@ -211,6 +220,8 @@ if __name__ == "__main__":
                 # plt.title("Mean max deviation for all non groups")
                 if (UNDISTURBED_COMPUTE) :
                     plt.savefig("../data/figures/deflection/will/scatter/undisturbed_trajectories/2/{2}/mean_max_deviation_for_all_pedestrians_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory, MAX_DISTANCE/1000, MAX_DISTANCE))
+                elif(OTHER_COMPUTE) :
+                    plt.savefig("../data/figures/deflection/will/scatter/other_trajectories/{2}/mean_max_deviation_for_all_pedestrians_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory, MAX_DISTANCE/1000, MAX_DISTANCE))
                 else :
                     plt.savefig("../data/figures/deflection/will/scatter/all_trajectories/2/{2}/mean_max_deviation_for_all_pedestrians_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory, MAX_DISTANCE/1000, MAX_DISTANCE))
 
@@ -242,9 +253,18 @@ if __name__ == "__main__":
                 
             if (UNDISTURBED_COMPUTE) :
                 plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
+            elif(OTHER_COMPUTE) :
+                plt.savefig("../data/figures/deflection/will/boxplot/other_trajectories/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             else :
                 plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             plt.close()
+
+            if(UNDISTURBED_COMPUTE) :
+                result_dict_global["undisturbed"] = plot_data
+            elif(OTHER_COMPUTE) :
+                result_dict_global["other"] = plot_data
+            else :
+                result_dict_global["all"] = plot_data
 
             for elt in plot_data :
                 print(np.mean(elt))
@@ -254,6 +274,8 @@ if __name__ == "__main__":
                 name_of_the_file = ""
                 if (UNDISTURBED_COMPUTE) :
                     name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/ANOVA_for_mean_max_deviation_undisturbed.txt"
+                elif(OTHER_COMPUTE) :
+                    name_of_the_file = "../data/report_text/deflection/will/other_trajectories/ANOVA_for_mean_max_deviation_other.txt"
                 else :
                     name_of_the_file = "../data/report_text/deflection/will/all_trajectories/ANOVA_for_mean_max_deviation.txt"
                 if not os.path.exists(name_of_the_file):
@@ -290,6 +312,8 @@ if __name__ == "__main__":
 
             if (UNDISTURBED_COMPUTE) :
                 plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{2}/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
+            elif(OTHER_COMPUTE) :
+                plt.savefig("../data/figures/deflection/will/boxplot/other_trajectories/{2}/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
             else :
                 plt.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/{2}/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
 
@@ -307,6 +331,8 @@ if __name__ == "__main__":
                                 boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
                 if (UNDISTURBED_COMPUTE) :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/boxplot_speed_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                elif(OTHER_COMPUTE) :
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/other_trajectories/{MAX_DISTANCE}/boxplot_speed_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 else :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/2/{MAX_DISTANCE}/boxplot_speed_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 plt.close()
@@ -322,6 +348,8 @@ if __name__ == "__main__":
                                 boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
                 if (UNDISTURBED_COMPUTE) :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/boxplot_length_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                elif(OTHER_COMPUTE) :
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/other_trajectories/{MAX_DISTANCE}/boxplot_length_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 else :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/2/{MAX_DISTANCE}/boxplot_length_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 plt.close()
@@ -338,6 +366,8 @@ if __name__ == "__main__":
                                 boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
                 if (UNDISTURBED_COMPUTE) :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/boxplot_time_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
+                elif(OTHER_COMPUTE) :
+                    fig.savefig(f"../data/figures/deflection/will/boxplot/other_trajectories/{MAX_DISTANCE}/boxplot_time_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")          
                 else :
                     fig.savefig(f"../data/figures/deflection/will/boxplot/all_trajectories/2/{MAX_DISTANCE}/boxplot_time_for_all_pedestrians_with_{str_trajectory}_trajectory_of_{MAX_DISTANCE/1000}_meters.png")
                 plt.close()
@@ -399,6 +429,8 @@ if __name__ == "__main__":
 
                         if (UNDISTURBED_COMPUTE) :
                             fig.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))                
+                        elif(OTHER_COMPUTE) :
+                            fig.savefig("../data/figures/deflection/will/boxplot/other_trajectories/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))
                         else :
                             fig.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/speed/boxplot_mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval_of_{2}_m_s.png".format(str_trajectory,MAX_DISTANCE/1000,elt))
 
@@ -417,8 +449,31 @@ if __name__ == "__main__":
 
                 if (UNDISTURBED_COMPUTE) :
                     fig2.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
+                elif(OTHER_COMPUTE) :
+                    fig2.savefig("../data/figures/deflection/will/boxplot/other_trajectories/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
                 else :
                     fig2.savefig("../data/figures/deflection/will/boxplot/all_trajectories/2/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
 
                 plt.close()
-        
+
+
+    if(UNDISTURBED_COMPUTE) :
+        if (os.path.exists("../data/csv/will/result_undisturbed.csv")) :
+            os.path.remove("../data/csv/will/result_undisturbed.csv")
+        with open("../data/csv/will/result_undisturbed.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(result_dict_global["undisturbed"].values())
+
+    elif(OTHER_COMPUTE) :
+        if (os.path.exists("../data/csv/will/result_other.csv")) :
+            os.path.remove("../data/csv/will/result_other.csv")
+        with open("../data/csv/will/result_other.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(result_dict_global["other"].values())
+
+    else :
+        if (os.path.exists("../data/csv/will/result_all.csv")) :
+            os.path.remove("../data/csv/will/result_all.csv")
+        with open("../data/csv/will/result_all.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(result_dict_global["all"].values())
