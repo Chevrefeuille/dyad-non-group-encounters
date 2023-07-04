@@ -180,7 +180,7 @@ if __name__ == "__main__":
             if(PLOT_LENGTH) :
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                 ax.set_title(f"Length of the trajectory in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
-                ax.set_xlabel("Social binding / Participants / Situation")
+                ax.set_xlabel("Social binding / Situation / data")
                 ax.set_ylabel("Length of the trajectory (m)")
                 ax.boxplot(length_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
@@ -191,7 +191,7 @@ if __name__ == "__main__":
             if(PLOT_SPEED) :
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                 ax.set_title(f"Speed in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
-                ax.set_xlabel("Social binding / Participants / Situation")
+                ax.set_xlabel("Social binding / Situation / data")
                 ax.set_ylabel("Speed (m/s)")
                 ax.boxplot(speed_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
@@ -202,7 +202,7 @@ if __name__ == "__main__":
             if(PLOT_TIME) :
                 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
                 ax.set_title(f"Time in function of the social binding / {length_group_average} meters  |  {time_group_average} s")
-                ax.set_xlabel("Social binding / Participants / Situation")
+                ax.set_xlabel("Social binding / Situation / data")
                 ax.set_ylabel("Time (s)")
                 ax.boxplot(time_soc, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
@@ -217,7 +217,7 @@ if __name__ == "__main__":
                     ax.set_title(f"Deviation in function of the social binding in encounter situation : {length_group_average} meters  |  {time_group_average} s")
                 else :
                     ax.set_title(f"Deviation in function of the social binding for max distance : {length_group_average}")
-                ax.set_xlabel("Social binding / Participants / Situation")
+                ax.set_xlabel("Social binding / Situation / data")
                 ax.set_ylabel("Maximum lateral deviation (m)")
 
                 plot_data = deviation_soc.copy()

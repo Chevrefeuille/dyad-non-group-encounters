@@ -18,7 +18,7 @@ from tqdm import tqdm
 
 
 
-UNDISTURBED_COMPUTE = False
+UNDISTURBED_COMPUTE = True
 OTHER_COMPUTE = False
 PLOT_MEAN_MAX_DEV = False
 SPEED_INTERVAL = True
@@ -62,6 +62,7 @@ if __name__ == "__main__":
             list_global_mean_length_pedestrian = [[] for i in range(6)]
             list_global_mean_velocity_pedestrian = [[] for i in range(6)]
             list_global_mean_time_pedestrian = [[] for i in range(6)]
+            list_global_data_points = [[] for i in range(6)]
 
 
             for group_id in no_encounters_deviations["group"]:
@@ -117,6 +118,7 @@ if __name__ == "__main__":
                     list_global_mean_length_pedestrian[social_binding].append(mean_length_group)
                     list_global_mean_velocity_pedestrian[social_binding].append(mean_velocity_group)
                     list_global_mean_time_pedestrian[social_binding].append(mean_time_group)
+                    list_global_data_points[social_binding].append(k)
 
             #Compute the mean max_deviation for all non groups
             # The same process but for non_groups
@@ -163,6 +165,7 @@ if __name__ == "__main__":
                     list_global_mean_length_pedestrian[5].append(mean_length_non_group)
                     list_global_mean_velocity_pedestrian[5].append(mean_velocity_non_group)
                     list_global_mean_time_pedestrian[5].append(mean_time_non_group)
+                    list_global_data_points[5].append(k)
 
             #Compute the mean max_deviation for all pedestrians
             flatten_list = [value for sublist in list_global_mean_length_pedestrian for value in sublist]
@@ -176,6 +179,9 @@ if __name__ == "__main__":
             flatten_list_time = [value for sublist in list_global_mean_time_pedestrian for value in sublist]
             average_time = sum(flatten_list_time) / len(flatten_list_time)
             total_mean_time_pedestrian = np.around(average_time,decimals=0)/1000
+
+            for i in range(len(list_global_data_points)):
+                list_global_data_points[i] = sum(list_global_data_points[i])
 
 
             #Scatter the mean max_deviation for all pedestrians
@@ -234,7 +240,7 @@ if __name__ == "__main__":
 
             list_of_social_binding = ["0", "1", "2", "3", "other", "alone"]
             for i in range(6) :
-                list_of_social_binding[i] = list_of_social_binding[i] + " / " + str(num_data[i])
+                list_of_social_binding[i] = list_of_social_binding[i] + " / " + str(num_data[i]) + " / " + str(list_global_data_points[i])
             
             fig, ax = plt.subplots(1, 1 , figsize=(10, 10))
             plot_list = list_of_social_binding.copy()
@@ -249,7 +255,7 @@ if __name__ == "__main__":
             ax.set_title(f"boxplot of mean max deviation for undisturbed pedestrian, trip of {total_mean_length_pedestrian} meters | {total_mean_time_pedestrian} seconds")
 
             plt.ylabel("Mean max deviation (mm)")
-            plt.xlabel("Social binding / Number of pedestrians")
+            plt.xlabel("Social binding / Pedestrians / data")
                 
             if (UNDISTURBED_COMPUTE) :
                 plt.savefig("../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{2}/boxplot_mean_max_deviation_for_all_pedestrians_with_{0}_trip_of_{1}_meters.png".format(str_trajectory,MAX_DISTANCE/1000, MAX_DISTANCE))
@@ -457,7 +463,7 @@ if __name__ == "__main__":
                 plt.close()
 
 
-    if(UNDISTURBED_COMPUTE) :
+    if(UNDISTURBED_COMPUTE and 0) :
         if (os.path.exists("../data/csv/will/result_undisturbed.csv")) :
             os.path.remove("../data/csv/will/result_undisturbed.csv")
         with open("../data/csv/will/result_undisturbed.csv", "w", newline="") as file:

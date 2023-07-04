@@ -2,4 +2,5 @@ plot :
 separer les alones people, pas utiliser le deuxième jour
 retirer disturbed pedestrians du all trajectories pour regarder ce qu'il se passe
 
+Anything but encounter / change the way compute max dev
 
