@@ -39,8 +39,6 @@ SPEED_INTERVAL = False
 # If we want to write a filte with ANOVA test
 ANOVA = False
 
-MAX_DISTANCE_INTERVAL = [1500,2500,3000]
-
 def compute_time_for_all_pedestrians(env_imput):
 
     """ This function computes the time for all pedestrians in the environment.
@@ -239,7 +237,7 @@ if __name__ == "__main__":
 
                         # Separate where there is a gap in space in the trajectory, we want only continues trajectory of MAX_DISTANCE
                         for sub_trajectory in list_of_sub_trajectories:
-                            result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            result = compute_continuous_sub_trajectories_using_distance_v2(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
                             add = result[0]
@@ -329,7 +327,7 @@ if __name__ == "__main__":
 
                     # Separate where there is a gap in space in the trajectory, we want only continues trajectory of 4000 mm
                     for sub_trajectory in list_of_sub_trajectories:
-                        result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                        result = compute_continuous_sub_trajectories_using_distance_v2(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                         if (result == None):
                             continue
                         add = result[0]

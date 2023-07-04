@@ -31,7 +31,7 @@ PLOT_VERIF = False
 PLOT_MEAN_MAX_DEV = False
 
 # If we want to plot the mean deflection for each pedestrian or for just undisturbed pedestrians
-UNDISTURBED_COMPUTE = True
+UNDISTURBED_COMPUTE = False
 
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = False
@@ -207,7 +207,7 @@ if __name__ == "__main__":
                         filter_pedestrian_times_undisturbed = group_times_undisturbed[masque]
 
                         # We don't want trajectory with too few observations
-                        if(filter_pedestrian_times_undisturbed.shape[0] <= MIN_NUMBER_OBSERVATIONS_LOCAL):
+                        if(filter_pedestrian_times_undisturbed.shape[0] < MIN_NUMBER_OBSERVATIONS_LOCAL):
                         #     print("not enough observations for pedestrian", filter_pedestrian_times_undisturbed.shape[0])
                         #     plt.plot(trajectory[:,1],trajectory[:,2])
                         #     plt.show()
@@ -240,7 +240,7 @@ if __name__ == "__main__":
 
                         # Separate where there is a gap in space in the trajectory, we want only continues trajectory of MAX_DISTANCE
                         for sub_trajectory in list_of_sub_trajectories:
-                            result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            result = compute_continuous_sub_trajectories_using_distance_v2(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
                             add = result[0]
@@ -324,7 +324,7 @@ if __name__ == "__main__":
 
                     # Separate where there is a gap in space in the trajectory, we want only continues trajectory of 4000 mm
                     for sub_trajectory in list_of_sub_trajectories:
-                        result = compute_continuous_sub_trajectories_using_distance(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                        result = compute_continuous_sub_trajectories_using_distance_v2(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                         if (result == None):
                             continue
                         add = result[0]
