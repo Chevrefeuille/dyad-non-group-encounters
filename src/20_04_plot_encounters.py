@@ -81,7 +81,7 @@ if __name__ == "__main__":
             n_g_intermediate_speed = []
             n_g_intermediate_time = []
 
-            for i in range(len(max_dev_group)):
+            for i,deviation in enumerate(max_dev_group):
 
                 intermediate_deviation.append(max_dev_group[i]["max_lateral_deviation"])
                 intermediate_length.append(max_dev_group[i]["length_of_trajectory"])
@@ -94,8 +94,7 @@ if __name__ == "__main__":
                 length_soc[indice].append(max_dev_group[i]["length_of_trajectory"])
                 time_soc[indice].append(max_dev_group[i]["time"])
 
-
-            for i in range(len(max_dev_non_group)):
+            for i,deviation in enumerate(max_dev_non_group):
 
                 deviation_soc[5].append(max_dev_non_group[i]["max_lateral_deviation"])
                 speed_soc[5].append(max_dev_non_group[i]["mean_velocity"])
@@ -132,11 +131,13 @@ if __name__ == "__main__":
                 total_soc_time[5].append(np.nanmean(n_g_intermediate_time))
 
             
+
+        # Here we compute the average of the deviation for each group
         non_group_average = [np.mean(deviation_soc[5])]
         flattened_list = [y for x in deviation_soc[:-1] for y in x]
         group_average = [np.mean(flattened_list)]
 
-        len_deviation_soc = [len(deviation_soc[i]) for i in range(6)] 
+        len_deviation_soc = [len(deviation_soc[i]) for i in range(6)]
         mean_deviation_soc = [np.mean(deviation_soc[i]) for i in range(6)]
         mean_speed_soc = [np.mean(speed_soc[i]) for i in range(6)]
         mean_length_soc = [np.mean(length_soc[i]) for i in range(6)]
@@ -157,7 +158,6 @@ if __name__ == "__main__":
 
         for i in range(5) :
             n_g_new_label[i] = n_g_new_label[i] + " / " + str(len(n_g_total_soc_dev[i])) + " / " + str(len_n_g_deviation_soc[i])
-
         del(n_g_new_label[4])
         del(n_g_deviation_soc[4])
 
