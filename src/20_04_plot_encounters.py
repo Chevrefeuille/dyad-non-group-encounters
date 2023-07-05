@@ -201,13 +201,16 @@ if __name__ == "__main__":
         if(PLOT_SOC_DEVIATION) :
 
             plot_data = deviation_soc.copy()
+            plot_label = NEW_LABEL.copy()
+            for i in range(6) :
+                plot_label[i] = plot_label[i] + " / " + str(len(plot_data[i]))
+            
             del(plot_data[4])
-            plot_label = new_label.copy()
             del(plot_label[4])
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
             ax.set_title(f"Deviation in function of the social binding in encounter situation : {length_group_average} meters  |  {time_group_average} s")
-            ax.set_xlabel("Social binding / Group / data")
+            ax.set_xlabel("Social binding / data")
             ax.set_ylabel("Maximum lateral deviation (m)")
 
             ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
@@ -221,14 +224,17 @@ if __name__ == "__main__":
             plt.close()
 
             plot_data =total_soc_dev.copy()
+            plot_label = NEW_LABEL.copy()
+            for i in range(6) :
+                plot_label[i] = plot_label[i] + " / " + str(len(plot_data[i]))
+
             del(plot_data[4])
-            plot_label = new_label.copy()
             del(plot_label[4])
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
             ax.set_title(f"Deviation in function of the social binding in encounter situation : {np.around(np.mean(mean_length_soc))} meters  |  {time_group_average} s")
 
-            ax.set_xlabel("Social binding / Group / data")
+            ax.set_xlabel("Social binding / Group")
             ax.set_ylabel("Maximum lateral deviation (m)")
 
             ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')

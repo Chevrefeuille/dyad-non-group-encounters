@@ -39,6 +39,8 @@ SPEED_INTERVAL = False
 # If we want to write a filte with ANOVA test
 ANOVA = False
 
+MAX_TIME = 1000
+
 def compute_time_for_all_pedestrians(env_imput):
 
     """ This function computes the time for all pedestrians in the environment.
@@ -219,8 +221,8 @@ if __name__ == "__main__":
                         test_sub_pedestrian = np.diff(pedestrian_undisturbed_trajectory[:,0])
 
                         # Separate where there is a gap in time in the trajectory
-                        if(np.any(test_sub_pedestrian > 2000)):
-                            list_of_sub_trajectories = compute_continuous_sub_trajectories_using_time(pedestrian_undisturbed_trajectory)
+                        if(np.any(test_sub_pedestrian > MAX_TIME)):
+                            list_of_sub_trajectories = compute_continuous_sub_trajectories_using_time(pedestrian_undisturbed_trajectory, max_gap=MAX_TIME)
                             
                         # Debug plot to see the trajectory we don't want
                         # else :

@@ -172,13 +172,13 @@ if __name__ == "__main__":
                     else:
                         for MAX_DISTANCE in MAX_DISTANCE_INTERVAL:
 
-                            result = compute_continuous_sub_trajectories_using_distance(traj_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            result = compute_continuous_sub_trajectories_using_distance_v2(traj_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
                             list_sub_traj_group = result[0]
                             list_sub_length_group = result[1]
 
-                            result = compute_continuous_sub_trajectories_using_distance(traj_non_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
+                            result = compute_continuous_sub_trajectories_using_distance_v2(traj_non_group_vicinity, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
                             if (result == None):
                                 continue
                             list_sub_traj_non_group = result[0]
