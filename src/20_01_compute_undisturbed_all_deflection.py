@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
                         # get the trajectory of the pedestrian, filter it to keep only the times where the group is in the corridor
                         pedestrian_id = pedestrian.get_id()
-                        no_encounters_deviations["group"][str(pedestrian_id)] = {
+                        no_encounters_deviations["group"][pedestrian_id] = {
                             "social_binding": soc_binding,
                             "max_dev": [],
                         }
@@ -255,6 +255,9 @@ if __name__ == "__main__":
                             elif (mean_speed > 2.5):
                                 continue
 
+                            if(len(trajectory) < 4):
+                                continue
+
                             n_points_average = 4
                             max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
                             trajectory, n_points_average, interpolate=False, length = length)
@@ -266,7 +269,7 @@ if __name__ == "__main__":
                             max_dev_sub["mean_velocity"] = mean_speed
                             max_dev_sub["time"] = time_of_group_traj
 
-                            no_encounters_deviations["group"][str(pedestrian_id)]["max_dev"].append(max_dev_sub)
+                            no_encounters_deviations["group"][pedestrian_id]["max_dev"].append(max_dev_sub)
 
                             if (PLOT_VERIF):
                                 plot_baseline(trajectory = trajectory,max_dev = max_dev_sub,soc_binding = soc_binding,group = True, id = pedestrian_id, boundaries = env.boundaries, colors = colors,
@@ -289,7 +292,7 @@ if __name__ == "__main__":
                     non_group_times_undisturbed = times_undisturbed[day]["non_group"][
                         non_group_id
                     ]
-                    no_encounters_deviations["non_group"][str(non_group_id)] = {
+                    no_encounters_deviations["non_group"][non_group_id] = {
                             "max_dev":[]
                         }
                     
@@ -348,7 +351,7 @@ if __name__ == "__main__":
                         max_dev_sub["mean_velocity"] = mean_speed
                         max_dev_sub["time"] = time_of_non_group_traj
 
-                        no_encounters_deviations["non_group"][str(non_group_id)]["max_dev"].append(max_dev_sub)
+                        no_encounters_deviations["non_group"][non_group_id]["max_dev"].append(max_dev_sub)
 
                         if (PLOT_VERIF):
                             plot_baseline(trajectory, max_dev_sub, None, False, id = non_group_id)

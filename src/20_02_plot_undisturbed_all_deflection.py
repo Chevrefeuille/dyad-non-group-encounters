@@ -76,7 +76,7 @@ if __name__ == "__main__":
                 if(social_binding == "other"):
                     social_binding = 4
 
-                for i in range(len(max_dev)):
+                for i,deviation in enumerate(max_dev):
                     
                     intermediate = max_dev[i]["max_lateral_deviation"]
                     if(intermediate > MAX_DISTANCE):
@@ -426,4 +426,4 @@ if __name__ == "__main__":
                     fig2.savefig("../data/figures/deflection/will/boxplot/all_trajectories/speed/mean_max_deviation_for_group_non_group_with_{0}_trajectory_of_{1}_meters_and_speed_interval.png".format(str_trajectory,MAX_DISTANCE/1000))
 
                 plt.close()
-        
+    

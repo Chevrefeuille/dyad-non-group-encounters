@@ -153,7 +153,6 @@ if __name__ == "__main__":
             new_label[i] = new_label[i] + " / " + str(len(total_soc_dev[i])) + " / " + str(len_deviation_soc[i])
 
         n_g_new_label = LIST_OF_SOCIAL_BINDING.copy()[:-1]
-
         len_n_g_deviation_soc = [len(n_g_deviation_soc[i]) for i in range(5)]
 
         for i in range(5) :
@@ -165,7 +164,7 @@ if __name__ == "__main__":
         group_alone_label[1] = group_alone_label[1] + " / " + str(len(deviation_soc[5]))
 
         if(PLOT_SOC_DEVIATION) :
-
+            # Here we plot the deviation in function of the social binding
             plot_data = deviation_soc.copy()
             plot_label = LIST_OF_SOCIAL_BINDING.copy()
             for i in range(6) :
@@ -182,10 +181,7 @@ if __name__ == "__main__":
             ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                             boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-            # ax.boxplot(total_soc_dev, labels=new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
-            #         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-            #     
-            #         boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+   
             fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{env_name_short}_deviation.png")
             plt.close()
 
@@ -250,7 +246,7 @@ if __name__ == "__main__":
             plt.close(fig)
 
             if(ANOVA):
-                name_of_the_file = "../data/report_text/deflection/will/encounter/all_data/ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(max_distance)
+                name_of_the_file = "../data/report_text/deflection/will/encounter/all_data/ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(length_group_average)
                 if not os.path.exists(name_of_the_file):
                     with open(name_of_the_file, "a") as f :
                         f.write("-----------------------------------------------------------\n")
