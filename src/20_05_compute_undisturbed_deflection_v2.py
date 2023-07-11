@@ -34,6 +34,8 @@ PLOT_MEAN_MAX_DEV = False
 # Control the max smapling time for the trajectory
 MAX_TIME = 1000
 
+
+
 ### Old parameters
 # If we want to plot the mean deflection for each pedestrian for an interval of speed
 SPEED_INTERVAL = False
@@ -252,7 +254,6 @@ if __name__ == "__main__":
                             if(len(trajectory) < 4):
                                 continue
 
-                            N_POINTS_AVERAGE = 1
                             max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
                             trajectory, N_POINTS_AVERAGE, interpolate=False, length=length)
 
@@ -338,7 +339,6 @@ if __name__ == "__main__":
                         elif (mean_speed > 2.5):
                             continue
                         
-                        N_POINTS_AVERAGE = 1
                         max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
                         trajectory, N_POINTS_AVERAGE, interpolate=False, length=length)
 

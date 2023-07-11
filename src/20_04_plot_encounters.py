@@ -27,7 +27,7 @@ PLOT_LENGTH = False
 SOCIAL_BINDING = {"0": 0, "1": 1, "2": 2, "3": 3, "other": 4, "alone": 5}
 LIST_OF_SOCIAL_BINDING = ["0", "1", "2", "3", "other", "alone"]
 
-MEDIUM_SAVE = "average_speed/2/"
+MEDIUM_SAVE = "average_speed/{N_POINTS_AVERAGE}/"
 
 
 

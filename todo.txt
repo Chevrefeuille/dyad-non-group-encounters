@@ -1,14 +1,10 @@
 plot :
 
-Anything but encounter / change the way compute max dev
-change the average for the speed
-
 
 ANOVA :
 0/1/2/3/alone
 G / alone
 0/1/2/3
-
 -> for all and mean
 
 5 ANOVA0/1/2/3/Alone * 0----Alone Newbaseline

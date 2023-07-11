@@ -11,7 +11,6 @@ from tqdm import tqdm
 
 
 PLOT_VERIF = False
-N_POINTS_AVERAGE = 2
 
 
 

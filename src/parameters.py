@@ -128,3 +128,6 @@ LINE_TYPES = {"group": "dashed", "non_group": "solid", "group_members": "dashdot
 N_POINTS_MIN_VICINITY = 4
 
 MAX_DISTANCE_INTERVAL = [1500]
+
+N_POINTS_AVERAGE = 1
+
