@@ -27,6 +27,7 @@ PLOT_LENGTH = False
 SOCIAL_BINDING = {"0": 0, "1": 1, "2": 2, "3": 3, "other": 4, "alone": 5}
 LIST_OF_SOCIAL_BINDING = ["0", "1", "2", "3", "other", "alone"]
 
+MEDIUM_SAVE = "average_speed/2/"
 
 
 
@@ -182,7 +183,7 @@ if __name__ == "__main__":
                         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                             boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
    
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{env_name_short}_deviation.png")
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_deviation.png")
             plt.close()
 
             plot_data =total_soc_dev.copy()
@@ -206,7 +207,7 @@ if __name__ == "__main__":
             #         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
             #     
             #         boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{env_name_short}_deviation.png")
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_deviation.png")
             plt.close()
 
 
@@ -222,7 +223,7 @@ if __name__ == "__main__":
             ax.set_title(f"Deviation for alone people in function of the social binding of their encounter / {length_group_average} meters")
             ax.set_xlabel("Social binding / Group / data")
             ax.set_ylabel("Maximum lateral deviation (m)")
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{env_name_short}_deviation_alone.png")
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_deviation_alone.png")
             plt.close(fig)
 
             fig,ax = plt.subplots(1, 1, figsize=(10, 10))
@@ -232,7 +233,7 @@ if __name__ == "__main__":
             ax.set_title(f"Deviation for alone people in function of the social binding of their encounter / {np.around(np.mean(mean_length_soc))} meters")
             ax.set_xlabel("Social binding / Group / data")
             ax.set_ylabel("Maximum lateral deviation (m)")
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{env_name_short}_deviation_alone.png")
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_deviation_alone.png")
             plt.close(fig)
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
@@ -242,7 +243,7 @@ if __name__ == "__main__":
             ax.boxplot([flattened_list, deviation_soc[5]], labels=group_alone_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                             , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                                 boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{env_name_short}_deviation_group_alone.png")
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_deviation_group_alone.png")
             plt.close(fig)
 
             if(ANOVA):

@@ -252,9 +252,9 @@ if __name__ == "__main__":
                             if(len(trajectory) < 4):
                                 continue
 
-                            n_points_average = 4
+                            N_POINTS_AVERAGE = 1
                             max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
-                            trajectory, n_points_average, interpolate=False, length=length)
+                            trajectory, N_POINTS_AVERAGE, interpolate=False, length=length)
 
                             if (max_dev_sub == None):
                                 continue
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
                             if (PLOT_VERIF):
                                 plot_baseline(trajectory = trajectory,max_dev = max_dev_sub,soc_binding = soc_binding,group = True, id = pedestrian_id, boundaries = env.boundaries, colors = colors,
-                                              n_average = n_points_average)
+                                              n_average = N_POINTS_AVERAGE)
                     
                     number_of_group_filtered += 1
 
@@ -338,9 +338,9 @@ if __name__ == "__main__":
                         elif (mean_speed > 2.5):
                             continue
                         
-                        n_points_average = 4
+                        N_POINTS_AVERAGE = 1
                         max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
-                        trajectory, n_points_average, interpolate=False, length=length)
+                        trajectory, N_POINTS_AVERAGE, interpolate=False, length=length)
 
                         if(len(max_dev_sub)==0):
                             continue

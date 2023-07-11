@@ -26,6 +26,8 @@ PLOT_VERIF = False
 # If we want to plot (scatter) the mean deflection for each pedestrian
 PLOT_MEAN_MAX_DEV = False
 
+N_POINTS_AVERAGE = 2
+
 # Control the max smapling time for the trajectory
 MAX_TIME = 1000
 
@@ -196,7 +198,7 @@ if __name__ == "__main__":
                     # compute the deflection for each pedestrian in the group
                     for pedestrian in group.get_members():
 
-                        # get the trajectory of the pedestrian, 
+                        # get the trajectory of the pedestrian,
                         # filter it to keep only the times where the group is in the corridor
                         pedestrian_id = pedestrian.get_id()
                         no_encounters_deviations["group"][pedestrian_id] = {
@@ -254,7 +256,6 @@ if __name__ == "__main__":
                             if len(trajectory) < 4:
                                 continue
 
-                            N_POINTS_AVERAGE = 4
                             max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
                             trajectory, N_POINTS_AVERAGE, interpolate=False, length = length)
 
@@ -293,7 +294,7 @@ if __name__ == "__main__":
                             "max_dev":[]
                         }
 
-                    # get the trajectory of the pedestrian, 
+                    # get the trajectory of the pedestrian,
                     # filter it to keep only the times where the pedestrian is in the corridor
                     trajectory = non_group.get_trajectory()
                     masque = np.isin(non_group_times_undisturbed,trajectory[:,0])
@@ -341,7 +342,6 @@ if __name__ == "__main__":
                         if mean_speed > 2.5:
                             continue
 
-                        N_POINTS_AVERAGE = 4
                         max_dev_sub = compute_maximum_lateral_deviation_using_vel_2(
                         trajectory, N_POINTS_AVERAGE, interpolate=False, length=length)
 

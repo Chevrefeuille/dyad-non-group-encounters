@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 
 PLOT_VERIF = False
-
+N_POINTS_AVERAGE = 2
 
 
 
@@ -126,19 +126,18 @@ if __name__ == "__main__":
                     time_of_group_traj = traj_group_vicinity[-1, 0] - traj_group_vicinity[0, 0]
                     time_of_non_group_traj = traj_non_group_vicinity[-1, 0] - traj_non_group_vicinity[0, 0]
                         
-                    n_points_average = 4
                     length_non_group = compute_length(traj_non_group_vicinity)
                     max_dev_ng = compute_maximum_lateral_deviation_using_vel_2(
-                        traj_non_group_vicinity, n_points_average, interpolate=False, length=length_non_group
+                        traj_non_group_vicinity, N_POINTS_AVERAGE, interpolate=False, length=length_non_group
                     )
 
                     length_group = compute_length(traj_group_vicinity)
                     max_dev_group = compute_maximum_lateral_deviation_using_vel_2(
-                        traj_group_vicinity, n_points_average, interpolate=False, length=length_group
+                        traj_group_vicinity, N_POINTS_AVERAGE, interpolate=False, length=length_group
                     )
                     if(PLOT_VERIF) :
                         fig, ax = plot_baseline(trajectory = traj_group_vicinity , max_dev = max_dev_group,soc_binding = soc_binding,group = True, id = group_id, boundaries = env.boundaries, colors = colors,ax = None,
-                                            n_average = n_points_average, show = False)
+                                            n_average = N_POINTS_AVERAGE, show = False)
                         plot_baseline(trajectory = traj_non_group_vicinity , max_dev = max_dev_ng,soc_binding = soc_binding,group = False, id = non_group_id, boundaries = env.boundaries, colors = colors, ax = ax, fig = fig,
                                     show = True
                         )
