@@ -125,13 +125,13 @@ if __name__ == "__main__":
             mean_time_new_baseline_soc[-1].append(np.nanmean(intermediate_time))
     
 
-        global_mean_mean_new_baseline_length = np.around(np.nanmean([np.nanmean(mean_length_new_baseline_soc[i]) for i in range(5)]), 2)
+        global_mean_mean_new_baseline_length = np.around(np.nanmean([np.nanmean(mean_length_new_baseline_soc[i]) for i in range(5)]), 2) /1000
         global_mean_mean_new_baseline_dev = np.around(np.nanmean([np.nanmean(mean_dev_new_baseline_soc[i]) for i in range(5)]), 2)
         global_mean_mean_new_baseline_velocity = np.around(np.nanmean([np.nanmean(mean_velocity_new_baseline_soc[i]) for i in range(5)]), 2)
-        global_mean_mean_new_baseline_time = np.around(np.nanmean([np.nanmean(mean_time_new_baseline_soc[i]) for i in range(5)]), 2)
+        global_mean_mean_new_baseline_time = np.around(np.nanmean([np.nanmean(mean_time_new_baseline_soc[i]) for i in range(5)]), 2) /1000
                 
         flattened_new_baseline_length = [item for sublist in length_new_baseline_soc for item in sublist]
-        global_mean_all_new_baseline_length = np.around(np.nanmean(flattened_new_baseline_length), 2)
+        global_mean_all_new_baseline_length = np.around(np.nanmean(flattened_new_baseline_length), 2) /1000
 
         flattened_new_baseline_dev = [item for sublist in dev_new_baseline_soc for item in sublist]
         global_mean_all_new_baseline_dev = np.around(np.nanmean(flattened_new_baseline_dev), 2)
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         global_mean_all_new_baseline_velocity = np.around(np.nanmean(flattened_new_baseline_velocity), 2)
 
         flattened_new_baseline_time = [item for sublist in time_new_baseline_soc for item in sublist]
-        global_mean_all_new_baseline_time = np.around(np.nanmean(flattened_new_baseline_time), 2)
+        global_mean_all_new_baseline_time = np.around(np.nanmean(flattened_new_baseline_time), 2) /1000
 
 
         # Plot the boxplot of the mean max_deviation for each social binding
@@ -190,7 +190,7 @@ if __name__ == "__main__":
             with open(name_of_the_file, "a") as f :
                 f.write("-----------------------------------------------------------\n")
                 result = f_oneway(*all_data)
-                f.write("ANOVA for mean max deviation for 0/1/2/3/alone in encounter situation for all data\n")
+                f.write("ANOVA for mean max deviation for 0/1/2/3/alone in new baseline situation for all data\n")
                 f.write("F-value : {0}\n".format(result[0]))
                 f.write("p-value : {0}\n".format(result[1]))
                 f.write("-----------------------------------------------------------\n")
@@ -201,7 +201,7 @@ if __name__ == "__main__":
             with open(name_of_the_file, "a") as f :
                 f.write("-----------------------------------------------------------\n")
                 result = f_oneway(*plot_data)
-                f.write("ANOVA for mean max deviation for 0/1/2/3/alone in encounter situation for mean data\n")
+                f.write("ANOVA for mean max deviation for 0/1/2/3/alone in new baseline situation for mean data\n")
                 f.write("F-value : {0}\n".format(result[0]))
                 f.write("p-value : {0}\n".format(result[1]))
                 f.write("-----------------------------------------------------------\n")
@@ -213,7 +213,7 @@ if __name__ == "__main__":
             with open(name_of_the_file, "a") as f :
                 f.write("-----------------------------------------------------------\n")
                 result = f_oneway(*all_data[:-1])
-                f.write("ANOVA for mean max deviation for 0/1/2/3 in encounter situation for all data\n")
+                f.write("ANOVA for mean max deviation for 0/1/2/3 in new baseline situation for all data\n")
                 f.write("F-value : {0}\n".format(result[0]))
                 f.write("p-value : {0}\n".format(result[1]))
                 f.write("-----------------------------------------------------------\n")
@@ -224,7 +224,7 @@ if __name__ == "__main__":
             with open(name_of_the_file, "a") as f :
                 f.write("-----------------------------------------------------------\n")
                 result = f_oneway(*plot_data[:-1])
-                f.write("ANOVA for mean max deviation for 0/1/2/3 in encounter situation for mean data\n")
+                f.write("ANOVA for mean max deviation for 0/1/2/3 in new baseline situation for mean data\n")
                 f.write("F-value : {0}\n".format(result[0]))
                 f.write("p-value : {0}\n".format(result[1]))
                 f.write("-----------------------------------------------------------\n")

@@ -12,10 +12,11 @@ from tqdm import tqdm
 
 # Current parameters
 PLOT_SOC_DEVIATION = True
-PLOT_NG = True
+PLOT_NG = False
+GROUP_PLOT = True
 
 # Old parameters
-ANOVA = False
+ANOVA = True
 SPEED_INTERVAL = False
 SPEED_GLOBAL = False
 SPEED_INTERVAL_2 = False
@@ -26,9 +27,9 @@ PLOT_LENGTH = False
 SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOCIAL_BINDING_VALUES = [0, 1, 2, 3]
 SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
-LIST_OF_SOCIAL_BINDING = ["0", "1", "2", "3", "other", "alone"]
+LIST_OF_SOCIAL_BINDING = ["0", "1", "2", "3", "alone"]
 
-MEDIUM_SAVE = "average_speed/{N_POINTS_AVERAGE}/"
+MEDIUM_SAVE = f"average_speed/{N_POINTS_AVERAGE}/"
 
 
 
@@ -146,13 +147,13 @@ if __name__ == "__main__":
 
 
 
-        global_mean_mean_encounter_length = np.around(np.nanmean([np.nanmean(mean_length_encounter_soc[i]) for i in range(5)]), 2)
+        global_mean_mean_encounter_length = np.around(np.nanmean([np.nanmean(mean_length_encounter_soc[i]) for i in range(5)]), 2) /1000
         global_mean_mean_encounter_speed = np.around(np.nanmean([np.nanmean(mean_speed_encounter_soc[i]) for i in range(5)]), 2)
         global_mean_mean_encounter_dev = np.around(np.nanmean([np.nanmean(mean_dev_encounter_soc[i]) for i in range(5)]), 2)
-        global_mean_mean_encounter_time = np.around(np.nanmean([np.nanmean(mean_time_encounter_soc[i]) for i in range(5)]), 2)
+        global_mean_mean_encounter_time = np.around(np.nanmean([np.nanmean(mean_time_encounter_soc[i]) for i in range(5)]), 2) /1000
 
         flattened_encounter_length = [item for sublist in length_encounter_soc for item in sublist]
-        global_mean_all_encounter_length = np.around(np.nanmean(flattened_encounter_length), 2)
+        global_mean_all_encounter_length = np.around(np.nanmean(flattened_encounter_length), 2) /1000
 
         flattened_encounter_speed = [item for sublist in speed_encounter_soc for item in sublist]
         global_mean_all_encounter_speed = np.around(np.nanmean(flattened_encounter_speed), 2)
@@ -161,7 +162,7 @@ if __name__ == "__main__":
         global_mean_all_encounter_dev = np.around(np.nanmean(flattened_encounter_dev), 2)
 
         flattened_encounter_time = [item for sublist in time_encounter_soc for item in sublist]
-        global_mean_all_encounter_time = np.around(np.nanmean(flattened_encounter_time), 2)
+        global_mean_all_encounter_time = np.around(np.nanmean(flattened_encounter_time), 2) /1000
 
 
         if(PLOT_SOC_DEVIATION) :
@@ -183,6 +184,32 @@ if __name__ == "__main__":
             fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_deviation.png")
             plt.close()
 
+            if ANOVA :
+                # Do the ANOVA thing
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_1/ANOVA_for_mean_max_deviation_new_baseline.txt"
+                if os.path.exists(name_of_the_file):
+                    os.remove(name_of_the_file)
+                with open(name_of_the_file, "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*plot_data)
+                    f.write("ANOVA for mean max deviation for 0/1/2/3/alone in encounter situation for all data\n")
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
+                # Do the ANOVA thing
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_3/ANOVA_for_mean_max_deviation_new_baseline.txt"
+                if os.path.exists(name_of_the_file):
+                    os.remove(name_of_the_file)
+                with open(name_of_the_file, "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*plot_data[:-1])
+                    f.write("ANOVA for mean max deviation for 0/1/2/3 in encounter situation for all data\n")
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
+
             plot_data =mean_dev_encounter_soc.copy()
             plot_label = LIST_OF_SOCIAL_BINDING.copy()
             for i in range(5) :
@@ -200,6 +227,101 @@ if __name__ == "__main__":
 
             fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_deviation.png")
             plt.close()
+
+            if ANOVA :
+                # Do the ANOVA thing
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_1/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+                if os.path.exists(name_of_the_file):
+                    os.remove(name_of_the_file)
+                with open(name_of_the_file, "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*plot_data)
+                    f.write("ANOVA for mean max deviation for 0/1/2/3/alone in encounter situation for all data\n")
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_3/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+                if os.path.exists(name_of_the_file):
+                    os.remove(name_of_the_file)
+                with open(name_of_the_file, "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*plot_data[:-1])
+                    f.write("ANOVA for mean max deviation for 0/1/2/3 in encounter situation for all data\n")
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
+        if GROUP_PLOT :
+            # This one is for group/non group only
+
+            group_data = []
+            for i in range (len(dev_encounter_soc) - 1):
+                group_data += dev_encounter_soc[i]
+
+            plot_data = [group_data, dev_encounter_soc[-1]]
+            plot_label = ["Group", "Non group"]
+            plot_label[0] = plot_label[0] + " / " + str(len(plot_data[0]))
+            plot_label[1] = plot_label[1] + " / " + str(len(plot_data[1]))
+
+            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+            ax.set_title(f"Deviation in function of the group apartenance in encounter situation : {global_mean_all_encounter_length} meters  |  {global_mean_all_encounter_time} s")
+            ax.set_xlabel("Group apartenance / data")
+            ax.set_ylabel("Maximum lateral deviation (m)")
+            boxplot = ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                        , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+            
+            plt.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_group_alone.png")
+            plt.close()
+
+            if ANOVA:
+                # Do the ANOVA thing
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_2/ANOVA_for_mean_max_deviation_new_baseline.txt"
+                if os.path.exists(name_of_the_file):
+                    os.remove(name_of_the_file)
+                with open(name_of_the_file, "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*plot_data)
+                    f.write("ANOVA for mean max deviation for Group/Alone in encounter situation for all data\n")
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
+
+            group_data = []
+            for i in range (len(mean_dev_encounter_soc) - 1):
+                group_data += mean_dev_encounter_soc[i]
+
+            plot_data = [group_data, mean_dev_encounter_soc[-1]]
+            plot_label = ["Group", "Non group"]
+            plot_label[0] = plot_label[0] + " / " + str(len(plot_data[0]))
+            plot_label[1] = plot_label[1] + " / " + str(len(plot_data[1]))
+
+            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+            ax.set_title(f"Deviation in function of the group apartenance in encounter situation : {global_mean_mean_encounter_length} meters  |  {global_mean_mean_encounter_time} s")
+            ax.set_xlabel("Group apartenance / Group")
+            ax.set_ylabel("Maximum lateral deviation (m)")
+            boxplot = ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                        , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+            
+            plt.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_group_alone.png")
+            plt.close()
+
+            if ANOVA :
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_2/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+                if os.path.exists(name_of_the_file):
+                    os.remove(name_of_the_file)
+                with open(name_of_the_file, "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*plot_data)
+                    f.write("ANOVA for mean max deviation for Group/Alone in encounter situation for mean data\n")
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
+
 
 
         if(PLOT_NG) :
@@ -237,18 +359,6 @@ if __name__ == "__main__":
             ax.set_xlabel("Social binding / Group / data")
             ax.set_ylabel("Maximum lateral deviation (m)")
             fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_deviation_alone.png")
-            plt.close(fig)
-
-            # Here we plot the deviation in function of the group /non group apartenance
-            
-            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-            ax.set_title(f"Mean deviation for group / alone encounters")
-            ax.set_xlabel("Social binding / Number of encounters")
-            ax.set_ylabel("Mean maximum lateral deviation (m)")
-            ax.boxplot([flattened_list, dev_encounter_soc[5]], labels=group_alone_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
-                            , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                                boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_deviation_group_alone.png")
             plt.close(fig)
 
             if(ANOVA):
