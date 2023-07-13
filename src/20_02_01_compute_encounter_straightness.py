@@ -149,8 +149,11 @@ if __name__ == "__main__":
                     group_straightness["time"] = time_of_group_traj
                     ng_straightness["time"] = time_of_non_group_traj
 
+                    group_straightness["length_of_trajectory"] = length_group
+                    ng_straightness["length_of_trajectory"] = length_non_group
+
                     dict_straightness["group"][group_id]["group straightness"].append(group_straightness)
                     dict_straightness["group"][group_id]["encounters straightness"].append(ng_straightness)
 
 
-    pickle_save(f"../data/pickle/{env_name_short}_encounters_straightnesss.pkl", dict_straightness)
+    pickle_save(f"../data/pickle/{env_name_short}_encounters_straightness.pkl", dict_straightness)

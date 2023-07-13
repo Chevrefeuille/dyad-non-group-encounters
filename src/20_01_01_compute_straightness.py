@@ -265,7 +265,7 @@ if __name__ == "__main__":
                         no_encounters_straightness["group"][pedestrian_id]["max_straightness"].append(max_straightness_sub)
 
                         if (PLOT_VERIF):
-                            plot_baseline(trajectory, max_straightness_sub, None, False, id = non_group_id)
+                            plot_baseline(trajectory, max_straightness_sub, None, False, id = group_id)
       
                 number_of_group_filtered += 1
 
