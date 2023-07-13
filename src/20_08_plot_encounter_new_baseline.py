@@ -11,6 +11,8 @@ ANOVA = True
 SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOCIAL_BINDING_VALUES = [0, 1, 2, 3]
 SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
+ANOVA_SAVE = f"{N_POINTS_AVERAGE}/"
+
 
 if __name__ == "__main__":
 
@@ -177,7 +179,7 @@ if __name__ == "__main__":
 
             # ANOVA
             if ANOVA:
-                name_of_the_file = f"../data/report_text/deflection/will/versus/all_data/ANOVA_{SOC_BINDING_NAMES[i]}.txt"
+                name_of_the_file = f"../data/report_text/deflection/will/versus/all_data/{ANOVA_SAVE}ANOVA_{SOC_BINDING_NAMES[i]}.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -188,7 +190,7 @@ if __name__ == "__main__":
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")
 
-                name_of_the_file = f"../data/report_text/deflection/will/versus/mean_data/ANOVA_{SOC_BINDING_NAMES[i]}.txt"
+                name_of_the_file = f"../data/report_text/deflection/will/versus/mean_data/{ANOVA_SAVE}ANOVA_{SOC_BINDING_NAMES[i]}.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :

@@ -30,6 +30,7 @@ SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
 LIST_OF_SOCIAL_BINDING = ["0", "1", "2", "3", "alone"]
 
 MEDIUM_SAVE = f"average_speed/{N_POINTS_AVERAGE}/"
+ANOVA_SAVE = f"{N_POINTS_AVERAGE}/"
 
 
 
@@ -186,7 +187,7 @@ if __name__ == "__main__":
 
             if ANOVA :
                 # Do the ANOVA thing
-                name_of_the_file = "../data/report_text/deflection/will/encounter/set_1/ANOVA_for_mean_max_deviation_new_baseline.txt"
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_1/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -198,7 +199,7 @@ if __name__ == "__main__":
                     f.write("-----------------------------------------------------------\n")
 
                 # Do the ANOVA thing
-                name_of_the_file = "../data/report_text/deflection/will/encounter/set_3/ANOVA_for_mean_max_deviation_new_baseline.txt"
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_3/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -230,7 +231,7 @@ if __name__ == "__main__":
 
             if ANOVA :
                 # Do the ANOVA thing
-                name_of_the_file = "../data/report_text/deflection/will/encounter/set_1/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_1/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -241,7 +242,7 @@ if __name__ == "__main__":
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")
 
-                name_of_the_file = "../data/report_text/deflection/will/encounter/set_3/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_3/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -277,7 +278,7 @@ if __name__ == "__main__":
 
             if ANOVA:
                 # Do the ANOVA thing
-                name_of_the_file = "../data/report_text/deflection/will/encounter/set_2/ANOVA_for_mean_max_deviation_new_baseline.txt"
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_2/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -310,7 +311,7 @@ if __name__ == "__main__":
             plt.close()
 
             if ANOVA :
-                name_of_the_file = "../data/report_text/deflection/will/encounter/set_2/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+                name_of_the_file = "../data/report_text/deflection/will/encounter/set_2/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -362,7 +363,7 @@ if __name__ == "__main__":
             plt.close(fig)
 
             if(ANOVA):
-                name_of_the_file = "../data/report_text/deflection/will/encounter/all_data/ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(global_mean_mean_encounter_length)
+                name_of_the_file = "../data/report_text/deflection/will/encounter/all_data/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(global_mean_mean_encounter_length)
                 if not os.path.exists(name_of_the_file):
                     with open(name_of_the_file, "a") as f :
                         f.write("-----------------------------------------------------------\n")
@@ -417,7 +418,7 @@ if __name__ == "__main__":
             plt.close(fig)
 
             if(ANOVA):
-                name_of_the_file = "../data/report_text/deflection/will/encounter/all_data/ANOVA_for_mean_max_deviation_diff.txt"
+                name_of_the_file = "../data/report_text/deflection/will/encounter/all_data/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_diff.txt"
                 if not os.path.exists(name_of_the_file):
                     with open(name_of_the_file, "a") as f :
                         f.write("-----------------------------------------------------------\n")

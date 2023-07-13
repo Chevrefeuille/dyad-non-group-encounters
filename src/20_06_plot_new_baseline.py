@@ -17,6 +17,7 @@ SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
 
 
 MEDIUM_SAVE = f"average_speed/{N_POINTS_AVERAGE}/"
+ANOVA_SAVE = f"{N_POINTS_AVERAGE}/"
 
 
 
@@ -184,7 +185,7 @@ if __name__ == "__main__":
 
         if(ANOVA) :
             # Do the ANOVA thing
-            name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/set_1/ANOVA_for_mean_max_deviation_new_baseline.txt"
+            name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_1/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
             if os.path.exists(name_of_the_file):
                 os.remove(name_of_the_file)
             with open(name_of_the_file, "a") as f :
@@ -195,7 +196,7 @@ if __name__ == "__main__":
                 f.write("p-value : {0}\n".format(result[1]))
                 f.write("-----------------------------------------------------------\n")
 
-            name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/set_1/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+            name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_1/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
             if os.path.exists(name_of_the_file):
                 os.remove(name_of_the_file)
             with open(name_of_the_file, "a") as f :
@@ -207,7 +208,7 @@ if __name__ == "__main__":
                 f.write("-----------------------------------------------------------\n")
 
 
-            name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/set_3/ANOVA_for_mean_max_deviation_new_baseline.txt"
+            name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_3/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
             if os.path.exists(name_of_the_file):
                 os.remove(name_of_the_file)
             with open(name_of_the_file, "a") as f :
@@ -218,7 +219,7 @@ if __name__ == "__main__":
                 f.write("p-value : {0}\n".format(result[1]))
                 f.write("-----------------------------------------------------------\n")
 
-            name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/set_3/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+            name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_3/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
             if os.path.exists(name_of_the_file):
                 os.remove(name_of_the_file)
             with open(name_of_the_file, "a") as f :
@@ -279,7 +280,7 @@ if __name__ == "__main__":
 
             if(ANOVA) :
                 # Do the ANOVA thing
-                name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/set_2/ANOVA_for_mean_max_deviation_new_baseline.txt"
+                name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_2/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :
@@ -290,7 +291,7 @@ if __name__ == "__main__":
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")
 
-                name_of_the_file = "../data/report_text/deflection/will/undisturbed_trajectories/set_2/ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
+                name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_2/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline_with_mean.txt"
                 if os.path.exists(name_of_the_file):
                     os.remove(name_of_the_file)
                 with open(name_of_the_file, "a") as f :

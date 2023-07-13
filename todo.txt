@@ -1,13 +1,10 @@
-plot :
-
-
 ANOVA :
 0/1/2/3/alone -> set1
 G / alone -> set 2
 0/1/2/3 -> set 3
 -> for all and mean
 
-
 vérifier les moyennes et tous les anovas
-
 5 ANOVA0/1/2/3/Alone * 0----Alone Newbaseline
+
+straightness - distribution - anova
