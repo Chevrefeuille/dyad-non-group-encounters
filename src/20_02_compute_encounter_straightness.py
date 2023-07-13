@@ -152,7 +152,5 @@ if __name__ == "__main__":
                     dict_straightness["group"][group_id]["group straightness"].append(group_straightness)
                     dict_straightness["group"][group_id]["encounters straightness"].append(ng_straightness)
 
-                    
 
     pickle_save(f"../data/pickle/{env_name_short}_encounters_straightnesss.pkl", dict_straightness)
-
