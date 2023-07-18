@@ -11,7 +11,7 @@ ANOVA = True
 SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOCIAL_BINDING_VALUES = [0, 1, 2, 3]
 SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
-ANOVA_SAVE = f"{N_POINTS_AVERAGE}/"
+ANOVA_SAVE = f"straightness/"
 
 
 if __name__ == "__main__":
@@ -23,107 +23,107 @@ if __name__ == "__main__":
             env_name
         )
 
-        no_encounters_sinuositys = pickle_load("../data/pickle/undisturbed_deflection_MAX_DISTANCE_2.pkl")
-        dict_sinuosity = pickle_load(f"../data/pickle/{env_name_short}_encounters_sinuositys.pkl")
+        no_encounters_straightness = pickle_load("../data/pickle/undisturbed_straightness_MAX_DISTANCE_2.pkl")
+        dict_straightness = pickle_load(f"../data/pickle/{env_name_short}_encounters_straightness.pkl")
 
         MAX_DISTANCE = MAX_DISTANCE_INTERVAL[0]
         print("MAX_DISTANCE", MAX_DISTANCE)
 
         # Organize value of encounter situation in list in order to plot
-        sinu_encounter_soc = [[] for _ in range(5)]
+        straight_encounter_soc = [[] for _ in range(5)]
         length_encounter_soc = [[] for _ in range(5)]
         
-        mean_sinu_encounter_soc = [[] for _ in range(5)]
+        mean_straight_encounter_soc = [[] for _ in range(5)]
         mean_length_encounter_soc = [[] for _ in range(5)]
 
-        for group_id in dict_sinuosity["group"]:
+        for group_id in dict_straightness["group"]:
 
-            soc_binding = dict_sinuosity["group"][group_id]["social_binding"]
+            soc_binding = dict_straightness["group"][group_id]["social_binding"]
             if soc_binding not in SOCIAL_BINDING_VALUES:
                 print(soc_binding, type(soc_binding))
                 continue
 
-            max_sinu_group = dict_sinuosity["group"][group_id]["group sinuosity"]
-            max_sinu_non_group = dict_sinuosity["group"][group_id]["encounters sinuosity"]
+            max_straight_group = dict_straightness["group"][group_id]["group straightness"]
+            max_straight_non_group = dict_straightness["group"][group_id]["encounters straightness"]
             indice = soc_binding
 
             intermediate = []
             intermediate_length = []
 
-            if len(max_sinu_group) == 0:
+            if len(max_straight_group) == 0:
                 continue
 
-            for i,sinuosity in enumerate(max_sinu_group):
-                intermediate.append(max_sinu_group[i]["max_lateral_sinuosity"])
-                intermediate_length.append(max_sinu_group[i]["length_of_trajectory"])
-                sinu_encounter_soc[indice].append(max_sinu_group[i]["max_lateral_sinuosity"])
-                length_encounter_soc[indice].append(max_sinu_group[i]["length_of_trajectory"])
+            for i,straightness in enumerate(max_straight_group):
+                intermediate.append(max_straight_group[i]["straightness"])
+                intermediate_length.append(max_straight_group[i]["length_of_trajectory"])
+                straight_encounter_soc[indice].append(max_straight_group[i]["straightness"])
+                length_encounter_soc[indice].append(max_straight_group[i]["length_of_trajectory"])
 
-            mean_sinu_encounter_soc[indice].append(np.nanmean(intermediate))
+            mean_straight_encounter_soc[indice].append(np.nanmean(intermediate))
             mean_length_encounter_soc[indice].append(np.nanmean(intermediate_length))
             
             intermediate = []
             intermediate_length = []
 
-            if len(max_sinu_non_group) == 0:
+            if len(max_straight_non_group) == 0:
                 continue
 
-            for i,sinuosity in enumerate(max_sinu_non_group):
+            for i,straightness in enumerate(max_straight_non_group):
 
-                intermediate.append(max_sinu_non_group[i]["max_lateral_sinuosity"])
-                intermediate_length.append(max_sinu_non_group[i]["length_of_trajectory"])
-                sinu_encounter_soc[-1].append(max_sinu_non_group[i]["max_lateral_sinuosity"])
-                length_encounter_soc[-1].append(max_sinu_non_group[i]["length_of_trajectory"])
+                intermediate.append(max_straight_non_group[i]["straightness"])
+                intermediate_length.append(max_straight_non_group[i]["length_of_trajectory"])
+                straight_encounter_soc[-1].append(max_straight_non_group[i]["straightness"])
+                length_encounter_soc[-1].append(max_straight_non_group[i]["length_of_trajectory"])
 
-            mean_sinu_encounter_soc[-1].append(np.nanmean(intermediate))
+            mean_straight_encounter_soc[-1].append(np.nanmean(intermediate))
             mean_length_encounter_soc[-1].append(np.nanmean(intermediate_length))
 
         # Organize value of undisturbed situation in list in order to plot
-        sinu_new_baseline_soc = [[] for _ in range(5)]
+        straight_new_baseline_soc = [[] for _ in range(5)]
         length_new_baseline_soc = [[] for _ in range(5)]
-        mean_sinu_new_baseline_soc = [[] for _ in range(5)]
+        mean_straight_new_baseline_soc = [[] for _ in range(5)]
         mean_length_new_baseline_soc = [[] for _ in range(5)]
 
-        for group_id in no_encounters_sinuositys["group"]:
+        for group_id in no_encounters_straightness["group"]:
 
-            social_binding = no_encounters_sinuositys["group"][group_id]["social_binding"]
+            social_binding = no_encounters_straightness["group"][group_id]["social_binding"]
             if social_binding not in SOCIAL_BINDING_VALUES:
                 print(social_binding, type(social_binding))
                 continue
 
-            max_sinu = no_encounters_sinuositys["group"][group_id]["max_sinu"]
-            if len(max_sinu) == 0:
+            max_straight = no_encounters_straightness["group"][group_id]["max_straightness"]
+            if len(max_straight) == 0:
                 continue
             indice = social_binding
 
             intermediate = []
             intermediate_length = []
-            for i,sinuosity in enumerate(max_sinu):
+            for i,straightness in enumerate(max_straight):
                 
-                intermediate.append(max_sinu[i]["max_lateral_sinuosity"])
-                intermediate_length.append(max_sinu[i]["length_of_trajectory"])
-                sinu_new_baseline_soc[indice].append(max_sinu[i]["max_lateral_sinuosity"])
-                length_new_baseline_soc[indice].append(max_sinu[i]["length_of_trajectory"])
+                intermediate.append(max_straight[i]["straightness"])
+                intermediate_length.append(max_straight[i]["length_of_trajectory"])
+                straight_new_baseline_soc[indice].append(max_straight[i]["straightness"])
+                length_new_baseline_soc[indice].append(max_straight[i]["length_of_trajectory"])
 
-            mean_sinu_new_baseline_soc[indice].append(np.nanmean(intermediate))
+            mean_straight_new_baseline_soc[indice].append(np.nanmean(intermediate))
             mean_length_new_baseline_soc[indice].append(np.nanmean(intermediate_length))
 
-        for non_group_id in no_encounters_sinuositys["non_group"]:
+        for non_group_id in no_encounters_straightness["non_group"]:
             
-            max_sinu = no_encounters_sinuositys["non_group"][non_group_id]["max_sinu"]
-            if len(max_sinu) == 0:
+            max_straight = no_encounters_straightness["non_group"][non_group_id]["max_straightness"]
+            if len(max_straight) == 0:
                 continue
 
             intermediate = []
             intermediate_length = []
-            for i,sinuosity in enumerate(max_sinu):
+            for i,straightness in enumerate(max_straight):
 
-                intermediate.append(max_sinu[i]["max_lateral_sinuosity"])
-                intermediate_length.append(max_sinu[i]["length_of_trajectory"])
-                sinu_new_baseline_soc[-1].append(max_sinu[i]["max_lateral_sinuosity"])
-                length_new_baseline_soc[-1].append(max_sinu[i]["length_of_trajectory"])
+                intermediate.append(max_straight[i]["straightness"])
+                intermediate_length.append(max_straight[i]["length_of_trajectory"])
+                straight_new_baseline_soc[-1].append(max_straight[i]["straightness"])
+                length_new_baseline_soc[-1].append(max_straight[i]["length_of_trajectory"])
 
-            mean_sinu_new_baseline_soc[-1].append(np.nanmean(intermediate))
+            mean_straight_new_baseline_soc[-1].append(np.nanmean(intermediate))
             mean_length_new_baseline_soc[-1].append(np.nanmean(intermediate_length))
 
         PLOT_LABEL = ["Encounter situation ", "new baseline situation "]
@@ -142,14 +142,14 @@ if __name__ == "__main__":
         # Plot
         for i in range(5):
             plot_label = PLOT_LABEL.copy()
-            plot_label[0] += f"{len(sinu_encounter_soc[i])} / {global_mean_all_encounter_length} m"
-            plot_label[1] += f"{len(sinu_new_baseline_soc[i])} / {global_mean_all_new_baseline_length} m"
+            plot_label[0] += f"{len(straight_encounter_soc[i])} / {global_mean_all_encounter_length} m"
+            plot_label[1] += f"{len(straight_new_baseline_soc[i])} / {global_mean_all_new_baseline_length} m"
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
             ax.set_title(f"Encounter situation vs. new baseline situation")
             ax.set_xlabel("Social binding / value / length of trajectory")
-            ax.set_ylabel("Lateral sinuosity (m)")
-            all_data = [sinu_encounter_soc[i], sinu_new_baseline_soc[i]]
+            ax.set_ylabel("Lateral straightness (m)")
+            all_data = [straight_encounter_soc[i], straight_new_baseline_soc[i]]
 
             ax.boxplot(all_data, labels = plot_label ,showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                 , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
@@ -161,14 +161,14 @@ if __name__ == "__main__":
 
 
             plot_label = PLOT_LABEL.copy()
-            plot_label[0] += f"{len(mean_sinu_encounter_soc[i])} / {global_mean_mean_encounter_length} m"
-            plot_label[1] += f"{len(mean_sinu_new_baseline_soc[i])} / {global_mean_mean_new_baseline_length} m"
+            plot_label[0] += f"{len(mean_straight_encounter_soc[i])} / {global_mean_mean_encounter_length} m"
+            plot_label[1] += f"{len(mean_straight_new_baseline_soc[i])} / {global_mean_mean_new_baseline_length} m"
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
             ax.set_title(f"Encounter situation vs. new baseline situation")
             ax.set_xlabel("Social binding / value")
-            ax.set_ylabel("Lateral sinuosity (m)")
-            mean_data = [mean_sinu_encounter_soc[i], mean_sinu_new_baseline_soc[i]]
+            ax.set_ylabel("Lateral straightness (m)")
+            mean_data = [mean_straight_encounter_soc[i], mean_straight_new_baseline_soc[i]]
 
             ax.boxplot(mean_data, labels = plot_label ,showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                 , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
@@ -185,7 +185,7 @@ if __name__ == "__main__":
                 with open(name_of_the_file, "a") as f :
                     f.write("-----------------------------------------------------------\n")
                     result = f_oneway(*all_data)
-                    f.write(f"ANOVA for mean max sinuosity for social binding {SOC_BINDING_NAMES[i]}\n")
+                    f.write(f"ANOVA for mean max straightness for social binding {SOC_BINDING_NAMES[i]}\n")
                     f.write("F-value : {0}\n".format(result[0]))
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")
@@ -196,7 +196,7 @@ if __name__ == "__main__":
                 with open(name_of_the_file, "a") as f :
                     f.write("-----------------------------------------------------------\n")
                     result = f_oneway(*mean_data)
-                    f.write("ANOVA for mean max sinuosity for social binding {SOC_BINDING_NAMES[i]}\n")
+                    f.write("ANOVA for mean max straightness for social binding {SOC_BINDING_NAMES[i]}\n")
                     f.write("F-value : {0}\n".format(result[0]))
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")

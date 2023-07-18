@@ -110,7 +110,7 @@ if __name__ == "__main__":
                     if (len(traj_group_vicinity) < 6 or len(traj_non_group_vicinity) < 6):
                         continue
 
-                    mean_group_speed = np.nanmean(traj_group_vicinity[:,4])/1000 
+                    mean_group_speed = np.nanmean(traj_group_vicinity[:,4])/1000
                     if (mean_group_speed < 0.5):
                         continue
                     elif (mean_group_speed > 2.5):

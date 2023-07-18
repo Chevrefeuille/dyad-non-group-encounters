@@ -11,7 +11,7 @@ ANOVA = True
 SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOCIAL_BINDING_VALUES = [0, 1, 2, 3]
 SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
-ANOVA_SAVE = f"sinuositycd/"
+ANOVA_SAVE = f"sinuosity/"
 
 
 if __name__ == "__main__":
@@ -23,7 +23,7 @@ if __name__ == "__main__":
             env_name
         )
 
-        no_encounters_sinuosity = pickle_load("../data/pickle/undisturbed_deflection_MAX_DISTANCE_2.pkl")
+        no_encounters_sinuosity = pickle_load("../data/pickle/undisturbed_sinuosity_MAX_DISTANCE_2.pkl")
         dict_sinuosity = pickle_load(f"../data/pickle/{env_name_short}_encounters_sinuosity.pkl")
 
         MAX_DISTANCE = MAX_DISTANCE_INTERVAL[0]
@@ -54,9 +54,9 @@ if __name__ == "__main__":
                 continue
 
             for i,sinuosity in enumerate(max_sinu_group):
-                intermediate.append(max_sinu_group[i]["max_lateral_sinuosity"])
+                intermediate.append(max_sinu_group[i]["sinuosity"])
                 intermediate_length.append(max_sinu_group[i]["length_of_trajectory"])
-                sinu_encounter_soc[indice].append(max_sinu_group[i]["max_lateral_sinuosity"])
+                sinu_encounter_soc[indice].append(max_sinu_group[i]["sinuosity"])
                 length_encounter_soc[indice].append(max_sinu_group[i]["length_of_trajectory"])
 
             mean_sinu_encounter_soc[indice].append(np.nanmean(intermediate))
@@ -70,9 +70,9 @@ if __name__ == "__main__":
 
             for i,sinuosity in enumerate(max_sinu_non_group):
 
-                intermediate.append(max_sinu_non_group[i]["max_lateral_sinuosity"])
+                intermediate.append(max_sinu_non_group[i]["sinuosity"])
                 intermediate_length.append(max_sinu_non_group[i]["length_of_trajectory"])
-                sinu_encounter_soc[-1].append(max_sinu_non_group[i]["max_lateral_sinuosity"])
+                sinu_encounter_soc[-1].append(max_sinu_non_group[i]["sinuosity"])
                 length_encounter_soc[-1].append(max_sinu_non_group[i]["length_of_trajectory"])
 
             mean_sinu_encounter_soc[-1].append(np.nanmean(intermediate))
@@ -91,7 +91,7 @@ if __name__ == "__main__":
                 print(social_binding, type(social_binding))
                 continue
 
-            max_sinu = no_encounters_sinuosity["group"][group_id]["max_sinu"]
+            max_sinu = no_encounters_sinuosity["group"][group_id]["max_sinuosity"]
             if len(max_sinu) == 0:
                 continue
             indice = social_binding
@@ -100,9 +100,9 @@ if __name__ == "__main__":
             intermediate_length = []
             for i,sinuosity in enumerate(max_sinu):
                 
-                intermediate.append(max_sinu[i]["max_lateral_sinuosity"])
+                intermediate.append(max_sinu[i]["sinuosity"])
                 intermediate_length.append(max_sinu[i]["length_of_trajectory"])
-                sinu_new_baseline_soc[indice].append(max_sinu[i]["max_lateral_sinuosity"])
+                sinu_new_baseline_soc[indice].append(max_sinu[i]["sinuosity"])
                 length_new_baseline_soc[indice].append(max_sinu[i]["length_of_trajectory"])
 
             mean_sinu_new_baseline_soc[indice].append(np.nanmean(intermediate))
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
         for non_group_id in no_encounters_sinuosity["non_group"]:
             
-            max_sinu = no_encounters_sinuosity["non_group"][non_group_id]["max_sinu"]
+            max_sinu = no_encounters_sinuosity["non_group"][non_group_id]["max_sinuosity"]
             if len(max_sinu) == 0:
                 continue
 
@@ -118,9 +118,9 @@ if __name__ == "__main__":
             intermediate_length = []
             for i,sinuosity in enumerate(max_sinu):
 
-                intermediate.append(max_sinu[i]["max_lateral_sinuosity"])
+                intermediate.append(max_sinu[i]["sinuosity"])
                 intermediate_length.append(max_sinu[i]["length_of_trajectory"])
-                sinu_new_baseline_soc[-1].append(max_sinu[i]["max_lateral_sinuosity"])
+                sinu_new_baseline_soc[-1].append(max_sinu[i]["sinuosity"])
                 length_new_baseline_soc[-1].append(max_sinu[i]["length_of_trajectory"])
 
             mean_sinu_new_baseline_soc[-1].append(np.nanmean(intermediate))
