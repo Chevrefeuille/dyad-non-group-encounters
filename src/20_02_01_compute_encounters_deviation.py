@@ -151,7 +151,5 @@ if __name__ == "__main__":
                     dict_deviation["group"][group_id]["group deviation"].append(max_dev_group)
                     dict_deviation["group"][group_id]["encounters deviation"].append(max_dev_ng)
 
-                    
-
     pickle_save(f"../data/pickle/{env_name_short}_encounters_deviations.pkl", dict_deviation)
 

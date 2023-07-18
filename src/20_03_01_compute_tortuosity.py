@@ -13,8 +13,8 @@ from scipy.stats import f_oneway
 
 from tqdm import tqdm
 
-"""The goal of this script is to compute the straightness of the pedestrians in the corridor environment.
-The straightness is computed as the maximum lateral straightnessiation of the pedestrian from its baseline trajectory.
+"""The goal of this script is to compute the tortuosity of the pedestrians in the corridor environment.
+The tortuosity is computed as the maximum lateral tortuosityiation of the pedestrian from its baseline trajectory.
 The baseline trajectory is the trajectory of the pedestrian using an average of the first 4 velocities vectors of the pedestrian.
     """
 
@@ -24,18 +24,16 @@ The baseline trajectory is the trajectory of the pedestrian using an average of 
 
 ### Current parameters
 
-# Minimum number of observations to compute the straightness
+# Minimum number of observations to compute the tortuosity
 MIN_NUMBER_OBSERVATIONS_LOCAL = 5
-# If we want to plot the trajectory to visualize the straightness
+# If we want to plot the trajectory to visualize the tortuosity
 PLOT_VERIF = False
-# If we want to plot (scatter) the mean straightness for each pedestrian
+# If we want to plot (scatter) the mean tortuosity for each pedestrian
 PLOT_MEAN_MAX_DEV = False
 
 # Control the max smapling time for the trajectory
 MAX_TIME = 1000
-
 MAX_DISTANCE = MAX_DISTANCE_INTERVAL[0]
-
 
 
 def compute_time_for_all_pedestrians(env_imput):
@@ -137,10 +135,10 @@ if __name__ == "__main__":
         all_times = compute_time_for_all_pedestrians(["diamor:corridor"])
         disturbed_times = pickle_load(f"../data/pickle/disturbed_times_time.pkl")
 
-        dict_straightness = {}
+        dict_tortuosity = {}
 
-        # Create the dictionary that will store the straightness
-        no_encounters_straightness = {
+        # Create the dictionary that will store the tortuosity
+        no_encounters_tortuosity = {
             "group": {},
             "non_group": {},
         }
@@ -168,7 +166,7 @@ if __name__ == "__main__":
             number_of_group_filtered = 0
             print("number of groups:", len(groups))
 
-            # compute straightness for all the groups
+            # compute tortuosity for all the groups
             for group in tqdm(groups):
 
                 # get the times where the group is undisturbed
@@ -180,14 +178,14 @@ if __name__ == "__main__":
                     continue
                 group_all_times = all_times[day]["group"][group_id]
 
-                # compute the straightness for each pedestrian in the group
+                # compute the tortuosity for each pedestrian in the group
                 for pedestrian in group.get_members():
 
                     # get the trajectory of the pedestrian, filter it to keep only the times where the group is in the corridor
                     pedestrian_id = pedestrian.get_id()
-                    no_encounters_straightness["group"][pedestrian_id] = {
+                    no_encounters_tortuosity["group"][pedestrian_id] = {
                         "social_binding": soc_binding,
-                        "max_straightness": [],
+                        "max_tortuosity": [],
                     }
                     trajectory = pedestrian.get_trajectory()
 
@@ -228,7 +226,7 @@ if __name__ == "__main__":
                         sub_sub_trajectory += add
                         sub_length += length
 
-                    # Compute the straightness for each sub trajectory
+                    # Compute the tortuosity for each sub trajectory
                     indice = 0
                     for trajectory in sub_sub_trajectory:
                         length = sub_length[indice]
@@ -243,22 +241,22 @@ if __name__ == "__main__":
                         if(len(trajectory) < 4):
                             continue
 
-                        max_straightness_sub = {"straightness": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
+                        max_tortuosity_sub = {"tortuosity": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
 
-                        max_straightness_sub["straightness"] = compute_straightness_index(trajectory)
+                        max_tortuosity_sub["tortuosity"] = compute_tortuosity_index(trajectory)
 
-                        if (max_straightness_sub["straightness"] is None):
+                        if (max_tortuosity_sub["tortuosity"] is None):
                             continue
 
                         time_of_group_traj = trajectory[-1, 0] - trajectory[0, 0]
-                        max_straightness_sub["mean_velocity"] = mean_speed
-                        max_straightness_sub["time"] = time_of_group_traj
-                        max_straightness_sub["length_of_trajectory"] = length
+                        max_tortuosity_sub["mean_velocity"] = mean_speed
+                        max_tortuosity_sub["time"] = time_of_group_traj
+                        max_tortuosity_sub["length_of_trajectory"] = length
 
-                        no_encounters_straightness["group"][pedestrian_id]["max_straightness"].append(max_straightness_sub)
+                        no_encounters_tortuosity["group"][pedestrian_id]["max_tortuosity"].append(max_tortuosity_sub)
 
                         if (PLOT_VERIF):
-                            plot_baseline(trajectory, max_straightness_sub, None, False, id = group_id)
+                            plot_baseline(trajectory, max_tortuosity_sub, None, False, id = group_id)
       
                 number_of_group_filtered += 1
 
@@ -268,7 +266,7 @@ if __name__ == "__main__":
 
             number_of_non_group_filtered = 0
 
-            # compute straightness for the non groups    
+            # compute tortuosity for the non groups    
             for non_group in tqdm(non_groups):
 
                 non_group_id = non_group.get_id()
@@ -277,8 +275,8 @@ if __name__ == "__main__":
                 non_group_all_times = all_times[day]["non_group"][
                     non_group_id
                 ]
-                no_encounters_straightness["non_group"][non_group_id] = {
-                        "max_straightness":[]
+                no_encounters_tortuosity["non_group"][non_group_id] = {
+                        "max_tortuosity":[]
                     }
                 
                 # get the trajectory of the pedestrian, filter it to keep only the times where the pedestrian is in the corridor
@@ -328,31 +326,31 @@ if __name__ == "__main__":
                     elif (mean_speed > 2.5):
                         continue
                     
-                    max_straightness_sub = {"straightness": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
-                    max_straightness_sub["straightness"] = compute_straightness_index(trajectory)
+                    max_tortuosity_sub = {"tortuosity": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
+                    max_tortuosity_sub["tortuosity"] = compute_tortuosity_index(trajectory)
 
-                    if(max_straightness_sub["straightness"] is None):
+                    if(max_tortuosity_sub["tortuosity"] is None):
                         continue
 
                     time_of_non_group_traj = trajectory[-1, 0] - trajectory[0, 0]
 
-                    max_straightness_sub["mean_velocity"] = mean_speed
-                    max_straightness_sub["time"] = time_of_non_group_traj
-                    max_straightness_sub["length_of_trajectory"] = length
+                    max_tortuosity_sub["mean_velocity"] = mean_speed
+                    max_tortuosity_sub["time"] = time_of_non_group_traj
+                    max_tortuosity_sub["length_of_trajectory"] = length
 
-                    no_encounters_straightness["non_group"][non_group_id]["max_straightness"].append(max_straightness_sub)
+                    no_encounters_tortuosity["non_group"][non_group_id]["max_tortuosity"].append(max_tortuosity_sub)
 
                     if (PLOT_VERIF):
-                        plot_baseline(trajectory, max_straightness_sub, None, False, id = non_group_id)
+                        plot_baseline(trajectory, max_tortuosity_sub, None, False, id = non_group_id)
 
                 number_of_non_group_filtered += 1
 
             print("number of non groups filtered:", number_of_non_group_filtered)
 
-        dict_straightness = no_encounters_straightness
+        dict_tortuosity = no_encounters_tortuosity
 
         
             #END OF COMPUTE DEVIATIONS
         
-        pickle_save(f"../data/pickle/undisturbed_straightness_MAX_DISTANCE_2.pkl", dict_straightness)
+        pickle_save(f"../data/pickle/undisturbed_tortuosity_MAX_DISTANCE_2.pkl", dict_tortuosity)
 

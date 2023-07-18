@@ -15,10 +15,8 @@ SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
 
 
-
-MEDIUM_SAVE = f"average_speed/{N_POINTS_AVERAGE}/"
-ANOVA_SAVE = f"{N_POINTS_AVERAGE}/"
-
+MEDIUM_SAVE = f"average_speed/{N_POINTS_AVERAGE}/deviation/"
+ANOVA_SAVE = f"{N_POINTS_AVERAGE}/deviation/"
 
 
 ### Old parameters
