@@ -282,7 +282,7 @@ if __name__ == "__main__":
             plt.close()
 
             double_table = write_table(plot_data, plot_label)
-            double_table[0].to_csv(f"../data/report_text/deflection/will/encounter/set_2/{ANOVA_SAVE}t_stats_encounter_new_baseline.csv", index = False) 
+            double_table[0].to_csv(f"../data/report_text/deflection/will/encounter/set_2/{ANOVA_SAVE}t_stats_encounter_new_baseline.csv", index = False)
             double_table[1].to_csv(f"../data/report_text/deflection/will/encounter/set_2/{ANOVA_SAVE}cohens_encounter_new_baseline.csv", index = False)
 
             if ANOVA:

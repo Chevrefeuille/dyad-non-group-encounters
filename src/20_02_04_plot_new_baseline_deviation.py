@@ -18,12 +18,13 @@ SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
 MEDIUM_SAVE = f"average_speed/{N_POINTS_AVERAGE}/deviation/"
 ANOVA_SAVE = f"{N_POINTS_AVERAGE}/deviation/"
 
+GROUP_PLOT = True
+ANOVA = True
+SUB_GROUP_PLOT = True
 
 ### Old parameters
 SCATTER_PLOT = False
 SPEED_INTERVAL = False
-GROUP_PLOT = True
-ANOVA = True
 PLOT_SPEED = False
 PLOT_TIME = False
 PLOT_LENGTH = False
@@ -304,6 +305,50 @@ if __name__ == "__main__":
                     f.write("-----------------------------------------------------------\n")
                     result = f_oneway(*new_plot_data)
                     f.write("ANOVA for mean max deviation for Group/Alone in encounter situation for mean data\n")
+                    f.write("F-value : {0}\n".format(result[0]))
+                    f.write("p-value : {0}\n".format(result[1]))
+                    f.write("-----------------------------------------------------------\n")
+
+        if SUB_GROUP_PLOT :
+             # This one is for group/non group only
+            intermediate_data = []
+            for i in range(2) :
+                intermediate_data += all_data[i]
+            
+            inter_intermediate_data = []
+            for i in range(2,4) :
+                inter_intermediate_data += all_data[i]
+
+            new_all_data = [intermediate_data, inter_intermediate_data]
+
+            new_label = ["Soc_0_1", "Soc_2_3"]
+            for i in range(2) :
+                new_label[i] = new_label[i] + " / " + str(len(new_all_data[i]))
+
+            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+            boxplot = ax.boxplot(new_all_data, labels = new_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                        , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                            boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+            ax.set_title(f"boxplot of mean max deviation, trip of {global_mean_mean_new_baseline_length} meters | {global_mean_mean_new_baseline_time} seconds")
+
+            plt.ylabel("Mean max deviation (mm)")
+            plt.xlabel("Social binding / Number of pedestrians")
+            plt.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/all_data/{MEDIUM_SAVE}/01_versus_12_new_baseline_with_{str_trajectory}_trip_of_{MAX_DISTANCE/1000}_meters.png")
+            plt.close()
+
+            double_table = write_table(new_all_data, new_label)
+            double_table[0].to_csv(f"../data/report_text/deflection/will/undisturbed_trajectories/set_4/{ANOVA_SAVE}t_stats_encounter_new_baseline.csv", index = False) 
+            double_table[1].to_csv(f"../data/report_text/deflection/will/undisturbed_trajectories/set_4/{ANOVA_SAVE}cohens_encounter_new_baseline.csv", index = False)
+
+            if(ANOVA) :
+                # Do the ANOVA thing
+                name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_4/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
+                if os.path.exists(name_of_the_file):
+                    os.remove(name_of_the_file)
+                with open(name_of_the_file, "a") as f :
+                    f.write("-----------------------------------------------------------\n")
+                    result = f_oneway(*new_all_data)
+                    f.write("ANOVA for mean max deviation for social binding 0,1 versus 2,3 in encounter situation for all data\n")
                     f.write("F-value : {0}\n".format(result[0]))
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")
