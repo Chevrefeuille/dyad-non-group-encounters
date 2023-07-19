@@ -158,7 +158,9 @@ if __name__ == "__main__":
             plt.savefig(f"../data/figures/deflection/will/boxplot/versus/all/encounter_new_baseline_{env_name_short}_{SOC_BINDING_NAMES[i]}.png")
             plt.close()
 
-
+            double_table = write_table(all_data, plot_label)
+            double_table[0].to_csv(f"../data/report_text/deflection/will/versus/all_data/{ANOVA_SAVE}_{SOC_BINDING_NAMES[i]}_t_stats_encounter_new_baseline.csv", index = False) 
+            double_table[1].to_csv(f"../data/report_text/deflection/will/versus/all_data/{ANOVA_SAVE}_{SOC_BINDING_NAMES[i]}_cohens_encounter_new_baseline.csv", index = False)
 
             plot_label = PLOT_LABEL.copy()
             plot_label[0] += f"{len(mean_dev_encounter_soc[i])} / {global_mean_mean_encounter_length} m"

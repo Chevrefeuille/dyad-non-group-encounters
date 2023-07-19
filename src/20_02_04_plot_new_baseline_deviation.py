@@ -181,6 +181,10 @@ if __name__ == "__main__":
         plt.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/all_data/{MEDIUM_SAVE}/boxplot_mean_max_deviation_for_all_pedestrians_with_{str_trajectory}_trip_of_{MAX_DISTANCE/1000}_meters.png")
         plt.close()
 
+        double_table = write_table(all_data, all_list)
+        double_table[0].to_csv(f"../data/report_text/deflection/will/undisturbed_trajectories/set_1/{ANOVA_SAVE}t_stats_encounter_new_baseline.csv", index = False) 
+        double_table[1].to_csv(f"../data/report_text/deflection/will/undisturbed_trajectories/set_1/{ANOVA_SAVE}cohens_encounter_new_baseline.csv", index = False)
+
         if(ANOVA) :
             # Do the ANOVA thing
             name_of_the_file = f"../data/report_text/deflection/will/undisturbed_trajectories/set_1/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_new_baseline.txt"
@@ -252,6 +256,10 @@ if __name__ == "__main__":
             plt.xlabel("Social binding / Number of pedestrians")
             plt.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/all_data/{MEDIUM_SAVE}/boxplot_mean_max_deviation_for_new_baseline_with_{str_trajectory}_trip_of_{MAX_DISTANCE/1000}_meters.png")
             plt.close()
+
+            double_table = write_table(new_all_data, new_label)
+            double_table[0].to_csv(f"../data/report_text/deflection/will/undisturbed_trajectories/set_2/{ANOVA_SAVE}t_stats_encounter_new_baseline.csv", index = False) 
+            double_table[1].to_csv(f"../data/report_text/deflection/will/undisturbed_trajectories/set_2/{ANOVA_SAVE}cohens_encounter_new_baseline.csv", index = False)
 
             new_plot_data = []
             intermediate_data = []

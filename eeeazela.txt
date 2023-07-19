@@ -1,0 +1,171 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% Zeynep Yucel 
+% Presentation
+%
+% Presented by Okadai Tarou
+%
+% 2018-11-14 16:20
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass{beamer}
+
+%gets rid of bottom navigation bars
+\setbeamertemplate{footline}[page number]{}
+
+%gets rid of navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% all item labels are bullets
+\def\labelitemi{$\color{blue}\bullet$}
+\def\labelitemii{$\color{blue}\circ$}
+
+% ----------------------------------------------------------------
+% Changing bullet and number style. Default options in 
+% brackets. Can specify anything different from defaults in braces
+% ----------------------------------------------------------------
+\setbeamertemplate{itemize item}[circle]            % First level item
+\setbeamertemplate{itemize subitem}[triangle]       % Second level item
+\setbeamertemplate{itemize subsubitem}[triangle]    % Third level item
+\makeatother
+
+
+
+
+% for toprule etc
+\usepackage{booktabs}
+
+\usepackage{multirow}
+
+% for writing kanji
+\usepackage{CJKutf8} 
+
+% for movie
+\usepackage{movie15}
+\usepackage{steinmetz}
+
+% for bib
+\usepackage{bibentry}
+\usepackage[style=verbose,backend=bibtex]{biblatex}
+\addbibresource{mybibexample.bib}
+
+% forimages
+\usepackage{graphicx}
+\usepackage{wrapfig}
+
+\renewcommand{\figurename}{図}
+\renewcommand{\tablename}{表}
+\setbeamertemplate{caption}[numbered]
+
+
+% for footnote without marker
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Title page template
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+
+\setbeamertemplate{title page}
+{
+  \vbox{}
+  \vfill
+  
+  \begin{centering}
+   
+    \setbeamercolor{title}{bg=white,fg=structure}
+    
+    \begin{beamercolorbox}[sep=8pt,center]{title}
+      {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+   
+    \end{beamercolorbox}%
+    
+      \begin{beamercolorbox}[sep=8pt,center]{title}
+      \usebeamerfont{title}\inserttitle
+            \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip1em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%  
+    \end{beamercolorbox} 
+    
+    
+    \vskip1em\par
+    \usebeamerfont{author}     \insertauthor       \vskip .5cm
+    \usebeamerfont{institute}  \insertinstitute    \vskip .5cm
+    \usebeamerfont{date}       \insertdate         \vskip .5cm 
+  \end{centering}
+  \vfill
+}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\begin{CJK}{UTF8}{ipxg}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[t]{My job in the Human Behavior understanding laboratory}
+\begin{columns}[onlytextwidth]
+  \begin{column}{0.45\textwidth}
+      \includegraphics[width=5cm, height=3.5cm]{figures/statistical-analysis-types.jpg}
+    \includegraphics[width=5cm, height=3.5cm]{tokyo-shibuya-crossing-194379.jpg}
+    \end{column}
+  \begin{column}{0.45\textwidth}
+  \includegraphics[width=4cm, height=3.5cm]{index.jpeg}
+    \includegraphics[width=4cm, height=3.5cm]{group.jpg}   
+    \end{column}
+\end{columns}
+
+
+\begin{text}
+    Understanding how pedestrians behave in crowds and how their social interaction influence their behavior
+\end{text}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[t]{My working tools as data scientist}
+
+
+\includegraphics[width=2cm, height=2cm]{1200px-Python.svg.png}
+\includegraphics[width=4cm, height=4cm]{encounter_baseline.png}
+\includegraphics[width=4cm, height=4cm]{undisturbed.png}
+
+
+
+
+
+\begin{itemize}
+    \item The job requires knowledge both in programming and statistical analysis
+    \item I am exclusively using python which provides lots of tools for data visualization or statistical calculation
+    \item If you have an interest in human understanding and are skiled in maths and computer science, this job is for you !
+    
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{CJK} 
+
+\end{document}
+
+
+
+
+l

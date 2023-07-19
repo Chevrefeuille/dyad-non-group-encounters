@@ -5,6 +5,9 @@ G / alone -> set 2
 -> for all and mean
 
 vérifier les moyennes et tous les anovas
-5 ANOVA0/1/2/3/Alone * 0----Alone Newbaseline
+5 ANOVA0/1/2/3/Alone * 0----Alone New_baseline
+
+DO 0/1 & 2/3
+Effect side table
 
 straightness - distribution - anova
