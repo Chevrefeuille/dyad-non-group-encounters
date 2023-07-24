@@ -15,10 +15,8 @@ SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
 
 
-
-MEDIUM_SAVE = f"curvature/"
-ANOVA_SAVE = f"curvature/"
-
+MEDIUM_SAVE = f"curvature/v2/"
+ANOVA_SAVE = f"curvature/v2"
 
 
 ### Old parameters
@@ -41,10 +39,11 @@ if __name__ == "__main__":
         )
 
         str_trajectory = "undisturbed"
-        no_encounters_curvature = pickle_load(f"../data/pickle/undisturbed_curvature_MAX_DISTANCE_2.pkl")
+        pre_dict = pickle_load(f"../data/pickle/undisturbed_curvature_points_v2.pkl")
         MAX_DISTANCE = MAX_DISTANCE_INTERVAL[0]
             
         print("MAX_DISTANCE", MAX_DISTANCE)
+        no_encounters_curvature = pre_dict
 
         # These lists are used to compute metrics (1 value for each group or pedestrian)
         mean_curv_new_baseline_soc = [[] for i in range(5)]
@@ -53,7 +52,6 @@ if __name__ == "__main__":
         mean_time_new_baseline_soc = [[] for i in range(5)]
 
         # These lists are used to compute metrics (various values for each group or pedestrian)
-        curv_sum_new_baseline_soc = [[] for i in range(5)]
         curv_new_baseline_soc = [[] for i in range(5)]
         curv_max_new_baseline_soc = [[] for i in range(5)]
         length_new_baseline_soc = [[] for i in range(5)]
@@ -73,7 +71,6 @@ if __name__ == "__main__":
             indice = social_binding
 
             intermediate = []
-            intermediate_sum = []
             intermediate_max = []
             intermediate_length = []
             intermediate_velocity = []
@@ -82,14 +79,12 @@ if __name__ == "__main__":
 
             for i,curvature in enumerate(curvature_list):
                 intermediate.append(curvature_list[i]["curvature_mean"])
-                intermediate_sum.append(curvature_list[i]["curvature_sum"])
                 intermediate_max.append(curvature_list[i]["curvature_max"])
                 intermediate_length.append(curvature_list[i]["length_of_trajectory"])
                 intermediate_velocity.append(curvature_list[i]["mean_velocity"])
                 intermediate_time.append(curvature_list[i]["time"])
                 
                 curv_new_baseline_soc[indice].append(curvature_list[i]["curvature_mean"])
-                curv_sum_new_baseline_soc[indice].append(curvature_list[i]["curvature_sum"])
                 curv_max_new_baseline_soc[indice].append(curvature_list[i]["curvature_max"])
                 length_new_baseline_soc[indice].append(curvature_list[i]["length_of_trajectory"])
                 velocity_new_baseline_soc[indice].append(curvature_list[i]["mean_velocity"])
@@ -111,7 +106,6 @@ if __name__ == "__main__":
                 continue
 
             intermediate = []
-            intermediate_sum = []
             intermediate_max = []
             intermediate_length = []
             intermediate_velocity = []
@@ -120,14 +114,12 @@ if __name__ == "__main__":
             for i, curvature in enumerate(curvature_list):
 
                 intermediate.append(curvature_list[i]["curvature_mean"])
-                intermediate_sum.append(curvature_list[i]["curvature_sum"])
                 intermediate_max.append(curvature_list[i]["curvature_max"])
                 intermediate_length.append(curvature_list[i]["length_of_trajectory"])
                 intermediate_velocity.append(curvature_list[i]["mean_velocity"])
                 intermediate_time.append(curvature_list[i]["time"])
 
                 curv_new_baseline_soc[-1].append(curvature_list[i]["curvature_mean"])
-                curv_sum_new_baseline_soc[-1].append(curvature_list[i]["curvature_sum"])
                 curv_max_new_baseline_soc[-1].append(curvature_list[i]["curvature_max"])
                 length_new_baseline_soc[-1].append(curvature_list[i]["length_of_trajectory"])
                 velocity_new_baseline_soc[-1].append(curvature_list[i]["mean_velocity"])
@@ -149,9 +141,6 @@ if __name__ == "__main__":
 
         flattened_new_baseline_curv_max = [item for sublist in curv_max_new_baseline_soc for item in sublist]
         global_mean_all_new_baseline_curv_max = np.around(np.nanmean(flattened_new_baseline_curv_max), 2)
-
-        flattened_new_baseline_curv_sum = [item for sublist in curv_sum_new_baseline_soc for item in sublist]
-        global_mean_all_new_baseline_curv_sum = np.around(np.nanmean(flattened_new_baseline_curv_sum), 2)
 
         flattened_new_baseline_curv = [item for sublist in curv_new_baseline_soc for item in sublist]
         global_mean_all_new_baseline_curv = np.around(np.nanmean(flattened_new_baseline_curv), 2)
@@ -217,26 +206,6 @@ if __name__ == "__main__":
 
         ax.set_title(f"boxplot of mean max curvature for undisturbed pedestrian, trip of {global_mean_all_new_baseline_length} meters | {global_mean_all_new_baseline_time} seconds")
         plt.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/all_data/{MEDIUM_SAVE}boxplot_max_curvature_listness_for_all_pedestrians_with_{str_trajectory}_trip_of_{MAX_DISTANCE/1000}_meters.png")
-        plt.close()
-
-        print("test :", curv_sum_new_baseline_soc[0][0:10], "ok :", curv_new_baseline_soc[0][0:10])
-        print("test :", curv_sum_new_baseline_soc[1][0:10], "ok :", curv_new_baseline_soc[1][0:10])
-
-        all_datata = curv_sum_new_baseline_soc
-        all_list = LIST_OF_SOCIAL_BINDING.copy()
-        for i in range(5) :
-            all_list[i] = all_list[i] + " / " + str(len(all_datata[i]))
-
-        fig, ax = plt.subplots(1 , 1, figsize=(10, 10))
-
-        boxplot = ax.boxplot(all_datata, labels = all_list, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
-                , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
-        plt.ylabel("Mean sum curvature (mm)")
-        plt.xlabel("Social binding / Data used")
-
-        ax.set_title(f"boxplot of sum curvature for undisturbed pedestrian, trip of {global_mean_all_new_baseline_length} meters | {global_mean_all_new_baseline_time} seconds")
-        plt.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/all_data/{MEDIUM_SAVE}boxplot_sum_curvature_listness_for_all_pedestrians_with_{str_trajectory}_trip_of_{MAX_DISTANCE/1000}_meters.png")
         plt.close()
 
         if(ANOVA) :

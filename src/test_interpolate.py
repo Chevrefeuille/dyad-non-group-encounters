@@ -1,11 +1,12 @@
 from copy import deepcopy
-import os
-from matplotlib import patches
 from pedestrians_social_binding.environment import Environment
-from pedestrians_social_binding.threshold import Threshold
 from pedestrians_social_binding.plot_utils import *
 from pedestrians_social_binding.utils import *
 from pedestrians_social_binding.constants import *
+
+import numpy as np
+from scipy.interpolate import CubicSpline
+import matplotlib.pyplot as plt
 
 from utils import *
 from parameters import *
@@ -196,68 +197,17 @@ if __name__ == "__main__":
                         trajectory, undisturbed_times
                     )
 
-                    list_of_sub_trajectories = [pedestrian_undisturbed_trajectory]
-                    test_sub_pedestrian = np.diff(pedestrian_undisturbed_trajectory[:,0])
+                    cs = CubicSpline(pedestrian_undisturbed_trajectory[:, 0], pedestrian_undisturbed_trajectory[:, 1:3])
+                    xs = np.linspace(pedestrian_undisturbed_trajectory[0, 0], pedestrian_undisturbed_trajectory[-1, 0], 100)
+                    fig, ax = plt.subplots()
+                    ax.set_aspect("equal", "box")
+                    ax.plot(pedestrian_undisturbed_trajectory[:, 1], pedestrian_undisturbed_trajectory[:, 2], 'o', label='data')
+                    ax.plot(cs(xs)[:, 0], cs(xs)[:, 1], label="S")
 
-                    # Separate where there is a gap in time in the trajectory
-                    if(np.any(test_sub_pedestrian > MAX_TIME)):
-                        list_of_sub_trajectories = compute_continuous_sub_trajectories_using_time(pedestrian_undisturbed_trajectory, max_gap=MAX_TIME)
-                        
-                    sub_sub_trajectory = []
-                    sub_length = []
-
-                    # Separate where there is a gap in space in the trajectory, we want only continues trajectory of MAX_DISTANCE
-                    for sub_trajectory in list_of_sub_trajectories:
-
-                        result = compute_continuous_sub_trajectories_using_distance_v2(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
-                        if (result is None):
-                            continue
-                        add = result[0]
-                        length = result[1]
-                        
-                        sub_sub_trajectory += add
-                        sub_length += length
-
-                    # Compute the curvature for each sub trajectory
-                    indice = 0
-                    for trajectory in sub_sub_trajectory:
-                        length = sub_length[indice]
-                        indice += 1
-                        
-                        mean_speed = np.nanmean(trajectory[:,4])/1000
-                        if (mean_speed < 0.5):
-                            continue
-                        elif (mean_speed > 2.5):
-                            continue
-
-                        if(len(trajectory) < 4):
-                            continue
-
-                        max_curvature_sub = {"curvature_mean": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
-
-                        curv = compute_curvature(trajectory[:, 1:3])
-
-                        time_of_group_traj = trajectory[-1, 0] - trajectory[0, 0]
-                        max_curvature_sub["mean_velocity"] = mean_speed
-                        max_curvature_sub["time"] = time_of_group_traj
-                        max_curvature_sub["length_of_trajectory"] = length
-                        max_curvature_sub["curvature_mean"] = np.nanmean(curv)
-                        max_curvature_sub["curvature_max"] = np.nanmax(curv)
-                        max_curvature_sub["curvature_sum"] = np.nansum(curv)
+                    ax.legend(loc='lower left', ncol=2)
+                    plt.show()
 
 
-                        no_encounters_curvature["group"][pedestrian_id]["curvature_list"].append(max_curvature_sub)
-
-                        if (PLOT_VERIF):
-                            plot_baseline(trajectory, max_curvature_sub, None, False, id = group_id)
-      
-                number_of_group_filtered += 1
-
-
-            print("number of groups filtered:", number_of_group_filtered)
-            print("number of non groups:", len(non_groups))
-
-            number_of_non_group_filtered = 0
 
             # compute curvature for the non groups    
             for non_group in tqdm(non_groups):
@@ -288,58 +238,6 @@ if __name__ == "__main__":
                     trajectory,
                     undisturbed_times,
                 )
-                list_of_sub_trajectories = [non_group_undisturbed_trajectory]
-                test_sub_non_group = np.diff(non_group_undisturbed_trajectory[:,0])
-                
-                # Separate where there is a gap in time in the trajectory
-                if(np.any(test_sub_non_group > MAX_TIME)):
-                    list_of_sub_trajectories = compute_continuous_sub_trajectories(non_group_undisturbed_trajectory, max_gap=MAX_TIME)
-
-
-                sub_sub_trajectory = []
-                sub_length = []
-
-                # Separate where there is a gap in space in the trajectory, we want only continues trajectory of 4000 mm
-                for sub_trajectory in list_of_sub_trajectories:
-                    result = compute_continuous_sub_trajectories_using_distance_v2(sub_trajectory, max_distance=MAX_DISTANCE, min_length=MIN_NUMBER_OBSERVATIONS_LOCAL)
-                    if (result is None):
-                        continue
-                    add = result[0]
-                    length = result[1]
-                    
-                    sub_sub_trajectory += add
-                    sub_length += length
-
-                for indice, trajectory in enumerate(sub_sub_trajectory):
-
-                    length = sub_length[indice]
-                    mean_speed = np.nanmean(trajectory[:,4])/1000
-                    if (mean_speed < 0.5):
-                        continue
-                    elif (mean_speed > 2.5):
-                        continue
-                    
-                    max_curvature_sub = {"curvature_mean": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
-                    curv = compute_curvature(trajectory[:, 1:3])
-                    
-                    time_of_non_group_traj = trajectory[-1, 0] - trajectory[0, 0]
-                    max_curvature_sub["curvature_mean"] = np.nanmean(curv)
-                    max_curvature_sub["curvature_max"] = np.nanmax(curv)
-                    max_curvature_sub["curvature_sum"] = np.nansum(curv)
-                    max_curvature_sub["mean_velocity"] = mean_speed
-                    max_curvature_sub["time"] = time_of_non_group_traj
-                    max_curvature_sub["length_of_trajectory"] = length
-
-                    no_encounters_curvature["non_group"][non_group_id]["curvature_list"].append(max_curvature_sub)
-
-                    if (PLOT_VERIF):
-                        plot_baseline(trajectory, max_curvature_sub, None, False, id = non_group_id)
-
-                number_of_non_group_filtered += 1
-
-            print("number of non groups filtered:", number_of_non_group_filtered)
-
-        dict_curvature = no_encounters_curvature
 
         
             #END OF COMPUTE DEVIATIONS

@@ -214,7 +214,7 @@ if __name__ == "__main__":
                             continue
                         add = result[0]
                         length = result[1]
-                        
+
                         sub_sub_trajectory += add
                         sub_length += length
 
@@ -223,7 +223,7 @@ if __name__ == "__main__":
                     for trajectory in sub_sub_trajectory:
                         length = sub_length[indice]
                         indice += 1
-                        
+
                         mean_speed = np.nanmean(trajectory[:,4])/1000
                         if (mean_speed < 0.5):
                             continue
@@ -235,7 +235,7 @@ if __name__ == "__main__":
 
                         max_curvature_sub = {"curvature_mean": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
 
-                        curv = compute_curvature(trajectory[:, 1:3])
+                        curv = compute_curvature_v3(trajectory)
 
                         time_of_group_traj = trajectory[-1, 0] - trajectory[0, 0]
                         max_curvature_sub["mean_velocity"] = mean_speed
@@ -245,12 +245,11 @@ if __name__ == "__main__":
                         max_curvature_sub["curvature_max"] = np.nanmax(curv)
                         max_curvature_sub["curvature_sum"] = np.nansum(curv)
 
-
                         no_encounters_curvature["group"][pedestrian_id]["curvature_list"].append(max_curvature_sub)
 
                         if (PLOT_VERIF):
                             plot_baseline(trajectory, max_curvature_sub, None, False, id = group_id)
-      
+
                 number_of_group_filtered += 1
 
 
@@ -259,7 +258,7 @@ if __name__ == "__main__":
 
             number_of_non_group_filtered = 0
 
-            # compute curvature for the non groups    
+            # compute curvature for the non groups
             for non_group in tqdm(non_groups):
 
                 non_group_id = non_group.get_id()
@@ -271,10 +270,10 @@ if __name__ == "__main__":
                 no_encounters_curvature["non_group"][non_group_id] = {
                         "curvature_list":[]
                     }
-                
+
                 # get the trajectory of the pedestrian, filter it to keep only the times where the pedestrian is in the corridor
                 trajectory = non_group.get_trajectory()
-                
+
                 if(non_group_id in disturbed_times[day]["non_group"]):
                     undisturbed_masque = np.isin(non_group_all_times, disturbed_times[day]["non_group"][non_group_id])
                     undisturbed_times = non_group_all_times[~undisturbed_masque]
@@ -290,7 +289,7 @@ if __name__ == "__main__":
                 )
                 list_of_sub_trajectories = [non_group_undisturbed_trajectory]
                 test_sub_non_group = np.diff(non_group_undisturbed_trajectory[:,0])
-                
+
                 # Separate where there is a gap in time in the trajectory
                 if(np.any(test_sub_non_group > MAX_TIME)):
                     list_of_sub_trajectories = compute_continuous_sub_trajectories(non_group_undisturbed_trajectory, max_gap=MAX_TIME)
@@ -306,7 +305,7 @@ if __name__ == "__main__":
                         continue
                     add = result[0]
                     length = result[1]
-                    
+
                     sub_sub_trajectory += add
                     sub_length += length
 
@@ -318,10 +317,10 @@ if __name__ == "__main__":
                         continue
                     elif (mean_speed > 2.5):
                         continue
-                    
+
                     max_curvature_sub = {"curvature_mean": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
-                    curv = compute_curvature(trajectory[:, 1:3])
-                    
+                    curv = compute_curvature_v3(trajectory)
+
                     time_of_non_group_traj = trajectory[-1, 0] - trajectory[0, 0]
                     max_curvature_sub["curvature_mean"] = np.nanmean(curv)
                     max_curvature_sub["curvature_max"] = np.nanmax(curv)
@@ -341,8 +340,7 @@ if __name__ == "__main__":
 
         dict_curvature = no_encounters_curvature
 
-        
-            #END OF COMPUTE DEVIATIONS
-        
-        pickle_save(f"../data/pickle/undisturbed_curvature_MAX_DISTANCE_2.pkl", dict_curvature)
 
+            #END OF COMPUTE DEVIATIONS
+
+        pickle_save(f"../data/pickle/undisturbed_curvature_points_v3.pkl", dict_curvature)
