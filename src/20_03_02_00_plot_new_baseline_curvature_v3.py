@@ -15,8 +15,8 @@ SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOC_BINDING_NAMES = ["0", "1", "2", "3", "alone"]
 
 
-MEDIUM_SAVE = f"curvature/v3/"
-ANOVA_SAVE = f"curvature/v3"
+MEDIUM_SAVE = f"curvature/v3/{SAMPLING_NUMBER}"
+ANOVA_SAVE = f"curvature/v3{SAMPLING_NUMBER}"
 
 
 ### Old parameters
@@ -39,7 +39,7 @@ if __name__ == "__main__":
         )
 
         str_trajectory = "undisturbed"
-        pre_dict = pickle_load(f"../data/pickle/undisturbed_curvature_points_v3.pkl")
+        pre_dict = pickle_load(f"../data/pickle/undisturbed_curvature_points_v3_{SAMPLING_NUMBER}.pkl")
         MAX_DISTANCE = MAX_DISTANCE_INTERVAL[0]
             
         print("MAX_DISTANCE", MAX_DISTANCE)

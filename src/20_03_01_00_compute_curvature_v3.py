@@ -343,4 +343,4 @@ if __name__ == "__main__":
 
             #END OF COMPUTE DEVIATIONS
 
-        pickle_save(f"../data/pickle/undisturbed_curvature_points_v3.pkl", dict_curvature)
+        pickle_save(f"../data/pickle/undisturbed_curvature_points_v3_{SAMPLING_NUMBER}.pkl", dict_curvature)

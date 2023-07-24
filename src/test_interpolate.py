@@ -165,6 +165,8 @@ if __name__ == "__main__":
                 # get the times where the group is undisturbed
                 group_id = group.get_id()
                 soc_binding = group.get_annotation(soc_binding_type)
+                if soc_binding != 3 :
+                    continue
                 if soc_binding not in soc_binding_values:
                     soc_binding = "other"
                 if group_id not in all_times[day]["group"]:
@@ -199,7 +201,7 @@ if __name__ == "__main__":
 
                     cs = CubicSpline(pedestrian_undisturbed_trajectory[:, 0], pedestrian_undisturbed_trajectory[:, 1:3])
                     xs = np.linspace(pedestrian_undisturbed_trajectory[0, 0], pedestrian_undisturbed_trajectory[-1, 0], 100)
-                    fig, ax = plt.subplots()
+                    fig, ax = plt.subplots(1, 1, figsize=(12, 10))
                     ax.set_aspect("equal", "box")
                     ax.plot(pedestrian_undisturbed_trajectory[:, 1], pedestrian_undisturbed_trajectory[:, 2], 'o', label='data')
                     ax.plot(cs(xs)[:, 0], cs(xs)[:, 1], label="S")
