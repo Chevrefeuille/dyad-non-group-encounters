@@ -50,6 +50,7 @@ if __name__ == "__main__":
         speed_encounter_soc = [[] for i in range(5)]
         length_encounter_soc = [[] for i in range(5)]
         time_encounter_soc = [[] for i in range(5)]
+        observation_encounter_soc = [[] for i in range(5)]
 
         # These lists are used to compute metrics (1 values for each group or pedestrian)
         mean_curv_encounter_soc = [[] for i in range(5)]
@@ -63,6 +64,7 @@ if __name__ == "__main__":
         n_g_mean_length_encounter_soc = [[] for i in range(4)]
         n_g_mean_speed_encounter_soc = [[] for i in range(4)]
         n_g_mean_time_encounter_soc = [[] for i in range(4)]
+        n_g_observation_encounter_soc = [[] for i in range(4)]
 
         n_g_curv_encounter_soc = [[] for i in range(4)]
         n_g_speed_encounter_soc = [[] for i in range(4)]
@@ -108,6 +110,7 @@ if __name__ == "__main__":
                 speed_encounter_soc[indice].append(max_curv_group[i]["mean_velocity"])
                 length_encounter_soc[indice].append(max_curv_group[i]["length_of_trajectory"])
                 time_encounter_soc[indice].append(max_curv_group[i]["time"])
+                observation_encounter_soc[indice].append(max_curv_group[i]["number_of_observations"])
 
             mean_curv_encounter_soc[indice].append(np.mean(intermediate_curvature))
             mean_length_encounter_soc[indice].append(np.mean(intermediate_length))
@@ -142,6 +145,7 @@ if __name__ == "__main__":
                 speed_encounter_soc[-1].append(max_curv_non_group[i]["mean_velocity"])
                 length_encounter_soc[-1].append(max_curv_non_group[i]["length_of_trajectory"])
                 time_encounter_soc[-1].append(max_curv_non_group[i]["time"])
+                observation_encounter_soc[-1].append(max_curv_non_group[i]["number_of_observations"])
 
                 n_g_curv_encounter_soc[indice].append(max_curv_non_group[i]["curvature_mean"])
                 n_g_speed_encounter_soc[indice].append(max_curv_non_group[i]["mean_velocity"])
@@ -172,6 +176,9 @@ if __name__ == "__main__":
         flattened_encounter_time = [item for sublist in time_encounter_soc for item in sublist]
         global_mean_all_encounter_time = np.around(np.nanmean(flattened_encounter_time), 2) /1000
 
+        flattened_encounter_observation = [item for sublist in observation_encounter_soc for item in sublist]
+        global_mean_all_encounter_observation = np.around(np.nanmean(flattened_encounter_observation), 2)
+
 
         if(PLOT_SOC_DEVIATION) :
             # Here we plot the curvature in function of the social binding
@@ -181,7 +188,7 @@ if __name__ == "__main__":
                 plot_label[i] = plot_label[i] + " / " + str(len(plot_data[i]))
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-            ax.set_title(f"Deviation in function of the social binding in encounter situation : {global_mean_all_encounter_length} meters  |  {global_mean_all_encounter_time} s")
+            ax.set_title(f"Deviation in function of the social binding in encounter situation : {global_mean_all_encounter_length} meters  |  {global_mean_all_encounter_time} s | {global_mean_all_encounter_observation} observations")
             ax.set_xlabel("Social binding / data")
             ax.set_ylabel("Maximum lateral curvature (m)")
 
@@ -189,7 +196,7 @@ if __name__ == "__main__":
                         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                             boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
    
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_curvature.png")
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}all_mean_curvature.png")
             plt.close()
 
             plot_data = curv_max_encounter_soc.copy()
@@ -241,7 +248,7 @@ if __name__ == "__main__":
                 plot_label[i] = plot_label[i] + " / " + str(len(plot_data[i]))
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-            ax.set_title(f"Deviation in function of the social binding in encounter situation : {global_mean_mean_encounter_length} meters  |  {global_mean_mean_encounter_time} s")
+            ax.set_title(f"Deviation in function of the social binding in encounter situation : {global_mean_mean_encounter_length} meters  |  {global_mean_mean_encounter_time} s | {global_mean_all_encounter_observation} observations")
 
             ax.set_xlabel("Social binding / Group")
             ax.set_ylabel("Maximum lateral curvature (m)")
@@ -250,7 +257,7 @@ if __name__ == "__main__":
                         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                             boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
 
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_curvature.png")
+            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}mean_mean_curvature.png")
             plt.close()
 
             if ANOVA :
@@ -290,7 +297,7 @@ if __name__ == "__main__":
             plot_label[1] = plot_label[1] + " / " + str(len(plot_data[1]))
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-            ax.set_title(f"Deviation in function of the group apartenance in encounter situation : {global_mean_all_encounter_length} meters  |  {global_mean_all_encounter_time} s")
+            ax.set_title(f"Deviation in function of the group apartenance in encounter situation : {global_mean_all_encounter_length} meters  |  {global_mean_all_encounter_time} s | {global_mean_all_encounter_observation} observations")
             ax.set_xlabel("Group apartenance / data")
             ax.set_ylabel("Maximum lateral curvature (m)")
             boxplot = ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
@@ -324,7 +331,7 @@ if __name__ == "__main__":
             plot_label[1] = plot_label[1] + " / " + str(len(plot_data[1]))
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-            ax.set_title(f"Deviation in function of the group apartenance in encounter situation : {global_mean_mean_encounter_length} meters  |  {global_mean_mean_encounter_time} s")
+            ax.set_title(f"Deviation in function of the group apartenance in encounter situation : {global_mean_mean_encounter_length} meters  |  {global_mean_mean_encounter_time} s | {global_mean_all_encounter_observation} observations")
             ax.set_xlabel("Group apartenance / Group")
             ax.set_ylabel("Maximum lateral curvature (m)")
             boxplot = ax.boxplot(plot_data, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
@@ -362,7 +369,7 @@ if __name__ == "__main__":
                         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                             boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
             
-            ax.set_title(f"Deviation for alone people in function of the social binding of their encounter / {global_mean_all_encounter_length} meters")
+            ax.set_title(f"Deviation for alone people in function of the social binding of their encounter / {global_mean_all_encounter_length} meters | {global_mean_all_encounter_observation} observations")
             ax.set_xlabel("Social binding / Group / data")
             ax.set_ylabel("Maximum lateral curvature (m)")
             fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/all_data/{MEDIUM_SAVE}{env_name_short}_curvature_alone.png")
@@ -380,7 +387,7 @@ if __name__ == "__main__":
                         , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
                             boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
             
-            ax.set_title(f"Deviation for alone people in function of the social binding of their encounter / {global_mean_mean_encounter_length} meters")
+            ax.set_title(f"Deviation for alone people in function of the social binding of their encounter / {global_mean_mean_encounter_length} meters | {global_mean_all_encounter_observation} observations")
             ax.set_xlabel("Social binding / Group / data")
             ax.set_ylabel("Maximum lateral curvature (m)")
             fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_curvature_alone.png")

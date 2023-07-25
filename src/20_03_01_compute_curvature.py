@@ -244,6 +244,7 @@ if __name__ == "__main__":
                         max_curvature_sub["curvature_mean"] = np.nanmean(curv)
                         max_curvature_sub["curvature_max"] = np.nanmax(curv)
                         max_curvature_sub["curvature_sum"] = np.nansum(curv)
+                        max_curvature_sub["number_of_observations"] = len(curv)
 
 
                         no_encounters_curvature["group"][pedestrian_id]["curvature_list"].append(max_curvature_sub)
@@ -329,6 +330,8 @@ if __name__ == "__main__":
                     max_curvature_sub["mean_velocity"] = mean_speed
                     max_curvature_sub["time"] = time_of_non_group_traj
                     max_curvature_sub["length_of_trajectory"] = length
+                    max_curvature_sub["number_of_observations"] = len(curv)
+
 
                     no_encounters_curvature["non_group"][non_group_id]["curvature_list"].append(max_curvature_sub)
 

@@ -236,8 +236,8 @@ if __name__ == "__main__":
                         max_curvature_sub = {"curvature_mean": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
 
                         curv = compute_curvature_v2(trajectory)
-                        print(curv)
 
+                        max_curvature_sub["number_of_observations"] = trajectory.shape[0]
                         time_of_group_traj = trajectory[-1, 0] - trajectory[0, 0]
                         max_curvature_sub["mean_velocity"] = mean_speed
                         max_curvature_sub["time"] = time_of_group_traj
@@ -322,6 +322,7 @@ if __name__ == "__main__":
                     max_curvature_sub = {"curvature_mean": float, "mean_velocity": np.ndarray, "length_of_trajectory": float, "time": float}
                     curv = compute_curvature_v2(trajectory)
 
+                    max_curvature_sub["number_of_observations"] = len(curv)
                     time_of_non_group_traj = trajectory[-1, 0] - trajectory[0, 0]
                     max_curvature_sub["curvature_mean"] = np.nanmean(curv)
                     max_curvature_sub["curvature_max"] = np.nanmax(curv)

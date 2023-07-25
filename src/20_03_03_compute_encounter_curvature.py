@@ -143,6 +143,8 @@ if __name__ == "__main__":
                         )
                         plt.close()
 
+                    group_curvature["number_of_observations"] = len(group_curv)
+                    ng_curvature["number_of_observations"] = len(ng_curv)
 
                     group_curvature["curvature_mean"] = np.nanmean(group_curv)
                     ng_curvature["curvature_mean"] = np.nanmean(ng_curv)
