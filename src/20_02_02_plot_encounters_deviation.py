@@ -23,7 +23,7 @@ SPEED_GLOBAL = False
 SPEED_INTERVAL_2 = False
 PLOT_SPEED = False
 PLOT_TIME = False
-PLOT_LENGTH = False
+PLOT_LENGTH = True
 
 SOCIAL_BINDING = {"0" : 0, "1" : 1, "2" : 2, "3" : 3, "alone" : 4}
 SOCIAL_BINDING_VALUES = [0, 1, 2, 3]
@@ -174,6 +174,8 @@ if __name__ == "__main__":
                 plot_label[i] = plot_label[i] + " / " + str(len(plot_data[i]))
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+            ax.set_ylim(0, 800)
+
             ax.set_title(f"Deviation in function of the social binding in encounter situation : {global_mean_all_encounter_length} meters  |  {global_mean_all_encounter_time} s")
             ax.set_xlabel("Social binding / data")
             ax.set_ylabel("Maximum lateral deviation (m)")
@@ -425,3 +427,26 @@ if __name__ == "__main__":
                     f.write("F-value : {0}\n".format(result[0]))
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")
+
+
+        if PLOT_LENGTH :
+            all_data_2 = length_encounter_soc.copy()
+            all_list = LIST_OF_SOCIAL_BINDING.copy()
+            for i in range(5) :
+                all_list[i] = all_list[i] + " / " + str(len(all_data_2[i]))
+            
+            all_data = []
+            for i in range(5) :
+                intermediate_string = str(np.nanmean(length_encounter_soc[i])) + "  |  "+str(len(length_encounter_soc[i]))
+                all_data.append(intermediate_string)
+
+            fig, ax = plt.subplots(1 , 1, figsize=(10, 10))
+
+
+            print("length : ", all_data)
+
+            all_data = []
+            for i in range(5) :
+                intermediate_string = str(np.nanmean(speed_encounter_soc[i]))
+                all_data.append(intermediate_string)  
+            print("\n speed :", all_data)     

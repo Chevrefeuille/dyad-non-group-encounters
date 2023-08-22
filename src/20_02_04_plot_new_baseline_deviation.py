@@ -25,9 +25,9 @@ SUB_GROUP_PLOT = True
 ### Old parameters
 SCATTER_PLOT = False
 SPEED_INTERVAL = False
-PLOT_SPEED = False
+PLOT_SPEED = True
 PLOT_TIME = False
-PLOT_LENGTH = False
+PLOT_LENGTH = True
 
 
 if __name__ == "__main__":
@@ -154,6 +154,7 @@ if __name__ == "__main__":
 
 
         fig, ax = plt.subplots(1 , 1, figsize=(10, 10))
+
         boxplot = ax.boxplot(plot_data, labels = plot_list
                 ,showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                 , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
@@ -171,6 +172,7 @@ if __name__ == "__main__":
             all_list[i] = all_list[i] + " / " + str(len(all_data[i]))
 
         fig, ax = plt.subplots(1 , 1, figsize=(10, 10))
+        ax.set_ylim(0, 800)
 
         boxplot = ax.boxplot(all_data, labels = all_list, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
                 , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
@@ -352,3 +354,33 @@ if __name__ == "__main__":
                     f.write("F-value : {0}\n".format(result[0]))
                     f.write("p-value : {0}\n".format(result[1]))
                     f.write("-----------------------------------------------------------\n")
+
+        if PLOT_LENGTH :
+            all_data_2 = length_new_baseline_soc.copy()
+            all_list = LIST_OF_SOCIAL_BINDING.copy()
+            for i in range(5) :
+                all_list[i] = all_list[i] + " / " + str(len(all_data_2[i]))
+            
+            all_data = []
+            for i in range(5) :
+                intermediate_string = str(np.nanmean(length_new_baseline_soc[i]))
+                all_data.append(intermediate_string)
+
+            fig, ax = plt.subplots(1 , 1, figsize=(10, 10))
+
+            boxplot = ax.boxplot(all_data_2, labels = all_list, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
+                    , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
+                    boxprops = dict(color = "black"), patch_artist = True, showbox = True, showcaps = True)
+            plt.ylabel("Mean max deviation (mm)")
+            plt.xlabel("Social binding / Data used")
+
+            ax.set_title(f"boxplot of mean max deviation for undisturbed pedestrian, trip of {global_mean_all_new_baseline_length} meters | {global_mean_all_new_baseline_time} seconds")
+            plt.savefig(f"../data/figures/deflection/will/boxplot/undisturbed_trajectories/2/{MAX_DISTANCE}/all_data/{MEDIUM_SAVE}/boxplot_mean_max_deviation_for_all_pedestrians_with_{str_trajectory}_trip_of_{MAX_DISTANCE/1000}_meters.png")
+            plt.close()
+            print("length : ", all_data)
+
+            all_data = []
+            for i in range(5) :
+                intermediate_string = str(np.nanmean(velocity_new_baseline_soc[i]))
+                all_data.append(intermediate_string)  
+            print("\n speed :", all_data)     

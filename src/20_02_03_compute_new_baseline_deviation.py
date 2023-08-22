@@ -25,7 +25,7 @@ The baseline trajectory is the trajectory of the pedestrian using an average of 
 ### Current parameters
 
 # Minimum number of observations to compute the deflection
-MIN_NUMBER_OBSERVATIONS_LOCAL = 5
+MIN_NUMBER_OBSERVATIONS_LOCAL = 6
 # If we want to plot the trajectory to visualize the deflection
 PLOT_VERIF = False
 # If we want to plot (scatter) the mean deflection for each pedestrian
@@ -241,7 +241,8 @@ if __name__ == "__main__":
                         length = sub_length[indice]
                         indice += 1
                         
-                        mean_speed = np.nanmean(trajectory[:,4])/1000 
+                        print(trajectory[:,4])
+                        mean_speed = np.nanmean(trajectory[:,4])/1000
                         if (mean_speed < 0.5):
                             continue
                         elif (mean_speed > 2.5):
@@ -257,6 +258,7 @@ if __name__ == "__main__":
                             continue
 
                         time_of_group_traj = trajectory[-1, 0] - trajectory[0, 0]
+                        print(mean_speed)
                         max_dev_sub["mean_velocity"] = mean_speed
                         max_dev_sub["time"] = time_of_group_traj
 
