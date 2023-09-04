@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 # Current parameters
 PLOT_SOC_DEVIATION = True
-PLOT_NG = False
+PLOT_NG = True
 GROUP_PLOT = True
 SUB_GROUP_PLOT = True
 
@@ -154,7 +154,7 @@ if __name__ == "__main__":
         global_mean_mean_encounter_time = np.around(np.nanmean([np.nanmean(mean_time_encounter_soc[i]) for i in range(5)]), 2) /1000
 
         flattened_encounter_length = [item for sublist in length_encounter_soc for item in sublist]
-        global_mean_all_encounter_length = np.around(np.nanmean(flattened_encounter_length), 2) /1000
+        global_mean_all_encounter_length = np.around(np.nanmean(flattened_encounter_length) /1000, 5) 
 
         flattened_encounter_speed = [item for sublist in speed_encounter_soc for item in sublist]
         global_mean_all_encounter_speed = np.around(np.nanmean(flattened_encounter_speed), 2)
@@ -174,7 +174,7 @@ if __name__ == "__main__":
                 plot_label[i] = plot_label[i] + " / " + str(len(plot_data[i]))
 
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-            ax.set_ylim(0, 800)
+            # ax.set_ylim(0, 800)
 
             ax.set_title(f"Deviation in function of the social binding in encounter situation : {global_mean_all_encounter_length} meters  |  {global_mean_all_encounter_time} s")
             ax.set_xlabel("Social binding / data")
@@ -354,33 +354,54 @@ if __name__ == "__main__":
             plt.close(fig)
 
 
-            plot_data = n_g_mean_dev_encounter_soc.copy()
-            plot_label = LIST_OF_SOCIAL_BINDING.copy()[:-1]
-
-            for i in range(4) :
-                plot_label[i] = plot_label[i] + " / " + str(len(plot_data[i]))
-
-            fig,ax = plt.subplots(1, 1, figsize=(10, 10))
-            ax.boxplot(n_g_mean_dev_encounter_soc, labels=plot_label, showmeans = True, meanline = True, showfliers = False, meanprops = dict(marker='o', markeredgecolor='black', markerfacecolor='black')
-                        , medianprops = dict(color = "black"), whiskerprops = dict(color = "black"), capprops = dict(color = "black"),
-                            boxprops = dict(color = "black"), patch_artist=True, showbox = True, showcaps = True)
             
-            ax.set_title(f"Deviation for alone people in function of the social binding of their encounter / {global_mean_mean_encounter_length} meters")
-            ax.set_xlabel("Social binding / Group / data")
-            ax.set_ylabel("Maximum lateral deviation (m)")
-            fig.savefig(f"../data/figures/deflection/will/boxplot/encounter/mean_data/{MEDIUM_SAVE}{env_name_short}_deviation_alone.png")
-            plt.close(fig)
-
             if(ANOVA):
-                name_of_the_file = f"../data/report_text/deflection/will/encounter/all_data/{ANOVA_SAVE}ANOVA_for_mean_max_deviation_MAX_DISTANCE_{0}.txt".format(global_mean_mean_encounter_length)
+                name_of_the_file = f"../data/report_text/deflection/will/encounter/set_5/ANOVA_for_mean_max_deviation_versus0123.txt"
                 if not os.path.exists(name_of_the_file):
                     with open(name_of_the_file, "a") as f :
                         f.write("-----------------------------------------------------------\n")
-                        result = f_oneway(dev_encounter_soc[0], dev_encounter_soc[1], dev_encounter_soc[2], dev_encounter_soc[3], dev_encounter_soc[4], dev_encounter_soc[5])
+                        result = f_oneway(n_g_dev_encounter_soc[0], n_g_dev_encounter_soc[1], n_g_dev_encounter_soc[2], n_g_dev_encounter_soc[3])
                         f.write("ANOVA for mean max deviation in function of the social binding in encounter situation\n")
                         f.write("F-value : {0}\n".format(result[0]))
                         f.write("p-value : {0}\n".format(result[1]))
                         f.write("-----------------------------------------------------------\n")
+        
+                
+
+
+                name_of_the_file = f"../data/report_text/deflection/will/encounter/set_5/ANOVA_for_mean_max_deviation_versus01_23.txt"
+                if not os.path.exists(name_of_the_file):
+                    with open(name_of_the_file, "a") as f :
+                        f.write("-----------------------------------------------------------\n")
+                        result = f_oneway(n_g_dev_encounter_soc[0] + n_g_dev_encounter_soc[1], n_g_dev_encounter_soc[2]+ n_g_dev_encounter_soc[3])
+                        f.write("ANOVA for mean max deviation in function of the social binding in encounter situation\n")
+                        f.write("F-value : {0}\n".format(result[0]))
+                        f.write("p-value : {0}\n".format(result[1]))
+                        f.write("-----------------------------------------------------------\n")
+
+                double_table = write_table([n_g_dev_encounter_soc[0] + n_g_dev_encounter_soc[1], n_g_dev_encounter_soc[2]+ n_g_dev_encounter_soc[3]], ["01","23"])
+                double_table[0].to_csv(f"../data/report_text/deflection/will/encounter/set_5/t_stats_encounter_new_baseline.csv", index = False)
+                double_table[1].to_csv(f"../data/report_text/deflection/will/encounter/set_5/cohens_encounter_new_baseline_01_vs_23.csv", index = False)
+
+
+                name_of_the_file = f"../data/report_text/deflection/will/encounter/set_5/ANOVA_for_mean_max_deviation_versus0_3.txt"
+                if not os.path.exists(name_of_the_file):
+                    with open(name_of_the_file, "a") as f :
+                        f.write("-----------------------------------------------------------\n")
+                        result = f_oneway(n_g_dev_encounter_soc[0], n_g_dev_encounter_soc[3])
+                        f.write("ANOVA for mean max deviation in function of the social binding in encounter situation\n")
+                        f.write("F-value : {0}\n".format(result[0]))
+                        f.write("p-value : {0}\n".format(result[1]))
+                        f.write("-----------------------------------------------------------\n")                        
+
+                double_table = write_table([n_g_dev_encounter_soc[0], n_g_dev_encounter_soc[3]], ["0","3"])
+                double_table[0].to_csv(f"../data/report_text/deflection/will/encounter/set_5/t_stats_encounter_new_baseline.csv", index = False)
+                double_table[1].to_csv(f"../data/report_text/deflection/will/encounter/set_5/cohens_encounter_new_baseline_0_vs_3.csv", index = False)
+
+
+            double_table = write_table(plot_data, plot_label)
+            double_table[0].to_csv(f"../data/report_text/deflection/will/encounter/set_5/t_stats_versus_new_baseline.csv", index = False)
+            double_table[1].to_csv(f"../data/report_text/deflection/will/encounter/set_5/cohens_versus_new_baseline.csv", index = False)
 
 
         if SUB_GROUP_PLOT :

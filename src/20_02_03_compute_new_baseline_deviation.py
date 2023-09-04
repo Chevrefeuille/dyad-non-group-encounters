@@ -241,7 +241,6 @@ if __name__ == "__main__":
                         length = sub_length[indice]
                         indice += 1
                         
-                        print(trajectory[:,4])
                         mean_speed = np.nanmean(trajectory[:,4])/1000
                         if (mean_speed < 0.5):
                             continue
@@ -258,7 +257,6 @@ if __name__ == "__main__":
                             continue
 
                         time_of_group_traj = trajectory[-1, 0] - trajectory[0, 0]
-                        print(mean_speed)
                         max_dev_sub["mean_velocity"] = mean_speed
                         max_dev_sub["time"] = time_of_group_traj
 

@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
                     in_vicinity = np.logical_and(
                         np.abs(traj_group[:, 1] - traj_non_group[:, 1]) <= 4000,
-                        np.abs(traj_group[:, 2] - traj_non_group[:, 2]) <= 2000,
+                        np.abs(traj_group[:, 2] - traj_non_group[:, 2]) <= 4000,
                     )
 
                     traj_A_vicinity = traj_A[in_vicinity]
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                     if (len(traj_group_vicinity) < 6 or len(traj_non_group_vicinity) < 6):
                         continue
 
-                    print(traj_group_vicinity[:,4])
+                    # print(traj_group_vicinity[:,4])
                     mean_group_speed = np.nanmean(traj_group_vicinity[:,4])/1000
                     if (mean_group_speed < 0.5):
                         continue
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                     time_of_group_traj = traj_group_vicinity[-1, 0] - traj_group_vicinity[0, 0]
                     time_of_non_group_traj = traj_non_group_vicinity[-1, 0] - traj_non_group_vicinity[0, 0]
                         
-                    print(len(traj_non_group_vicinity))
+                    # print(len(traj_non_group_vicinity))
                     length_non_group = compute_length(traj_non_group_vicinity)
                     encounter_speed = length_non_group / (500 * (len(traj_non_group_vicinity)))
 
@@ -146,7 +146,7 @@ if __name__ == "__main__":
                                     show = True
                         )
                         plt.close()
-                    print(mean_group_speed)
+                    # print(mean_group_speed)
                     max_dev_group["mean_velocity"] = mean_group_speed
                     max_dev_ng["mean_velocity"] = encounter_speed
 
